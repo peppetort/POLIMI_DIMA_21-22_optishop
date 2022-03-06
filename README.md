@@ -1,4 +1,4 @@
-# dima21_migliore_tortorelli
+# OptiShop
 
 DIMA course project
 
