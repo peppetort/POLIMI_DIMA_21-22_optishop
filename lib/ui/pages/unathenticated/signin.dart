@@ -152,7 +152,7 @@ class _SignInPageState extends State<SignInPage> {
                         ),
                         child: Center(
                           child: BigElevatedButton(
-                            onPressed: submitLogin,
+                            onPressed: _isLoading ? null : submitLogin,
                             child: _isLoading
                                 ? const CircularProgressIndicator.adaptive(
                                     backgroundColor:

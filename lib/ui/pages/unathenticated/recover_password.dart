@@ -1,10 +1,9 @@
 import 'package:dima21_migliore_tortorelli/app_theme.dart';
+import 'package:dima21_migliore_tortorelli/providers/authentication.dart';
 import 'package:dima21_migliore_tortorelli/ui/widgets/alert_dialog.dart';
 import 'package:dima21_migliore_tortorelli/ui/widgets/big_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import '../../../providers/authentication.dart';
 
 class RecoverPasswordPage extends StatefulWidget {
   const RecoverPasswordPage({Key? key}) : super(key: key);
@@ -51,7 +50,7 @@ class _RecoverPasswordPageState extends State<RecoverPasswordPage> {
     );
   }
 
-  void submitLogin() async {
+  void submitRecover() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
         _isLoading = true;
@@ -171,7 +170,7 @@ class _RecoverPasswordPageState extends State<RecoverPasswordPage> {
                         Container(
                           padding: const EdgeInsets.symmetric(vertical: 10.0),
                           child: BigElevatedButton(
-                            onPressed: submitLogin,
+                            onPressed: _isLoading ? null : submitRecover,
                             child: _isLoading
                                 ? const CircularProgressIndicator.adaptive(
                                     backgroundColor:

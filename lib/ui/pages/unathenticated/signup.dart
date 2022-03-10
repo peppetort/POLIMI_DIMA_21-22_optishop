@@ -332,7 +332,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         ),
                       ),
                       BigElevatedButton(
-                        onPressed: submitSignUp,
+                        onPressed: _isLoading ? null : submitSignUp,
                         child: _isLoading
                             ? const CircularProgressIndicator.adaptive(
                                 backgroundColor:
