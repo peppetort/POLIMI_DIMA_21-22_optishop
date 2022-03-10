@@ -1,6 +1,7 @@
 import 'package:dima21_migliore_tortorelli/providers/authentication.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/home.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/unathenticated/first.dart';
+import 'package:dima21_migliore_tortorelli/ui/pages/unathenticated/recover_password.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/unathenticated/signin.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/unathenticated/signup.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -29,6 +30,7 @@ class OptiShop extends StatelessWidget {
         routes: <String, WidgetBuilder>{
           '/signin': (BuildContext context) => const SignInPage(),
           '/signup': (BuildContext context) => const SignUpPage(),
+          '/recover': (BuildContext context) => const RecoverPasswordPage(),
         },
         home: const Root(),
       ),

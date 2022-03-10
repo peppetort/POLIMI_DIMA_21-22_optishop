@@ -55,8 +55,9 @@ class AuthenticationProvider with ChangeNotifier {
       await users.doc(uid).set(
         {'name': name, 'surname': surname, 'phone': phone},
       );
+      _logger.info('Successfully registeres user $name $surname $email $phone');
       return true;
-    }on FirebaseAuthException catch (e) {
+    } on FirebaseAuthException catch (e) {
       _logger.info(e);
       if (e.message != null) {
         lastMessage = e.message!;
@@ -77,5 +78,21 @@ class AuthenticationProvider with ChangeNotifier {
 
   Future<void> signOut() async {
     await firebaseAuth.signOut();
+  }
+
+  Future<bool> recoverPassword({required String email}) async {
+    try {
+      await firebaseAuth.sendPasswordResetEmail(email: email);
+      _logger.info('Reset link sended to $email');
+      return true;
+    } on FirebaseAuthException catch (e) {
+      _logger.info(e);
+      if (e.message != null) {
+        lastMessage = e.message!;
+      } else {
+        lastMessage = 'Authentication error';
+      }
+      return false;
+    }
   }
 }

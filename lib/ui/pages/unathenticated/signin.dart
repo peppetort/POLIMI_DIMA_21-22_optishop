@@ -171,9 +171,7 @@ class _SignInPageState extends State<SignInPage> {
                             Text('Problemi di accesso?',
                                 style: Theme.of(context).textTheme.bodyText1!),
                             TextButton(
-                              onPressed: () => {
-                                //TODO:push recover page
-                              },
+                              onPressed: () => Navigator.pushNamed(context, '/recover'),
                               child: Text(
                                 'Recupera password',
                                 style: Theme.of(context)
