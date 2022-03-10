@@ -8,12 +8,9 @@ final _logger = Logger('AuthenticationProvider');
 class AuthenticationProvider with ChangeNotifier {
   final FirebaseAuth firebaseAuth;
   CollectionReference users = FirebaseFirestore.instance.collection('users');
-  String _lastMessage = '';
+  String lastMessage = '';
 
   AuthenticationProvider(this.firebaseAuth);
-
-  Stream<User?> get authState => firebaseAuth.idTokenChanges();
-  String get lastMessage => _lastMessage;
 
   Future<bool> signIn({
     required String email,
@@ -27,17 +24,17 @@ class AuthenticationProvider with ChangeNotifier {
     } on FirebaseAuthException catch (e) {
       _logger.info(e);
       if (e.message != null) {
-        _lastMessage = e.message!;
+        lastMessage = e.message!;
       } else {
-        _lastMessage = 'Authentication error';
+        lastMessage = 'Authentication error';
       }
       return false;
     } on FirebaseException catch (e) {
       _logger.info(e);
       if (e.message != null) {
-        _lastMessage = e.message!;
+        lastMessage = e.message!;
       } else {
-        _lastMessage = 'Authentication error';
+        lastMessage = 'Authentication error';
       }
       return false;
     }
@@ -58,21 +55,22 @@ class AuthenticationProvider with ChangeNotifier {
       await users.doc(uid).set(
         {'name': name, 'surname': surname, 'phone': phone},
       );
+      _logger.info('Successfully registeres user $name $surname $email $phone');
       return true;
-    }on FirebaseAuthException catch (e) {
+    } on FirebaseAuthException catch (e) {
       _logger.info(e);
       if (e.message != null) {
-        _lastMessage = e.message!;
+        lastMessage = e.message!;
       } else {
-        _lastMessage = 'Authentication error';
+        lastMessage = 'Authentication error';
       }
       return false;
     } on FirebaseException catch (e) {
       _logger.info(e);
       if (e.message != null) {
-        _lastMessage = e.message!;
+        lastMessage = e.message!;
       } else {
-        _lastMessage = 'Authentication error';
+        lastMessage = 'Authentication error';
       }
       return false;
     }
@@ -80,5 +78,21 @@ class AuthenticationProvider with ChangeNotifier {
 
   Future<void> signOut() async {
     await firebaseAuth.signOut();
+  }
+
+  Future<bool> recoverPassword({required String email}) async {
+    try {
+      await firebaseAuth.sendPasswordResetEmail(email: email);
+      _logger.info('Reset link sended to $email');
+      return true;
+    } on FirebaseAuthException catch (e) {
+      _logger.info(e);
+      if (e.message != null) {
+        lastMessage = e.message!;
+      } else {
+        lastMessage = 'Authentication error';
+      }
+      return false;
+    }
   }
 }

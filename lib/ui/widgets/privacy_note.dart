@@ -20,23 +20,24 @@ class PrivacyNote extends StatelessWidget {
                   'dati, puoi consultare l’',
             ),
             TextSpan(
-              text: 'Informativa sulla Privacy e '
-                  'sui Cookie.',
-              style: Theme.of(context).textTheme.bodyText1?.copyWith(
+                text: 'Informativa sulla Privacy e '
+                    'sui Cookie.',
+                style: Theme.of(context).textTheme.bodyText1?.copyWith(
+                      fontSize: 11.0,
+                      color: Theme.of(context).colorScheme.secondary,
+                      height: 1.5,
+                      decoration: TextDecoration.underline,
+                    ),
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () => {
+                        //TODO:Navigator.of(context).pushNamed('/legal'),
+                      })
+          ],
+          style: Theme.of(context).textTheme.bodyText1?.copyWith(
                 fontSize: 11.0,
                 color: Theme.of(context).colorScheme.secondary,
                 height: 1.5,
-                decoration: TextDecoration.underline,
               ),
-              recognizer: TapGestureRecognizer()
-                ..onTap = () => Navigator.of(context).pushNamed('/legal'),
-            )
-          ],
-          style: Theme.of(context).textTheme.bodyText1?.copyWith(
-            fontSize: 11.0,
-            color: Theme.of(context).colorScheme.secondary,
-            height: 1.5,
-          ),
         ),
       ),
     );
