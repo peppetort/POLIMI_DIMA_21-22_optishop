@@ -152,13 +152,9 @@ class _SignInPageState extends State<SignInPage> {
                         ),
                         child: Center(
                           child: BigElevatedButton(
-                            onPressed: _isLoading ? null : submitLogin,
-                            child: _isLoading
-                                ? const CircularProgressIndicator.adaptive(
-                                    backgroundColor:
-                                        OptiShopAppTheme.backgroundColor,
-                                  )
-                                : const Text('Accedi'),
+                            onPressed: submitLogin,
+                            loading: _isLoading,
+                            child: const Text('Accedi'),
                           ),
                         ),
                       ),
@@ -171,7 +167,8 @@ class _SignInPageState extends State<SignInPage> {
                             Text('Problemi di accesso?',
                                 style: Theme.of(context).textTheme.bodyText1!),
                             TextButton(
-                              onPressed: () => Navigator.pushNamed(context, '/recover'),
+                              onPressed: () =>
+                                  Navigator.pushNamed(context, '/recover'),
                               child: Text(
                                 'Recupera password',
                                 style: Theme.of(context)

@@ -170,15 +170,11 @@ class _RecoverPasswordPageState extends State<RecoverPasswordPage> {
                         Container(
                           padding: const EdgeInsets.symmetric(vertical: 10.0),
                           child: BigElevatedButton(
-                            onPressed: _isLoading ? null : submitRecover,
-                            child: _isLoading
-                                ? const CircularProgressIndicator.adaptive(
-                                    backgroundColor:
-                                        OptiShopAppTheme.backgroundColor,
-                                  )
-                                : Text(
-                                    'Invia Email'.toUpperCase(),
-                                  ),
+                            onPressed: submitRecover,
+                            loading: _isLoading,
+                            child: Text(
+                              'Invia Email'.toUpperCase(),
+                            ),
                           ),
                         ),
                       ],
