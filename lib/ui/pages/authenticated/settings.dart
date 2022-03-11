@@ -24,11 +24,6 @@ class _SettingsPageState extends State<SettingsPage> {
   late double _currentSliderValue = 300;
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     UserModel? user = Provider.of<UserDataProvider>(context).user;
     const containerHeight = 70.0;
@@ -64,9 +59,8 @@ class _SettingsPageState extends State<SettingsPage> {
                       height: 10.0,
                     ),
                     InkWell(
-                      onTap: () => {
-                        //TODO: push modify profile page
-                      },
+                      onTap: () =>
+                          Navigator.pushNamed(context, '/updateprofile'),
                       child: Container(
                         padding: OptiShopAppTheme.defaultPagePadding,
                         height: containerHeight,

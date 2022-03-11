@@ -60,7 +60,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   surname: _lastNameController.text,
                   email: _emailController.text,
                   password: _passwordController.text,
-                  phone: _prefixController.text + _phoneController.text);
+                  phone: _prefixController.text + ' ' + _phoneController.text);
 
       if (!result) {
         showAlertDialog(context,

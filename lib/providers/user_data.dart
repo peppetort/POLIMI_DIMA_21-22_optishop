@@ -12,6 +12,7 @@ class UserDataProvider with ChangeNotifier {
   late DocumentReference _userDataReference;
   late User? _userAuthReference;
   UserModel? user;
+  String lastMessage = '';
 
   void _listenForChanges(User userRef) {
     _userDataReference.snapshots().listen((event) {
@@ -32,6 +33,29 @@ class UserDataProvider with ChangeNotifier {
           .collection('users')
           .doc(_userAuthReference!.uid);
       _listenForChanges(_userAuthReference!);
+    }
+  }
+
+  Future<bool> updateUserData(
+      {required String name,
+      required String surname,
+      required String phone}) async {
+    try {
+      await _userDataReference.set({
+        'name': name,
+        'surname': surname,
+        'phone': phone,
+      });
+      _logger.info('Successfully updated user $name $surname');
+      return true;
+    } on FirebaseException catch (e) {
+      _logger.info(e);
+      if (e.message != null) {
+        lastMessage = e.message!;
+      } else {
+        lastMessage = 'Connection error';
+      }
+      return false;
     }
   }
 }
