@@ -1,5 +1,6 @@
 import 'package:dima21_migliore_tortorelli/app_theme.dart';
 import 'package:dima21_migliore_tortorelli/providers/authentication.dart';
+import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/error.dart';
 import 'package:dima21_migliore_tortorelli/ui/widgets/alert_dialog.dart';
 import 'package:dima21_migliore_tortorelli/ui/widgets/big_button.dart';
 import 'package:flutter/material.dart';
@@ -54,7 +55,10 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
                 .changePassword(password: _passwordController.text);
 
         if (!changePwdRes) {
-          //TODO:show error page
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const ErrorPage()),
+          );
           setState(() {
             _isLoading = false;
           });
@@ -119,8 +123,8 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
                               ),
                             ),
                             Container(
-                              padding:
-                                  const EdgeInsets.only(top: 15.0, bottom: 30.0),
+                              padding: const EdgeInsets.only(
+                                  top: 15.0, bottom: 30.0),
                               child: TextFormField(
                                 controller: _oldPasswordController,
                                 decoration: InputDecoration(
