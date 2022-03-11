@@ -49,7 +49,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
           .updateUserData(
               name: _nameController.text,
               surname: _surnameController.text,
-              phone: _prefixController.text + ' ' + _phoneController.text);
+              phone: _prefixController.text.trim() + ' ' + _phoneController.text.trim());
 
       if (!result) {
         showAlertDialog(context,

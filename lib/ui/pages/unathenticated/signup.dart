@@ -47,7 +47,7 @@ class _SignUpPageState extends State<SignUpPage> {
             ..layout())
           .size;
 
-  void submitSignUp() async {
+  void _submitSignUp() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
         _isLoading = true;
@@ -60,7 +60,9 @@ class _SignUpPageState extends State<SignUpPage> {
                   surname: _lastNameController.text,
                   email: _emailController.text,
                   password: _passwordController.text,
-                  phone: _prefixController.text + ' ' + _phoneController.text);
+                  phone: _prefixController.text.trim() +
+                      ' ' +
+                      _phoneController.text.trim());
 
       if (!result) {
         showAlertDialog(context,
@@ -332,7 +334,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         ),
                       ),
                       BigElevatedButton(
-                        onPressed: submitSignUp,
+                        onPressed: _submitSignUp,
                         loading: _isLoading,
                         child: Text(
                           'Crea Account'.toUpperCase(),

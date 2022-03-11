@@ -21,7 +21,7 @@ class _SignInPageState extends State<SignInPage> {
   bool _hidePassword = true;
   bool _isLoading = false;
 
-  void submitLogin() async {
+  void _submitLogin() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
         _isLoading = true;
@@ -152,7 +152,7 @@ class _SignInPageState extends State<SignInPage> {
                         ),
                         child: Center(
                           child: BigElevatedButton(
-                            onPressed: submitLogin,
+                            onPressed: _submitLogin,
                             loading: _isLoading,
                             child: const Text('Accedi'),
                           ),
