@@ -3,6 +3,9 @@ import 'package:dima21_migliore_tortorelli/models/UserModel.dart';
 import 'package:dima21_migliore_tortorelli/providers/authentication.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
+
+Logger _logger = Logger('UserDataProvider');
 
 class UserDataProvider with ChangeNotifier {
   late AuthenticationProvider? authenticationProvider;
@@ -10,12 +13,13 @@ class UserDataProvider with ChangeNotifier {
   late User? _userAuthReference;
   UserModel? user;
 
-  void _getUserData(User userRef) async {
-    Map<String, dynamic> userData =
-        (await _userDataReference.get()).data() as Map<String, dynamic>;
-    user = UserModel(userRef.uid, userRef.email!, userData['name'],
-        userData['surname'], userData['phone']);
-    notifyListeners();
+  void _listenForChanges(User userRef) {
+    _userDataReference.snapshots().listen((event) {
+      Map<String, dynamic> userData = event.data() as Map<String, dynamic>;
+      user = UserModel(userRef.uid, userRef.email!, userData['name'],
+          userData['surname'], userData['phone']);
+      notifyListeners();
+    });
   }
 
   void update({required AuthenticationProvider authenticationProvider}) {
@@ -27,7 +31,7 @@ class UserDataProvider with ChangeNotifier {
       _userDataReference = FirebaseFirestore.instance
           .collection('users')
           .doc(_userAuthReference!.uid);
-      _getUserData(_userAuthReference!);
+      _listenForChanges(_userAuthReference!);
     }
   }
 }
