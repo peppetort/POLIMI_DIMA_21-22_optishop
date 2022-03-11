@@ -19,6 +19,7 @@ class AuthenticationProvider with ChangeNotifier {
       await firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
       _logger.info('User correctly authenticated: $email');
+      notifyListeners();
       return true;
     } on FirebaseAuthException catch (e) {
       _logger.info(e);
@@ -27,6 +28,7 @@ class AuthenticationProvider with ChangeNotifier {
       } else {
         lastMessage = 'Authentication error';
       }
+      notifyListeners();
       return false;
     } on FirebaseException catch (e) {
       _logger.info(e);
@@ -35,6 +37,7 @@ class AuthenticationProvider with ChangeNotifier {
       } else {
         lastMessage = 'Authentication error';
       }
+      notifyListeners();
       return false;
     }
   }
@@ -55,6 +58,7 @@ class AuthenticationProvider with ChangeNotifier {
         {'name': name, 'surname': surname, 'phone': phone},
       );
       _logger.info('Successfully registeres user $name $surname $email $phone');
+      notifyListeners();
       return true;
     } on FirebaseAuthException catch (e) {
       _logger.info(e);
@@ -63,6 +67,7 @@ class AuthenticationProvider with ChangeNotifier {
       } else {
         lastMessage = 'Authentication error';
       }
+      notifyListeners();
       return false;
     } on FirebaseException catch (e) {
       _logger.info(e);
@@ -71,12 +76,14 @@ class AuthenticationProvider with ChangeNotifier {
       } else {
         lastMessage = 'Authentication error';
       }
+      notifyListeners();
       return false;
     }
   }
 
   Future<void> signOut() async {
     await firebaseAuth.signOut();
+    notifyListeners();
   }
 
   Future<bool> recoverPassword({required String email}) async {
