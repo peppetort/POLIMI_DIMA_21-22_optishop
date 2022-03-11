@@ -94,4 +94,35 @@ class AuthenticationProvider with ChangeNotifier {
       return false;
     }
   }
+
+  Future<bool> reAuthenticate({required String password}) async {
+    try {
+      final userCredentials = EmailAuthProvider.credential(
+          email: firebaseAuth.currentUser!.email!, password: password);
+
+      await firebaseAuth.currentUser!
+          .reauthenticateWithCredential(userCredentials);
+      _logger.info(
+          'User ${firebaseAuth.currentUser!.email!} reauthenticated correctly');
+      return true;
+    } on FirebaseAuthException catch (e) {
+      if (e.message != null) {
+        lastMessage = e.message!;
+      } else {
+        lastMessage = 'Authentication error';
+      }
+      return false;
+    }
+  }
+
+  Future<bool> changePassword({required String password}) async {
+    try {
+      await firebaseAuth.currentUser!.updatePassword(password);
+      _logger.info('Passwoed updated correctly');
+      return true;
+    } on FirebaseAuthException catch (e) {
+      _logger.info(e);
+      return false;
+    }
+  }
 }

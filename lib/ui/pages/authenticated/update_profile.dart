@@ -147,9 +147,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
                           ),
                           const SizedBox(height: 20.0),
                           InkWell(
-                            onTap: () => {
-                              //TODO: push update password page
-                            },
+                            onTap: () => Navigator.pushNamed(context, '/updatepassword'),
                             child: TextFormField(
                               initialValue: 'thisisnotmypassword',
                               decoration: const InputDecoration(
