@@ -1,4 +1,5 @@
 import 'package:dima21_migliore_tortorelli/providers/authentication.dart';
+import 'package:dima21_migliore_tortorelli/providers/user_data.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/home.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/unathenticated/first.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/unathenticated/recover_password.dart';
@@ -22,6 +23,12 @@ class OptiShop extends StatelessWidget {
       providers: [
         ChangeNotifierProvider<AuthenticationProvider>(
           create: (_) => AuthenticationProvider(FirebaseAuth.instance),
+        ),
+        ChangeNotifierProxyProvider<AuthenticationProvider, UserDataProvider>(
+          create: (_) => UserDataProvider(),
+          update: (_, authenticationProvider, userDataProvider) =>
+              userDataProvider!
+                ..update(authenticationProvider: authenticationProvider),
         ),
       ],
       child: MaterialApp(
