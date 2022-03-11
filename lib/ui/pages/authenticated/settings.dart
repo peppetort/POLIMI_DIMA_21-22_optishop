@@ -2,6 +2,7 @@ import 'package:dima21_migliore_tortorelli/app_theme.dart';
 import 'package:dima21_migliore_tortorelli/models/UserModel.dart';
 import 'package:dima21_migliore_tortorelli/providers/authentication.dart';
 import 'package:dima21_migliore_tortorelli/providers/user_data.dart';
+import 'package:dima21_migliore_tortorelli/ui/widgets/alert_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
@@ -21,11 +22,20 @@ class _SettingsPageState extends State<SettingsPage> {
   final double _minDistanceValue = 100;
   final double _maxDistanceValue = 5000;
   late final int _divisions = (_maxDistanceValue - _minDistanceValue) ~/ 100;
-  late double _currentSliderValue = 300;
+  late double _currentSliderValue;
+
+  @override
+  void initState() {
+    final radius =
+        Provider.of<UserDataProvider>(context, listen: false).user!.distance;
+    _currentSliderValue = radius;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     UserModel? user = Provider.of<UserDataProvider>(context).user;
+
     const containerHeight = 70.0;
     var _divider = const Divider(
       height: 1,
@@ -127,8 +137,18 @@ class _SettingsPageState extends State<SettingsPage> {
                                   _currentSliderValue = value;
                                 });
                               },
-                              onChangeEnd: (double value) {
-                                //TODO: change value
+                              onChangeEnd: (double value) async {
+                                var res = await Provider.of<UserDataProvider>(
+                                        context,
+                                        listen: false)
+                                    .updateUserData(distance: value);
+                                if (!res) {
+                                  showAlertDialog(context,
+                                      title: 'Attenzione',
+                                      message:
+                                          Provider.of<UserDataProvider>(context)
+                                              .lastMessage);
+                                }
                               }),
                         ],
                       ),

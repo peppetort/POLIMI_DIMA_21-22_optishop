@@ -16,14 +16,19 @@ class UserDataProvider with ChangeNotifier {
 
   void _listenForChanges(User userRef) {
     _userDataReference.snapshots().listen((event) {
-      Map<String, dynamic> userData = event.data() as Map<String, dynamic>;
-      user = UserModel(userRef.uid, userRef.email!, userData['name'],
-          userData['surname'], userData['phone']);
+      Map<String, dynamic> updatedData = event.data() as Map<String, dynamic>;
+      user = UserModel(
+          userRef.uid,
+          userRef.email!,
+          updatedData['name'] ?? user!.name,
+          updatedData['surname'] ?? user!.surname,
+          updatedData['phone'] ?? user!.phone,
+          double.parse(updatedData['distance'].toString()));
       notifyListeners();
     });
   }
 
-  void update({required AuthenticationProvider authenticationProvider}) {
+  void update({required AuthenticationProvider authenticationProvider}) async {
     this.authenticationProvider = authenticationProvider;
 
     _userAuthReference = this.authenticationProvider?.firebaseAuth.currentUser;
@@ -32,21 +37,33 @@ class UserDataProvider with ChangeNotifier {
       _userDataReference = FirebaseFirestore.instance
           .collection('users')
           .doc(_userAuthReference!.uid);
+
+      Map<String, dynamic> userData =
+      (await _userDataReference.get()).data() as Map<String, dynamic>;
+
+      user = UserModel(
+          _userAuthReference!.uid,
+          _userAuthReference!.email!,
+          userData['name'],
+          userData['surname'],
+          userData['phone'],
+          userData['distance']);
+
       _listenForChanges(_userAuthReference!);
     }
   }
 
   Future<bool> updateUserData(
-      {required String name,
-      required String surname,
-      required String phone}) async {
+      {String? name, String? surname, String? phone, double? distance}) async {
     try {
-      await _userDataReference.set({
-        'name': name,
-        'surname': surname,
-        'phone': phone,
-      });
-      _logger.info('Successfully updated user $name $surname');
+      Map<String, dynamic> payload = {
+        'name': name ?? user!.name,
+        'surname': surname ?? user!.surname,
+        'phone': phone ?? user!.phone,
+        'distance': distance ?? user!.distance,
+      };
+      await _userDataReference.set(payload);
+      _logger.info('Successfully updated user');
       return true;
     } on FirebaseException catch (e) {
       _logger.info(e);

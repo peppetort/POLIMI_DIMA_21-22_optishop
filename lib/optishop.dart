@@ -29,6 +29,7 @@ class OptiShop extends StatelessWidget {
         ),
         ChangeNotifierProxyProvider<AuthenticationProvider, UserDataProvider>(
           create: (_) => UserDataProvider(),
+          lazy: false,
           update: (_, authenticationProvider, userDataProvider) =>
               userDataProvider!
                 ..update(authenticationProvider: authenticationProvider),
