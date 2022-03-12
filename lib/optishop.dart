@@ -1,6 +1,8 @@
 import 'package:dima21_migliore_tortorelli/providers/authentication.dart';
+import 'package:dima21_migliore_tortorelli/providers/data.dart';
 import 'package:dima21_migliore_tortorelli/providers/user_data.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/home.dart';
+import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/products.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/settings.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/update_password.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/update_profile.dart';
@@ -34,6 +36,12 @@ class OptiShop extends StatelessWidget {
               userDataProvider!
                 ..update(authenticationProvider: authenticationProvider),
         ),
+        ChangeNotifierProxyProvider<AuthenticationProvider, DataProvider>(
+          create: (_) => DataProvider(),
+          lazy: false,
+          update: (_, authenticationProvider, dataProvider) => dataProvider!
+            ..update(authenticationProvider: authenticationProvider),
+        ),
       ],
       child: MaterialApp(
         title: 'OptiShop',
@@ -44,7 +52,8 @@ class OptiShop extends StatelessWidget {
           '/recover': (BuildContext context) => const RecoverPasswordPage(),
           '/settings': (BuildContext context) => const SettingsPage(),
           '/updateprofile': (BuildContext context) => const UpdateProfilePage(),
-          '/updatepassword': (BuildContext context) => const UpdatePasswordPage(),
+          '/updatepassword': (BuildContext context) =>
+              const UpdatePasswordPage(),
         },
         home: const Root(),
       ),
