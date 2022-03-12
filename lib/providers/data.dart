@@ -56,6 +56,8 @@ class DataProvider with ChangeNotifier {
       _productsReference = FirebaseFirestore.instance.collection('products');
       _marketsReference = FirebaseFirestore.instance.collection('markets');
       _listenForChanges();
+    }else{
+      cart = [];
     }
   }
 
