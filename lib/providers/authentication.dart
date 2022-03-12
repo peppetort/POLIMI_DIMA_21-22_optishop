@@ -55,7 +55,7 @@ class AuthenticationProvider with ChangeNotifier {
       var uid = userCredential.user!.uid;
 
       await FirebaseFirestore.instance.collection('users').doc(uid).set(
-        {'name': name, 'surname': surname, 'phone': phone},
+        {'name': name, 'surname': surname, 'phone': phone, 'distance': 100},
       );
       _logger.info('Successfully registeres user $name $surname $email $phone');
       notifyListeners();

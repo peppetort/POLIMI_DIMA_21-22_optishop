@@ -42,6 +42,10 @@ class _SettingsPageState extends State<SettingsPage> {
       thickness: 1,
     );
 
+    if(_currentSliderValue < _minDistanceValue){
+      _currentSliderValue = _minDistanceValue;
+    }
+
     return Scaffold(
       appBar: AppBar(
         title:
