@@ -68,22 +68,27 @@ flutter:
     - assets/images/logo_negativo.png
     - assets/images/Ill_modifica_password.png
     - assets/images/Ill_ooops_2.png
+    - assets/images/Ill_ooops_1.png
     - assets/images/1.5x/logo_positivo_payoff.png
     - assets/images/1.5x/logo_negativo.png
     - assets/images/1.5x/Ill_modifica_password.png
     - assets/images/1.5x/Ill_ooops_2.png
+    - assets/images/1.5x/Ill_ooops_1.png
     - assets/images/2.0x/logo_positivo_payoff.png
     - assets/images/2.0x/logo_negativo.png
     - assets/images/2.0x/Ill_modifica_password.png
     - assets/images/2.0x/Ill_ooops_2.png
+    - assets/images/2.0x/Ill_ooops_1.png
     - assets/images/3.0x/logo_positivo_payoff.png
     - assets/images/3.0x/logo_negativo.png
     - assets/images/3.0x/Ill_ooops_2.png
+    - assets/images/3.0x/Ill_ooops_1.png
     - assets/images/3.0x/Ill_modifica_password.png
     - assets/images/4.0x/logo_positivo_payoff.png
     - assets/images/4.0x/logo_negativo.png
     - assets/images/4.0x/Ill_modifica_password.png
     - assets/images/4.0x/Ill_ooops_2.png
+    - assets/images/4.0x/Ill_ooops_1.png
 
 flutter_icons:
   android: "launcher_icon"

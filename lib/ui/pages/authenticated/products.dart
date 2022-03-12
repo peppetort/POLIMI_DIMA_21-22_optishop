@@ -120,10 +120,27 @@ class _ProductsPageState extends State<ProductsPage> {
                               ),
                             )
                           : selectedProducts!.isEmpty
-                              ? const Center(
-                                  child: Text(
-                                      'Non ci sono prodotti per questa categoria '),
-                                  //TODO: cambiare
+                              ? Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.only(
+                                            bottom: 40.0),
+                                        child: Image.asset(
+                                          'assets/images/Ill_ooops_1.png',
+                                          fit: BoxFit.fitWidth,
+                                        ),
+                                      ),
+                                      Text(
+                                        'Non ci sono prodotti per questa categoria',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline5,
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ],
+                                  ),
                                 )
                               : GridView.builder(
                                   gridDelegate:
