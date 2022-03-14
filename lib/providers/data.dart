@@ -84,13 +84,9 @@ class DataProvider with ChangeNotifier {
       ProductModel product = cart[cartProductIndex];
 
       if (!remove) {
-        if (product.quantity == 1) {
+        cart[cartProductIndex].quantity--;
+        if (product.quantity == 0) {
           cart.removeAt(cartProductIndex);
-        } else {
-          cart[cartProductIndex].quantity--;
-          productsOfSelectedCategory!
-              .firstWhere((element) => element.id == product.id)
-              .quantity = cart[cartProductIndex].quantity;
         }
       } else {
         cart[cartProductIndex].quantity = 0;
