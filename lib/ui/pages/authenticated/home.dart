@@ -3,13 +3,17 @@ import 'package:dima21_migliore_tortorelli/models/CategoryModel.dart';
 import 'package:dima21_migliore_tortorelli/models/ProductModel.dart';
 import 'package:dima21_migliore_tortorelli/providers/authentication.dart';
 import 'package:dima21_migliore_tortorelli/providers/data.dart';
+import 'package:dima21_migliore_tortorelli/providers/user_data.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/categories.dart';
 import 'package:dima21_migliore_tortorelli/ui/widgets/alert_dialog.dart';
 import 'package:dima21_migliore_tortorelli/ui/widgets/product_cart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:location/location.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
+
+import 'allow_location.dart';
 
 Logger _logger = Logger('HomePage');
 
@@ -111,77 +115,96 @@ class _HomeScreenState extends State<HomeScreen> {
     selectedProducts =
         Provider.of<DataProvider>(context).productsOfSelectedCategory;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('OptiShop'),
-        centerTitle: true,
-        leading: IconButton(
-          onPressed: () => Navigator.pushNamed(context, '/settings'),
-          icon: const Icon(Icons.person_outline),
-        ),
-        actions: [
-          //TODO: rimuovere solo debug
-          IconButton(
-            onPressed: () {
-              Provider.of<AuthenticationProvider>(context, listen: false)
-                  .signOut();
-            },
-            icon: const Icon(Icons.logout),
-          ),
-          IconButton(
-            onPressed: () => Navigator.pushNamed(context, '/cart'),
-            icon: const Icon(Icons.shopping_cart_outlined),
-          ),
-        ],
-      ),
-      body: categories == null
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
-          : DefaultTabController(
-              key: _tabControllerKey,
-              length: categories!.length + 1,
-              child: Column(
-                children: [
-                  Container(
-                    constraints: const BoxConstraints(maxHeight: 130.0),
-                    child: Material(
-                      color: OptiShopAppTheme.backgroundColor,
-                      child: TabBar(
-                          onTap: (value) => _selectCategory(value),
-                          isScrollable: true,
-                          unselectedLabelStyle: Theme.of(context)
-                              .textTheme
-                              .bodyText2!
-                              .copyWith(color: OptiShopAppTheme.primaryText),
-                          labelStyle: Theme.of(context)
-                              .textTheme
-                              .bodyText2!
-                              .copyWith(fontWeight: FontWeight.bold),
-                          indicatorColor: OptiShopAppTheme.primaryColor,
-                          indicatorSize: TabBarIndicatorSize.label,
-                          indicatorWeight: 4.0,
-                          tabs: [
-                                const Tab(
-                                  text: 'Tutte le categorie',
-                                )
-                              ] +
-                              categories!
-                                  .map((entry) => Tab(
-                                        text: entry.name,
-                                      ))
-                                  .toList()),
-                    ),
+    return FutureBuilder(
+      future: Provider.of<UserDataProvider>(context).getPermissions(),
+      builder:
+          (BuildContext context, AsyncSnapshot<PermissionStatus> snapshot) {
+        if (snapshot.hasData) {
+          PermissionStatus locationPermission = snapshot.data!;
+
+          if (locationPermission != PermissionStatus.denied &&
+              locationPermission != PermissionStatus.deniedForever) {
+            return Scaffold(
+              appBar: AppBar(
+                title: const Text('OptiShop'),
+                centerTitle: true,
+                leading: IconButton(
+                  onPressed: () => Navigator.pushNamed(context, '/settings'),
+                  icon: const Icon(Icons.person_outline),
+                ),
+                actions: [
+                  //TODO: rimuovere solo debug
+                  IconButton(
+                    onPressed: () {
+                      Provider.of<AuthenticationProvider>(context,
+                              listen: false)
+                          .signOut();
+                    },
+                    icon: const Icon(Icons.logout),
                   ),
-                  Flexible(
-                    flex: 5,
-                    child: Builder(builder: (BuildContext c) {
-                      return _getPageBody();
-                    }),
+                  IconButton(
+                    onPressed: () => Navigator.pushNamed(context, '/cart'),
+                    icon: const Icon(Icons.shopping_cart_outlined),
                   ),
                 ],
               ),
-            ),
+              body: categories == null
+                  ? const Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : DefaultTabController(
+                      key: _tabControllerKey,
+                      length: categories!.length + 1,
+                      child: Column(
+                        children: [
+                          Container(
+                            constraints: const BoxConstraints(maxHeight: 130.0),
+                            child: Material(
+                              color: OptiShopAppTheme.backgroundColor,
+                              child: TabBar(
+                                  onTap: (value) => _selectCategory(value),
+                                  isScrollable: true,
+                                  unselectedLabelStyle: Theme.of(context)
+                                      .textTheme
+                                      .bodyText2!
+                                      .copyWith(
+                                          color: OptiShopAppTheme.primaryText),
+                                  labelStyle: Theme.of(context)
+                                      .textTheme
+                                      .bodyText2!
+                                      .copyWith(fontWeight: FontWeight.bold),
+                                  indicatorColor: OptiShopAppTheme.primaryColor,
+                                  indicatorSize: TabBarIndicatorSize.label,
+                                  indicatorWeight: 4.0,
+                                  tabs: [
+                                        const Tab(
+                                          text: 'Tutte le categorie',
+                                        )
+                                      ] +
+                                      categories!
+                                          .map((entry) => Tab(
+                                                text: entry.name,
+                                              ))
+                                          .toList()),
+                            ),
+                          ),
+                          Flexible(
+                            flex: 5,
+                            child: Builder(builder: (BuildContext c) {
+                              return _getPageBody();
+                            }),
+                          ),
+                        ],
+                      ),
+                    ),
+            );
+          } else {
+            return AllowLocationPage();
+          }
+        } else {
+          return const Center(child: CupertinoActivityIndicator());
+        }
+      },
     );
   }
 }

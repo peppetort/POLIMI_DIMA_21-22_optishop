@@ -339,6 +339,8 @@ PODS:
     - abseil/base/config
     - abseil/meta/type_traits
   - Alamofire (5.5.0)
+  - "app_settings (3.0.0+1)":
+    - Flutter
   - BoringSSL-GRPC (0.0.7):
     - BoringSSL-GRPC/Implementation (= 0.0.7)
     - BoringSSL-GRPC/Interface (= 0.0.7)
@@ -442,6 +444,8 @@ PODS:
   - gRPC-Core/Interface (1.28.2)
   - GTMSessionFetcher/Core (1.7.0)
   - leveldb-library (1.22.1)
+  - location (0.0.1):
+    - Flutter
   - nanopb (2.30908.0):
     - nanopb/decode (= 2.30908.0)
     - nanopb/encode (= 2.30908.0)
@@ -456,11 +460,13 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
+  - app_settings (from `.symlinks/plugins/app_settings/ios`)
   - cloud_firestore (from `.symlinks/plugins/cloud_firestore/ios`)
   - firebase_auth (from `.symlinks/plugins/firebase_auth/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - Flutter (from `Flutter`)
   - flutter_osm_plugin (from `.symlinks/plugins/flutter_osm_plugin/ios`)
+  - location (from `.symlinks/plugins/location/ios`)
   - permission_handler (from `.symlinks/plugins/permission_handler/ios`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
 
@@ -486,6 +492,8 @@ SPEC REPOS:
     - Tangram-es
 
 EXTERNAL SOURCES:
+  app_settings:
+    :path: ".symlinks/plugins/app_settings/ios"
   cloud_firestore:
     :path: ".symlinks/plugins/cloud_firestore/ios"
   firebase_auth:
@@ -496,6 +504,8 @@ EXTERNAL SOURCES:
     :path: Flutter
   flutter_osm_plugin:
     :path: ".symlinks/plugins/flutter_osm_plugin/ios"
+  location:
+    :path: ".symlinks/plugins/location/ios"
   permission_handler:
     :path: ".symlinks/plugins/permission_handler/ios"
   url_launcher_ios:
@@ -504,6 +514,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   abseil: 6c8eb7892aefa08d929b39f9bb108e5367e3228f
   Alamofire: 1c4fb5369c3fe93d2857c780d8bbe09f06f97e7c
+  app_settings: d103828c9f5d515c4df9ee754dabd443f7cedcf3
   BoringSSL-GRPC: 8edf627ee524575e2f8d19d56f068b448eea3879
   cloud_firestore: c6c42fe62809b7417aa3c45a6ef0c2812f7fb0d6
   Firebase: 44dd9724c84df18b486639e874f31436eaa9a20c
@@ -521,6 +532,7 @@ SPEC CHECKSUMS:
   gRPC-Core: 4afa11bfbedf7cdecd04de535a9e046893404ed5
   GTMSessionFetcher: 43748f93435c2aa068b1cbe39655aaf600652e91
   leveldb-library: 50c7b45cbd7bf543c81a468fe557a16ae3db8729
+  location: 3a2eed4dd2fab25e7b7baf2a9efefe82b512d740
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   permission_handler: ccb20a9fad0ee9b1314a52b70b76b473c5f8dab0
   Polyline: fce41d72e1146c41c6d081f7656827226f643dff
