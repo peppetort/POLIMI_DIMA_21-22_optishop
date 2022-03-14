@@ -136,9 +136,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: categories == null
           ? const Center(
-              child: CupertinoActivityIndicator(
-                radius: 20.0,
-              ),
+              child: CircularProgressIndicator(),
             )
           : DefaultTabController(
               key: _tabControllerKey,

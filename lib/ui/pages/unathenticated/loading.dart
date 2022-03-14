@@ -13,7 +13,6 @@ class LoadingPage extends StatefulWidget {
 }
 
 class _LoadingPageState extends State<LoadingPage> {
-
   void doWork() async {
     if (widget.function != null) {
       await widget.function!(context);
@@ -37,9 +36,7 @@ class _LoadingPageState extends State<LoadingPage> {
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 20.0),
             ),
-            const CupertinoActivityIndicator(
-              radius: 20.0,
-            ),
+            const CircularProgressIndicator(),
           ],
         ),
       ),
