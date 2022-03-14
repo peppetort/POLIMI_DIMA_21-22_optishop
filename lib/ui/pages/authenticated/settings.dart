@@ -42,7 +42,7 @@ class _SettingsPageState extends State<SettingsPage> {
       thickness: 1,
     );
 
-    if(_currentSliderValue < _minDistanceValue){
+    if (_currentSliderValue < _minDistanceValue) {
       _currentSliderValue = _minDistanceValue;
     }
 
@@ -59,9 +59,7 @@ class _SettingsPageState extends State<SettingsPage> {
       body: SafeArea(
         child: user == null
             ? const Center(
-                child: CupertinoActivityIndicator(
-                  radius: 20.0,
-                ),
+                child: CircularProgressIndicator(),
               )
             : SingleChildScrollView(
                 child: Column(

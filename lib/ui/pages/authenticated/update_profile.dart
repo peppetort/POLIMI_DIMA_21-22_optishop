@@ -83,9 +83,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
         ),
         body: user == null
             ? const Center(
-                child: CupertinoActivityIndicator(
-                  radius: 20.0,
-                ),
+                child: CircularProgressIndicator(),
               )
             : SafeArea(
                 child: SingleChildScrollView(
