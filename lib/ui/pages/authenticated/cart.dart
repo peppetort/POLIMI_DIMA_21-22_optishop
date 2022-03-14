@@ -81,12 +81,9 @@ class _CartPageState extends State<CartPage> {
                             return Dismissible(
                               key: Key(product.id),
                               onDismissed: (direction) async {
-                                setState(() {
-                                  cartItems.removeAt(index);
-                                });
                                 Provider.of<DataProvider>(context,
                                         listen: false)
-                                    .removeFromCart(product);
+                                    .removeFromCart(product, remove: true);
                               },
                               direction: DismissDirection.endToStart,
                               dismissThresholds: const <DismissDirection,

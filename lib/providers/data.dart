@@ -56,7 +56,7 @@ class DataProvider with ChangeNotifier {
       _productsReference = FirebaseFirestore.instance.collection('products');
       _marketsReference = FirebaseFirestore.instance.collection('markets');
       _listenForChanges();
-    }else{
+    } else {
       cart = [];
     }
   }
@@ -71,24 +71,33 @@ class DataProvider with ChangeNotifier {
       product.quantity++;
       cart.add(product);
     }
-
     _logger.info('Product added to cart: ${product.name}');
 
     notifyListeners();
   }
 
-  void removeFromCart(ProductModel product) {
+  void removeFromCart(ProductModel product, {bool remove = false}) {
     int cartProductIndex =
         cart.indexWhere((element) => element.id == product.id);
 
     if (cartProductIndex != -1) {
-      int quantity = cart[cartProductIndex].quantity;
-      cart[cartProductIndex].quantity--;
-      if (quantity == 1) {
+      ProductModel product = cart[cartProductIndex];
+
+      if (!remove) {
+        if (product.quantity == 1) {
+          cart.removeAt(cartProductIndex);
+        } else {
+          cart[cartProductIndex].quantity--;
+          productsOfSelectedCategory!
+              .firstWhere((element) => element.id == product.id)
+              .quantity = cart[cartProductIndex].quantity;
+        }
+      } else {
+        cart[cartProductIndex].quantity = 0;
         cart.removeAt(cartProductIndex);
       }
+      _logger.info('Product removed from cart: ${product.name}');
     }
-    _logger.info('Product removed from cart: ${product.name}');
 
     notifyListeners();
   }
