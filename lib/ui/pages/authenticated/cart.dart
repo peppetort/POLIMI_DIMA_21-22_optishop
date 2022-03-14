@@ -25,6 +25,16 @@ class _CartPageState extends State<CartPage> {
       appBar: AppBar(
         title: const Text('Carrello'),
         centerTitle: true,
+        actions: [
+          cartItems.isNotEmpty
+              ? IconButton(
+                  onPressed: () =>
+                      Provider.of<DataProvider>(context, listen: false)
+                          .emptyCart(),
+                  icon: const Icon(Icons.delete_outline),
+                )
+              : Container(),
+        ],
       ),
       body: cartItems.isEmpty
           ? Padding(

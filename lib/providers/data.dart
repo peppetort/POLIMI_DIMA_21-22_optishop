@@ -98,6 +98,14 @@ class DataProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void emptyCart() {
+    for (var element in cart) {
+      element.quantity = 0;
+    }
+    cart = [];
+    notifyListeners();
+  }
+
   Future<bool> getProductsByCategory(CategoryModel category) async {
     List<ProductModel> selectedProducts = [];
     try {
