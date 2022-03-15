@@ -19,7 +19,6 @@ class DataProvider with ChangeNotifier {
 
   List<ProductModel> cart = [];
   List<CategoryModel>? categories;
-  List<MarketModel>? resultMarkets;
 
   List<ProductModel>? productsOfSelectedCategory;
 
@@ -79,7 +78,9 @@ class DataProvider with ChangeNotifier {
     _marketsReference.add({'name': market.name, 'position': position.data});
   }
 
-  Future<bool> findResults() async {
+  Future<List<MarketModel>> findResults() async {
+    List<MarketModel> selectedMarkets = [];
+
     try {
       final geo = Geoflutterfire();
 
@@ -89,7 +90,7 @@ class DataProvider with ChangeNotifier {
           permissionStatus == PermissionStatus.deniedForever) {
         lastMessage =
             "Per utilizzare questa funzionalità devi autorizzare OptiShop ad utlizzare la tua posizione";
-        return false;
+        return selectedMarkets;
       }
 
       LocationData locationData = await userDataProvider.location.getLocation();
@@ -98,7 +99,8 @@ class DataProvider with ChangeNotifier {
           latitude: locationData.latitude!, longitude: locationData.longitude!);
       double radius = (userDataProvider.user!.distance / 1000);
 
-      _logger.info('Looking for markets starting from (${locationData.latitude!}, ${locationData.longitude}) in a radius of ${radius}Km' );
+      _logger.info(
+          'Looking for markets starting from (${locationData.latitude!}, ${locationData.longitude}) in a radius of ${radius}Km');
 
       List<String> cartProductsIdList = cart.map((e) => e.id).toList();
       _logger.info(cartProductsIdList);
@@ -136,13 +138,12 @@ class DataProvider with ChangeNotifier {
               strictMode: true)
           .first;
 
-      List<MarketModel> results = [];
       x.sort((a, b) => a.kmDistance.compareTo(b.kmDistance));
 
       x.forEach((element) {
         Map<String, dynamic> marketData = element.documentSnapshot.data()!;
         int distance = (element.kmDistance * 100).toInt();
-        results.add(MarketModel(
+        selectedMarkets.add(MarketModel(
           element.documentSnapshot.id,
           marketData['name'],
           (marketData['position']['geopoint'] as GeoPoint).latitude,
@@ -151,11 +152,8 @@ class DataProvider with ChangeNotifier {
           marketData['address'],
         ));
       });
-
-      resultMarkets = results;
       _logger.info('Result search done');
-      notifyListeners();
-      return true;
+      return selectedMarkets;
     } on FirebaseException catch (e) {
       _logger.info(e);
       if (e.message != null) {
@@ -163,7 +161,7 @@ class DataProvider with ChangeNotifier {
       } else {
         lastMessage = 'Connection error';
       }
-      return false;
+      return [];
     }
   }
 
