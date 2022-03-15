@@ -96,7 +96,9 @@ class DataProvider with ChangeNotifier {
       _logger.info(locationData);
       GeoFirePoint userLocation = geo.point(
           latitude: locationData.latitude!, longitude: locationData.longitude!);
-      double radius = userDataProvider.user!.distance;
+      double radius = (userDataProvider.user!.distance / 1000);
+
+      _logger.info('Looking for markets starting from (${locationData.latitude!}, ${locationData.longitude}) in a radius of ${radius}Km' );
 
       List<String> cartProductsIdList = cart.map((e) => e.id).toList();
       _logger.info(cartProductsIdList);

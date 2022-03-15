@@ -19,9 +19,8 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  final double _minDistanceValue = 100;
-  final double _maxDistanceValue = 5000;
-  late final int _divisions = (_maxDistanceValue - _minDistanceValue) ~/ 100;
+  final double _minDistanceValue = 75;
+  final double _maxDistanceValue = 3750;
   late double _currentSliderValue;
 
   @override
@@ -115,7 +114,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                     ),
                               ),
                               Text(
-                                '${_currentSliderValue.round()} passi / ${(_currentSliderValue * stepLength).round()} metri',
+                                '${(_currentSliderValue / stepLength).round()} passi / ${(_currentSliderValue).round()} metri',
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodyText1!
@@ -133,7 +132,6 @@ class _SettingsPageState extends State<SettingsPage> {
                               value: _currentSliderValue,
                               min: _minDistanceValue,
                               max: _maxDistanceValue,
-                              divisions: _divisions,
                               onChanged: (double value) {
                                 setState(() {
                                   _currentSliderValue = value;
