@@ -13,7 +13,7 @@ class AuthenticationProvider with ChangeNotifier {
 
   AuthenticationProvider(this.firebaseAuth);
 
-  //TODO: setup via Firebase console
+  //TODO: finish android setup and fix linking error
   Future<bool> signInWithGoogle() async {
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
@@ -45,6 +45,13 @@ class AuthenticationProvider with ChangeNotifier {
     }
 
     return false;
+  }
+
+  Future<bool> anonymousSignIn() async {
+    await firebaseAuth.signInAnonymously();
+    notifyListeners();
+
+    return true;
   }
 
   Future<bool> signIn({

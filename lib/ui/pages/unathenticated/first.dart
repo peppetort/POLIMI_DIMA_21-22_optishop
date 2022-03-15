@@ -2,6 +2,8 @@ import 'package:dima21_migliore_tortorelli/app_theme.dart';
 import 'package:dima21_migliore_tortorelli/ui/widgets/privacy_note.dart';
 import 'package:flutter/material.dart';
 import 'package:dima21_migliore_tortorelli/ui/widgets/big_button.dart';
+import 'package:dima21_migliore_tortorelli/providers/authentication.dart';
+import 'package:provider/provider.dart';
 
 class FirstPage extends StatelessWidget {
   const FirstPage({Key? key}) : super(key: key);
@@ -52,6 +54,14 @@ class FirstPage extends StatelessWidget {
                           },
                           child: const Text('Accedi'),
                         ),
+                        //placeholder widget for anonymous login
+                        GestureDetector(
+                          onTap: () async {
+                            await Provider.of<AuthenticationProvider>(context, listen: false)
+                                .anonymousSignIn();
+                          },
+                          child: const Text('Continua come ospite'),
+                          ),
                       ],
                     ),
                     const PrivacyNote(),
