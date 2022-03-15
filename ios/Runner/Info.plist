@@ -43,5 +43,20 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-</dict>
+
+    <key>TODO</key>
+    <string>merge with facebook and twitter keys</string>
+
+    <key>CFBundleURLTypes</key>
+    <array>
+    	<dict>
+    		<key>CFBundleTypeRole</key>
+    		<string>Editor</string>
+    		<key>CFBundleURLSchemes</key>
+    		<array>
+    			<string>com.googleusercontent.apps.52498918263-kha0t68oiaan6t6prau62i45nj3m47qp</string>
+    		</array>
+    	</dict>
+    </array>
+
 </plist>
