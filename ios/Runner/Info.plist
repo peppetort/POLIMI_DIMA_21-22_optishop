@@ -45,7 +45,7 @@
 	<false/>
 
     <key>TODO</key>
-    <string>merge with facebook and twitter keys</string>
+    <string>merge with twitter keys</string>
 
     <key>CFBundleURLTypes</key>
     <array>
@@ -55,20 +55,11 @@
     		<key>CFBundleURLSchemes</key>
     		<array>
     			<string>com.googleusercontent.apps.52498918263-kha0t68oiaan6t6prau62i45nj3m47qp</string>
+    			<string>470253408116478</string>
     		</array>
     	</dict>
     </array>
 
-    <key>CFBundleURLTypes</key>
-    <array>
-      <dict>
-      <key>CFBundleURLSchemes</key>
-      <array>
-        <string>470253408116478</string>
-      </array>
-      </dict>
-    </array>
-    
     <key>FacebookAppID</key>
     <string>470253408116478</string>
     <key>FacebookClientToken</key>
