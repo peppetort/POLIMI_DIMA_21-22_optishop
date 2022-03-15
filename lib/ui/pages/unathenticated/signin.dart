@@ -5,6 +5,7 @@ import 'package:dima21_migliore_tortorelli/ui/widgets/big_button.dart';
 import 'package:dima21_migliore_tortorelli/ui/widgets/privacy_note.dart';
 import 'package:dima21_migliore_tortorelli/ui/widgets/scroll_column_view.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
 class SignInPage extends StatefulWidget {
@@ -207,13 +208,15 @@ class _SignInPageState extends State<SignInPage> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
+                            //TODO: fix icons not showing properly
                             GestureDetector(
-                              onTap: () => {},
-                              child: Container(
-                                //TODO: substitute container with other access methods icons
-                                height: socialButtonWidth,
-                                width: socialButtonWidth,
-                                color: OptiShopAppTheme.secondaryColor,
+                              onTap: () async {
+                                await Provider.of<AuthenticationProvider>(context, listen: false)
+                                  .signInWithGoogle();
+                              },
+                              child: const Icon(FontAwesomeIcons.google,
+                              size: 60.0,
+                              color: OptiShopAppTheme.secondaryColor,
                               ),
                             ),
                             GestureDetector(

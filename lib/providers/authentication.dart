@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 final _logger = Logger('AuthenticationProvider');
 
@@ -10,6 +11,23 @@ class AuthenticationProvider with ChangeNotifier {
   String lastMessage = '';
 
   AuthenticationProvider(this.firebaseAuth);
+
+  //TODO: setup via Firebase console
+  Future<bool> signInWithGoogle() async {
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    await firebaseAuth.signInWithCredential(credential);
+    notifyListeners();
+
+    return true;
+  }
 
   Future<bool> signIn({
     required String email,
