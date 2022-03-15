@@ -2,6 +2,9 @@ import 'package:dima21_migliore_tortorelli/app_theme.dart';
 import 'package:dima21_migliore_tortorelli/models/MarketModel.dart';
 import 'package:dima21_migliore_tortorelli/providers/data.dart';
 import 'package:dima21_migliore_tortorelli/ui/widgets/alert_dialog.dart';
+import 'package:dima21_migliore_tortorelli/ui/widgets/big_button.dart';
+import 'package:dima21_migliore_tortorelli/ui/widgets/loading.dart';
+import 'package:dima21_migliore_tortorelli/ui/widgets/scroll_column_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
 import 'package:provider/provider.dart';
@@ -49,18 +52,73 @@ class _ResultsPageState extends State<ResultsPage> {
     markets = Provider.of<DataProvider>(context).resultMarkets;
 
     return markets == null
-        ?
-        //TODO: loading page
-        Center(
-            child: CircularProgressIndicator(),
-          )
+        ? const LoadingPage(
+            title: 'Stiamo cercando i migliori supermercati!',
+            subtitle:
+                'OptiShop sta cercando i supermercati che nelle tue vicinanze che hanno i prezzi più bassi')
         : Scaffold(
             appBar: AppBar(
               title: const Text('Risultati'),
               centerTitle: true,
             ),
             body: markets!.isEmpty
-                ? Center(
+                ? Padding(
+                    padding: OptiShopAppTheme.defaultPagePadding,
+                    child: ScrollColumnView(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          padding:
+                              const EdgeInsets.only(bottom: 10.0, top: 20.0),
+                          child: Image.asset(
+                            'assets/images/Ill_ooops_1.png',
+                            fit: BoxFit.fitWidth,
+                          ),
+                        ),
+                        Column(
+                          children: [
+                            Container(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 15.0),
+                              child: Text(
+                                'Ci dispiace!\nNon abbiamo trovato nessun supermercato intorno a te',
+                                style: Theme.of(context).textTheme.headline5,
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.only(bottom: 15.0),
+                              child: Text(
+                                'Prova ad ampliare il raggio di ricerca dalle impostazioni',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText2!
+                                    .copyWith(
+                                      height: 1.5,
+                                      color: OptiShopAppTheme.primaryText,
+                                    ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Container(
+                          padding:
+                              const EdgeInsets.only(top: 10.0, bottom: 30.0),
+                          child: BigElevatedButton(
+                            onPressed: () => Navigator.pushNamedAndRemoveUntil(
+                                context, '/', (route) => false),
+                            child: Text(
+                              'Continua lo shopping'.toUpperCase(),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+
+                /* Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -78,7 +136,7 @@ class _ResultsPageState extends State<ResultsPage> {
                         ),
                       ],
                     ),
-                  )
+                  )*/
                 : SafeArea(
                     child: Column(
                       children: [
