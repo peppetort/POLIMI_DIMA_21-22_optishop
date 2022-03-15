@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dima21_migliore_tortorelli/app_theme.dart';
 import 'package:dima21_migliore_tortorelli/models/ProductModel.dart';
 import 'package:dima21_migliore_tortorelli/providers/data.dart';
+import 'package:dima21_migliore_tortorelli/ui/widgets/alert_dialog.dart';
 import 'package:dima21_migliore_tortorelli/ui/widgets/big_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -226,9 +227,9 @@ class _CartPageState extends State<CartPage> {
                           horizontal: 28.0, vertical: 10.0),
                       child: Center(
                         child: BigElevatedButton(
-                          onPressed: () {
-                            //TODO: submit
-                          },
+                          onPressed: () =>
+                              Navigator.pushNamed(context, '/results'),
+                          // Navigator.pushNamed(context, '/results'),
                           child: Text(
                             'Cerca il migliore'.toUpperCase(),
                           ),

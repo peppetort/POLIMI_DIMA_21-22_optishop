@@ -3,6 +3,7 @@ import 'package:dima21_migliore_tortorelli/providers/data.dart';
 import 'package:dima21_migliore_tortorelli/providers/user_data.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/cart.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/home.dart';
+import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/results.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/settings.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/update_password.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/update_profile.dart';
@@ -36,11 +37,14 @@ class OptiShop extends StatelessWidget {
               userDataProvider!
                 ..update(authenticationProvider: authenticationProvider),
         ),
-        ChangeNotifierProxyProvider<AuthenticationProvider, DataProvider>(
+        ChangeNotifierProxyProvider2<AuthenticationProvider, UserDataProvider,
+            DataProvider>(
           create: (_) => DataProvider(),
-          lazy: false,
-          update: (_, authenticationProvider, dataProvider) => dataProvider!
-            ..update(authenticationProvider: authenticationProvider),
+          update: (_, authenticationProvider, userDataProvider, dataProvider) =>
+              dataProvider!
+                ..update(
+                    authenticationProvider: authenticationProvider,
+                    userDataProvider: userDataProvider),
         ),
       ],
       child: MaterialApp(
@@ -52,6 +56,7 @@ class OptiShop extends StatelessWidget {
           '/recover': (BuildContext context) => const RecoverPasswordPage(),
           '/settings': (BuildContext context) => const SettingsPage(),
           '/cart': (BuildContext context) => const CartPage(),
+          '/results': (BuildContext context) => const ResultsPage(),
           '/updateprofile': (BuildContext context) => const UpdateProfilePage(),
           '/updatepassword': (BuildContext context) =>
               const UpdatePasswordPage(),
