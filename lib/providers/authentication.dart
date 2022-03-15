@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 
 final _logger = Logger('AuthenticationProvider');
 
@@ -27,6 +28,23 @@ class AuthenticationProvider with ChangeNotifier {
     notifyListeners();
 
     return true;
+  }
+
+  Future<bool> signInWithFacebook() async {
+    final LoginResult result = await FacebookAuth.instance.login();
+    if(result.status == LoginStatus.success){
+
+      // Create a credential from the access token
+      final OAuthCredential credential = FacebookAuthProvider.credential(result.accessToken!.token);
+
+      // Once signed in, return the UserCredential
+      await firebaseAuth.signInWithCredential(credential);
+      notifyListeners();
+
+      return true;
+    }
+
+    return false;
   }
 
   Future<bool> signIn({

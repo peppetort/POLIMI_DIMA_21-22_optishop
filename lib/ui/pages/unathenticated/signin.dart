@@ -220,11 +220,13 @@ class _SignInPageState extends State<SignInPage> {
                               ),
                             ),
                             GestureDetector(
-                              onTap: () => {},
-                              child: Container(
-                                height: socialButtonWidth,
-                                width: socialButtonWidth,
-                                color: OptiShopAppTheme.secondaryColor,
+                              onTap: () async {
+                                await Provider.of<AuthenticationProvider>(context, listen: false)
+                                .signInWithFacebook();
+                              },
+                              child: const Icon(FontAwesomeIcons.facebook,
+                              size: 60.0,
+                              color: OptiShopAppTheme.secondaryColor,
                               ),
                             ),
                             GestureDetector(
