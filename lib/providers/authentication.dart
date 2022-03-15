@@ -57,7 +57,7 @@ class AuthenticationProvider with ChangeNotifier {
       await FirebaseFirestore.instance.collection('users').doc(uid).set(
         {'name': name, 'surname': surname, 'phone': phone, 'distance': 100},
       );
-      _logger.info('Successfully registeres user $name $surname $email $phone');
+      _logger.info('Successfully registered user $name $surname $email $phone');
       notifyListeners();
       return true;
     } on FirebaseAuthException catch (e) {
@@ -89,7 +89,7 @@ class AuthenticationProvider with ChangeNotifier {
   Future<bool> recoverPassword({required String email}) async {
     try {
       await firebaseAuth.sendPasswordResetEmail(email: email);
-      _logger.info('Reset link sended to $email');
+      _logger.info('Reset link sent to $email');
       return true;
     } on FirebaseAuthException catch (e) {
       _logger.info(e);
@@ -125,7 +125,7 @@ class AuthenticationProvider with ChangeNotifier {
   Future<bool> changePassword({required String password}) async {
     try {
       await firebaseAuth.currentUser!.updatePassword(password);
-      _logger.info('Passwoed updated correctly');
+      _logger.info('Password updated correctly');
       return true;
     } on FirebaseAuthException catch (e) {
       _logger.info(e);
