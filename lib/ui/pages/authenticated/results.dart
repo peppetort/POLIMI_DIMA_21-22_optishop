@@ -96,8 +96,7 @@ class _ResultsPageState extends State<ResultsPage> {
                                 const EdgeInsets.only(top: 10.0, bottom: 30.0),
                             child: BigElevatedButton(
                               onPressed: () =>
-                                  Navigator.pushNamedAndRemoveUntil(
-                                      context, '/', (route) => false),
+                                  Navigator.popUntil(context, (route) => route.isFirst),
                               child: Text(
                                 'Continua lo shopping'.toUpperCase(),
                               ),
