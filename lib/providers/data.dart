@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dima21_migliore_tortorelli/models/CategoryModel.dart';
 import 'package:dima21_migliore_tortorelli/models/ProductModel.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 
@@ -73,12 +74,16 @@ class DataProvider with ChangeNotifier {
         Map<String, dynamic> productData =
             element.data() as Map<String, dynamic>;
 
+        String downloadURL = await firebase_storage.FirebaseStorage.instance
+            .ref(productData['image'])
+            .getDownloadURL();
+
         selectedProducts.add(
           ProductModel(
             element.id,
             productData['name'],
             productData['description'],
-            productData['image'],
+            downloadURL,
             categoryId,
           ),
         );

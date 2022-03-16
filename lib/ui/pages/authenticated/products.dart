@@ -1,6 +1,6 @@
 import 'package:dima21_migliore_tortorelli/models/ProductModel.dart';
 import 'package:dima21_migliore_tortorelli/providers/data.dart';
-import 'package:dima21_migliore_tortorelli/ui/widgets/product_cart.dart';
+import 'package:dima21_migliore_tortorelli/ui/widgets/product_card.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';

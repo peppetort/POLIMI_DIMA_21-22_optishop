@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dima21_migliore_tortorelli/app_theme.dart';
 import 'package:dima21_migliore_tortorelli/models/ProductModel.dart';
 import 'package:dima21_migliore_tortorelli/providers/cart.dart';
@@ -135,8 +136,11 @@ class CartPage extends StatelessWidget {
                                             )),
                                         child: AspectRatio(
                                           aspectRatio: 1,
-                                          child: Image.memory(
-                                            base64Decode(product.image),
+                                          child: CachedNetworkImage(
+                                            imageUrl: product.image,
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                    const Icon(Icons.error),
                                           ),
                                         ),
                                       ),
