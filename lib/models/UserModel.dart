@@ -8,14 +8,6 @@ class UserModel {
 
   UserModel(this.uid, this.email, this.name, this.surname, this.phone, this.distance);
 
-  UserModel.fromJson(Map<String, dynamic> json)
-      : uid = json['uid'],
-        email = json['email'],
-        name = json['name'],
-        surname = json['surname'],
-        phone = json['phone'],
-        distance = json['distance'];
-
   Map<String, dynamic> toJson() => {
         'uid': uid,
         'email': email,
@@ -24,4 +16,25 @@ class UserModel {
         'phone': phone,
         'distance': distance,
       };
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is UserModel &&
+          runtimeType == other.runtimeType &&
+          uid == other.uid &&
+          email == other.email &&
+          name == other.name &&
+          surname == other.surname &&
+          phone == other.phone &&
+          distance == other.distance;
+
+  @override
+  int get hashCode =>
+      uid.hashCode ^
+      email.hashCode ^
+      name.hashCode ^
+      surname.hashCode ^
+      phone.hashCode ^
+      distance.hashCode;
 }

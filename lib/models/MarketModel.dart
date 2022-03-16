@@ -7,7 +7,7 @@ class MarketModel {
   final double longitude;
   final int distance;
   final String address;
-  final Map<ProductModel, double> products;
+  final Map<String, double> products;
 
   MarketModel(this.id, this.name, this.latitude, this.longitude, this.distance,
       this.address,
@@ -19,5 +19,29 @@ class MarketModel {
         'latitude': latitude,
         'longitude': longitude,
         'distance': distance,
+        'products': products,
       };
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is MarketModel &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          name == other.name &&
+          latitude == other.latitude &&
+          longitude == other.longitude &&
+          distance == other.distance &&
+          address == other.address &&
+          products == other.products;
+
+  @override
+  int get hashCode =>
+      id.hashCode ^
+      name.hashCode ^
+      latitude.hashCode ^
+      longitude.hashCode ^
+      distance.hashCode ^
+      address.hashCode ^
+      products.hashCode;
 }
