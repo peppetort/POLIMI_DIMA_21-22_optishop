@@ -62,7 +62,7 @@ class OptiShop extends StatelessWidget {
           '/signup': (BuildContext context) => const SignUpPage(),
           '/recover': (BuildContext context) => const RecoverPasswordPage(),
           '/settings': (BuildContext context) => const SettingsPage(),
-          // '/cart': (BuildContext context) => const CartPage(),
+          '/cart': (BuildContext context) => const CartPage(),
           // '/results': (BuildContext context) => const ResultsPage(),
           '/updateprofile': (BuildContext context) => const UpdateProfilePage(),
           '/updatepassword': (BuildContext context) =>
