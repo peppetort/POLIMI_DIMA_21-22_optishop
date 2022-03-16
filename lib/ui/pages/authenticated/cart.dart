@@ -5,6 +5,7 @@ import 'package:dima21_migliore_tortorelli/app_theme.dart';
 import 'package:dima21_migliore_tortorelli/models/ProductModel.dart';
 import 'package:dima21_migliore_tortorelli/providers/cart.dart';
 import 'package:dima21_migliore_tortorelli/ui/widgets/big_button.dart';
+import 'package:dima21_migliore_tortorelli/ui/widgets/scroll_column_view.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -33,7 +34,7 @@ class CartPage extends StatelessWidget {
       body: cart.isEmpty
           ? Padding(
               padding: OptiShopAppTheme.defaultPagePadding,
-              child: Column(
+              child: ScrollColumnView(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [

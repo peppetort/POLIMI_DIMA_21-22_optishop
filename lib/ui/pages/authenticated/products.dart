@@ -1,6 +1,7 @@
 import 'package:dima21_migliore_tortorelli/models/ProductModel.dart';
 import 'package:dima21_migliore_tortorelli/providers/data.dart';
 import 'package:dima21_migliore_tortorelli/ui/widgets/product_card.dart';
+import 'package:dima21_migliore_tortorelli/ui/widgets/scroll_column_view.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
@@ -26,24 +27,23 @@ class ProductPage extends StatelessWidget {
             child: CircularProgressIndicator(),
           )
         : selectedProducts.isEmpty
-            ? Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.only(bottom: 40.0),
-                      child: Image.asset(
-                        'assets/images/Ill_ooops_1.png',
-                        fit: BoxFit.fitWidth,
-                      ),
+            ? ScrollColumnView(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.only(bottom: 10.0, top: 20.0),
+                    child: Image.asset(
+                      'assets/images/Ill_ooops_1.png',
+                      fit: BoxFit.fitWidth,
                     ),
-                    Text(
-                      'Non ci sono prodotti per questa categoria',
-                      style: Theme.of(context).textTheme.headline5,
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
+                  ),
+                  Text(
+                    'Non ci sono prodotti per questa categoria',
+                    style: Theme.of(context).textTheme.headline5,
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               )
             : GridView.builder(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

@@ -37,10 +37,11 @@ class _ResultsPageState extends State<ResultsPage> {
   Widget build(BuildContext context) {
     _logger.info('ResultPage build');
     return FutureBuilder(
-        future: Provider.of<ResultProvider>(context, listen: false).findResults(),
+        future:
+            Provider.of<ResultProvider>(context, listen: false).findResults(),
         builder:
             (BuildContext context, AsyncSnapshot<List<MarketModel>> snapshot) {
-              _logger.info('ResultPage future build');
+          _logger.info('ResultPage future build');
           if (snapshot.hasData) {
             List<MarketModel> markets = snapshot.data!;
 
@@ -95,8 +96,8 @@ class _ResultsPageState extends State<ResultsPage> {
                             padding:
                                 const EdgeInsets.only(top: 10.0, bottom: 30.0),
                             child: BigElevatedButton(
-                              onPressed: () =>
-                                  Navigator.popUntil(context, (route) => route.isFirst),
+                              onPressed: () => Navigator.popUntil(
+                                  context, (route) => route.isFirst),
                               child: Text(
                                 'Continua lo shopping'.toUpperCase(),
                               ),
@@ -209,7 +210,7 @@ class _ResultsPageState extends State<ResultsPage> {
             return const LoadingPage(
                 title: 'Stiamo cercando i migliori supermercati!',
                 subtitle:
-                    'OptiShop sta cercando i supermercati che nelle tue vicinanze che hanno i prezzi più bassi');
+                    'OptiShop sta cercando i supermercati con i prezzi più bassi nelle tue vicinanze');
           }
         });
   }
