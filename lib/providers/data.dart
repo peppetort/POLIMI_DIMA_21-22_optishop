@@ -23,22 +23,16 @@ class DataProvider with ChangeNotifier {
 
   late CollectionReference _categoriesReference;
   late CollectionReference _productsReference;
-  late CollectionReference _marketsReference;
 
   late AuthenticationProvider authenticationProvider;
-  late UserDataProvider userDataProvider;
 
-  void update(
-      {required AuthenticationProvider authenticationProvider,
-      required UserDataProvider userDataProvider}) {
+  void update({required AuthenticationProvider authenticationProvider}) {
     this.authenticationProvider = authenticationProvider;
-    this.userDataProvider = userDataProvider;
 
     if (this.authenticationProvider.firebaseAuth.currentUser != null) {
       _categoriesReference =
           FirebaseFirestore.instance.collection('categories');
       _productsReference = FirebaseFirestore.instance.collection('products');
-      _marketsReference = FirebaseFirestore.instance.collection('markets');
     }
   }
 
@@ -112,7 +106,7 @@ class DataProvider with ChangeNotifier {
     getProductsByCategory(categoryId);
   }
 
-  void deselectCategory(){
+  void deselectCategory() {
     selectedCategory = null;
     productsByCategories.clear();
     notifyListeners();

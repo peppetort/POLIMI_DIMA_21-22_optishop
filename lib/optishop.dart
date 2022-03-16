@@ -1,6 +1,7 @@
 import 'package:dima21_migliore_tortorelli/providers/authentication.dart';
 import 'package:dima21_migliore_tortorelli/providers/cart.dart';
 import 'package:dima21_migliore_tortorelli/providers/data.dart';
+import 'package:dima21_migliore_tortorelli/providers/result.dart';
 import 'package:dima21_migliore_tortorelli/providers/user_data.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/allow_location.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/cart.dart';
@@ -44,14 +45,20 @@ class OptiShop extends StatelessWidget {
               userDataProvider!
                 ..update(authenticationProvider: authenticationProvider),
         ),
-        ChangeNotifierProxyProvider2<AuthenticationProvider, UserDataProvider,
-            DataProvider>(
+        ChangeNotifierProxyProvider<AuthenticationProvider, DataProvider>(
           create: (_) => DataProvider(),
-          update: (_, authenticationProvider, userDataProvider, dataProvider) =>
-              dataProvider!
+          lazy: false,
+          update: (_, authenticationProvider, dataProvider) => dataProvider!
+            ..update(authenticationProvider: authenticationProvider),
+        ),
+        ChangeNotifierProxyProvider2<UserDataProvider, CartProvider,
+            ResultProvider>(
+          create: (_) => ResultProvider(),
+          update: (_, userDataProvider, cartProvider, resultProvider) =>
+              resultProvider!
                 ..update(
-                    authenticationProvider: authenticationProvider,
-                    userDataProvider: userDataProvider),
+                    userDataProvider: userDataProvider,
+                    cartProvider: cartProvider),
         ),
       ],
       child: MaterialApp(
@@ -63,7 +70,7 @@ class OptiShop extends StatelessWidget {
           '/recover': (BuildContext context) => const RecoverPasswordPage(),
           '/settings': (BuildContext context) => const SettingsPage(),
           '/cart': (BuildContext context) => const CartPage(),
-          // '/results': (BuildContext context) => const ResultsPage(),
+          '/results': (BuildContext context) => const ResultsPage(),
           '/updateprofile': (BuildContext context) => const UpdateProfilePage(),
           '/updatepassword': (BuildContext context) =>
               const UpdatePasswordPage(),

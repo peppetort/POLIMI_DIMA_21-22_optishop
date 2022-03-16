@@ -4,7 +4,10 @@ import 'package:dima21_migliore_tortorelli/app_theme.dart';
 import 'package:dima21_migliore_tortorelli/models/ProductModel.dart';
 import 'package:dima21_migliore_tortorelli/providers/cart.dart';
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
+
+Logger _logger = Logger('ProductCard');
 
 class ProductCard extends StatelessWidget {
   final ProductModel product;
@@ -13,6 +16,7 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    _logger.info('ProductCard build ${product.id}');
     int? quantity =
         context.select<CartProvider, int?>((value) => value.cart[product]);
 
