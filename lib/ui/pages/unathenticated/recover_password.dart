@@ -118,7 +118,7 @@ class _RecoverPasswordPageState extends State<RecoverPasswordPage> {
                         Container(
                           padding: const EdgeInsets.symmetric(vertical: 10.0),
                           child: Text(
-                            'Inserisci il tuo indirizzo email.\nTi invieremo un link per generarne una nuova',
+                            'Inserisci il tuo indirizzo email.\nTi invieremo un link per generarne una nuova.',
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyText2!
@@ -158,9 +158,9 @@ class _RecoverPasswordPageState extends State<RecoverPasswordPage> {
                             cursorColor: OptiShopAppTheme.secondaryColor,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Inserisci la tua mail';
+                                return 'Inserisci la tua email';
                               } else if (!emailRegex.hasMatch(value)) {
-                                return 'Inserisci una mail valida';
+                                return 'Inserisci una email valida';
                               } else {
                                 return null;
                               }

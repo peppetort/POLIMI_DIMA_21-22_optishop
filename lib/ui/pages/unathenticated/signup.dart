@@ -298,7 +298,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             Flexible(
                               flex: 3,
                               child: Text(
-                                'Desidero ricevere notizie e offerte da Fishop sul mio indirizzo email.',
+                                'Desidero ricevere notizie e offerte da OptiShop sul mio indirizzo email.',
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodyText1!
