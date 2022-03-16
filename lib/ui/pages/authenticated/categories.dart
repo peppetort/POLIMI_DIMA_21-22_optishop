@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 class CategoriesPage extends StatelessWidget {
   final List<CategoryModel> categories;
-  final void Function(int, CategoryModel) callback;
+  final void Function(String) callback;
 
   const CategoriesPage(
       {Key? key, required this.categories, required this.callback})
@@ -19,7 +19,7 @@ class CategoriesPage extends StatelessWidget {
             1;
 
         DefaultTabController.of(context)!.animateTo(index);
-        callback(index, CategoryModel('o8QmLH0UwqwfYx3uA2K9', 'Bevande', 'TODO'));
+        callback('o8QmLH0UwqwfYx3uA2K9');
       },
       child: Text('Bevande'),
     );

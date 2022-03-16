@@ -1,13 +1,9 @@
 import 'package:dima21_migliore_tortorelli/app_theme.dart';
 import 'package:dima21_migliore_tortorelli/models/CategoryModel.dart';
-import 'package:dima21_migliore_tortorelli/models/ProductModel.dart';
 import 'package:dima21_migliore_tortorelli/providers/authentication.dart';
 import 'package:dima21_migliore_tortorelli/providers/data.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/products.dart';
-import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/categories.dart';
-import 'package:dima21_migliore_tortorelli/ui/widgets/alert_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
 
@@ -23,37 +19,15 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final _tabControllerKey = GlobalKey();
 
-  //int _selectedTab = 0;
-
   @override
   void initState() {
     super.initState();
     Provider.of<DataProvider>(context, listen: false).getAllCategories();
   }
 
-  void _selectCategory(int value, CategoryModel category) async {
-    // setState(() {
-    //   _selectedTab = value;
-    // });
-    if (value > 0) {
-      var res = await Provider.of<DataProvider>(context, listen: false)
-          .getProductsByCategory(category);
-      if (!res) {
-        showAlertDialog(context,
-            title: 'Attenzione',
-            message:
-                Provider.of<DataProvider>(context, listen: false).lastMessage);
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     _logger.info('Home build');
-
-    // Map<String, CategoryModel> categories =
-    //     context.select<DataProvider, Map<String, CategoryModel>>(
-    //         (value) => value.categories);
 
     List<CategoryModel> categories =
         context.select<DataProvider, List<CategoryModel>>(
@@ -97,20 +71,14 @@ class _HomePageState extends State<HomePage> {
                       color: OptiShopAppTheme.backgroundColor,
                       child: TabBar(
                           onTap: (value) {
-                            // setState(() {
-                            //   _selectedTab = value;
-                            // });
                             if (value != 0) {
-                              CategoryModel selectedCategory = context
-                                  .read<DataProvider>()
-                                  .categories
-                                  .values
-                                  .toList()[value - 1];
-                              _selectCategory(value, selectedCategory);
+                              CategoryModel selectedCategory =
+                                  categories[value - 1];
+                              Provider.of<DataProvider>(context, listen: false)
+                                  .selectCategory(selectedCategory.id);
                             } else {
-                              // setState(() {
-                              //   _selectedTab = value;
-                              // });
+                              Provider.of<DataProvider>(context, listen: false)
+                                  .deselectCategory();
                             }
                           },
                           isScrollable: true,
@@ -130,34 +98,36 @@ class _HomePageState extends State<HomePage> {
                                   text: 'Tutte le categorie',
                                 )
                               ] +
-                              context
-                                  .select<DataProvider,
-                                          Map<String, CategoryModel>>(
-                                      (value) => value.categories)
-                                  .values
+                              categories
                                   .map((entry) => Tab(
                                         text: entry.name,
                                       ))
                                   .toList()),
                     ),
                   ),
-                  Flexible(
+                  const Flexible(
                     flex: 5,
-                    child: Builder(builder: (c) {
-                      return DefaultTabController.of(c)?.index == 0
-                          ? CategoriesPage(
-                              categories: categories,
-                              callback: _selectCategory,
-                            )
-                          : ProductPage(
-                              selectedCategory: categories[
-                                  DefaultTabController.of(c)!.index - 1],
-                            );
-                    }),
+                    child: HomePageBody(),
                   ),
                 ],
               ),
             ),
     );
+  }
+}
+
+class HomePageBody extends StatelessWidget {
+  const HomePageBody({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    String? selectedCategory = context
+        .select<DataProvider, String?>((value) => value.selectedCategory);
+
+    return selectedCategory == null
+        ? const Text('all categories')
+        : ProductPage(
+            selectedCategoryId: selectedCategory,
+          );
   }
 }

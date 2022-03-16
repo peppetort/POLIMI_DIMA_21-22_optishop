@@ -19,6 +19,7 @@ class DataProvider with ChangeNotifier {
 
   final Map<String, CategoryModel> categories = {};
   final Map<String, List<ProductModel>> productsByCategories = {};
+  String? selectedCategory;
 
   late CollectionReference _categoriesReference;
   late CollectionReference _productsReference;
@@ -68,11 +69,12 @@ class DataProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> getProductsByCategory(CategoryModel category) async {
+  Future<bool> getProductsByCategory(String categoryId) async {
+    productsByCategories.clear();
     List<ProductModel> selectedProducts = [];
     try {
       List<QueryDocumentSnapshot> products = (await _productsReference
-              .where('category', isEqualTo: category.id)
+              .where('category', isEqualTo: categoryId)
               .get())
           .docs;
 
@@ -86,13 +88,12 @@ class DataProvider with ChangeNotifier {
             productData['name'],
             productData['description'],
             productData['image'],
-            category.id,
+            categoryId,
           ),
         );
       }
-      productsByCategories[category.id] = selectedProducts;
-      _logger
-          .info('Successfully fetched products of category ${category.name}');
+      productsByCategories[categoryId] = selectedProducts;
+      _logger.info('Successfully fetched products of category $categoryId');
       notifyListeners();
       return true;
     } on FirebaseException catch (e) {
@@ -104,6 +105,17 @@ class DataProvider with ChangeNotifier {
       }
       return false;
     }
+  }
+
+  void selectCategory(String categoryId) {
+    selectedCategory = categoryId;
+    getProductsByCategory(categoryId);
+  }
+
+  void deselectCategory(){
+    selectedCategory = null;
+    productsByCategories.clear();
+    notifyListeners();
   }
 }
 
