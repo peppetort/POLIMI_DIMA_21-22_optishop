@@ -2,42 +2,34 @@ import 'dart:convert';
 
 import 'package:dima21_migliore_tortorelli/app_theme.dart';
 import 'package:dima21_migliore_tortorelli/models/ProductModel.dart';
-import 'package:dima21_migliore_tortorelli/providers/data.dart';
-import 'package:dima21_migliore_tortorelli/ui/widgets/alert_dialog.dart';
+import 'package:dima21_migliore_tortorelli/providers/cart.dart';
 import 'package:dima21_migliore_tortorelli/ui/widgets/big_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class CartPage extends StatefulWidget {
+class CartPage extends StatelessWidget {
   const CartPage({Key? key}) : super(key: key);
 
   @override
-  State<CartPage> createState() => _CartPageState();
-}
-
-class _CartPageState extends State<CartPage> {
-  late List<ProductModel> cartItems;
-
-  @override
   Widget build(BuildContext context) {
-    cartItems = Provider.of<DataProvider>(context).cart;
+    Map<ProductModel, int> cart = context.watch<CartProvider>().cart;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Carrello'),
         centerTitle: true,
         actions: [
-          cartItems.isNotEmpty
+          cart.isNotEmpty
               ? IconButton(
                   onPressed: () =>
-                      Provider.of<DataProvider>(context, listen: false)
+                      Provider.of<CartProvider>(context, listen: false)
                           .emptyCart(),
                   icon: const Icon(Icons.delete_outline),
                 )
               : Container(),
         ],
       ),
-      body: cartItems.isEmpty
+      body: cart.isEmpty
           ? Padding(
               padding: OptiShopAppTheme.defaultPagePadding,
               child: Column(
@@ -85,16 +77,16 @@ class _CartPageState extends State<CartPage> {
                   children: [
                     Expanded(
                       child: ListView.builder(
-                          itemCount: cartItems.length,
+                          itemCount: cart.length,
                           itemBuilder: (BuildContext context, int index) {
-                            ProductModel product = cartItems[index];
+                            ProductModel product = cart.keys.toList()[index];
 
                             return Dismissible(
                               key: Key(product.id),
                               onDismissed: (direction) async {
-                                Provider.of<DataProvider>(context,
+                                Provider.of<CartProvider>(context,
                                         listen: false)
-                                    .removeFromCart(product, remove: true);
+                                    .removeFromCart(product, force: true);
                               },
                               direction: DismissDirection.endToStart,
                               dismissThresholds: const <DismissDirection,
@@ -192,7 +184,7 @@ class _CartPageState extends State<CartPage> {
                                             horizontal: 20.0),
                                         child: Center(
                                           child: Text(
-                                            'x${product.quantity.toString()}',
+                                            'x${cart.values.toList()[index]}',
                                             style: Theme.of(context)
                                                 .textTheme
                                                 .headline5!

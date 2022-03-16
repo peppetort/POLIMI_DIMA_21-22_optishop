@@ -1,13 +1,17 @@
 import 'package:dima21_migliore_tortorelli/app_theme.dart';
 import 'package:dima21_migliore_tortorelli/models/MarketModel.dart';
 import 'package:dima21_migliore_tortorelli/providers/data.dart';
+import 'package:dima21_migliore_tortorelli/providers/result.dart';
 import 'package:dima21_migliore_tortorelli/ui/widgets/alert_dialog.dart';
 import 'package:dima21_migliore_tortorelli/ui/widgets/big_button.dart';
 import 'package:dima21_migliore_tortorelli/ui/widgets/loading.dart';
 import 'package:dima21_migliore_tortorelli/ui/widgets/scroll_column_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
+import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
+
+Logger _logger = Logger('ResultPage');
 
 class ResultsPage extends StatefulWidget {
   const ResultsPage({Key? key}) : super(key: key);
@@ -31,10 +35,12 @@ class _ResultsPageState extends State<ResultsPage> {
 
   @override
   Widget build(BuildContext context) {
+    _logger.info('ResultPage build');
     return FutureBuilder(
-        future: Provider.of<DataProvider>(context, listen: false).findResults(),
+        future: Provider.of<ResultProvider>(context, listen: false).findResults(),
         builder:
             (BuildContext context, AsyncSnapshot<List<MarketModel>> snapshot) {
+              _logger.info('ResultPage future build');
           if (snapshot.hasData) {
             List<MarketModel> markets = snapshot.data!;
 

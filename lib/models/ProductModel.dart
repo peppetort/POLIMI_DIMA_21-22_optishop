@@ -1,15 +1,12 @@
-import 'package:dima21_migliore_tortorelli/models/CategoryModel.dart';
 
 class ProductModel {
   final String id;
   final String name;
   final String description;
   final String image;
-  final CategoryModel category;
-  int quantity;
+  final String category;
 
-  ProductModel(this.id, this.name, this.description, this.image, this.category,
-      [this.quantity = 0]);
+  ProductModel(this.id, this.name, this.description, this.image, this.category);
 
   Map<String, dynamic> toJson() => {
         'id': id,
@@ -17,6 +14,24 @@ class ProductModel {
         'description': description,
         'image': image,
         'category': category,
-        'quantity': quantity,
       };
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ProductModel &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          name == other.name &&
+          description == other.description &&
+          image == other.image &&
+          category == other.category;
+
+  @override
+  int get hashCode =>
+      id.hashCode ^
+      name.hashCode ^
+      description.hashCode ^
+      image.hashCode ^
+      category.hashCode;
 }

@@ -5,14 +5,21 @@ class CategoryModel {
 
   CategoryModel(this.id, this.name, this.image);
 
-  CategoryModel.fromJson(Map<String, dynamic> json)
-      : id = json['id'],
-        name = json['name'],
-        image = json['image'];
-
   Map<String, dynamic> toJson() => {
         'id': id,
         'name': name,
         'image': image,
       };
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CategoryModel &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          name == other.name &&
+          image == other.image;
+
+  @override
+  int get hashCode => id.hashCode ^ name.hashCode ^ image.hashCode;
 }
