@@ -1,6 +1,6 @@
-import 'package:dima21_migliore_tortorelli/app_theme.dart';
 import 'package:dima21_migliore_tortorelli/models/ProductModel.dart';
 import 'package:dima21_migliore_tortorelli/providers/data.dart';
+import 'package:dima21_migliore_tortorelli/ui/widgets/product_cart.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
@@ -55,18 +55,9 @@ class ProductPage extends StatelessWidget {
                 padding: const EdgeInsets.all(15.0),
                 itemCount: selectedProducts.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                    color: OptiShopAppTheme.secondaryColor,
+                  return ProductCard(
+                    product: selectedProducts[index],
                   );
-                  // return ProductCard(
-                  //   product: selectedProducts![index],
-                  //   onAddCallback: () =>
-                  //       Provider.of<DataProvider>(context, listen: false)
-                  //           .addToCart(selectedProducts![index]),
-                  //   onRemoveCallback: () =>
-                  //       Provider.of<DataProvider>(context, listen: false)
-                  //           .removeFromCart(selectedProducts![index]),
-                  // );
                 });
   }
 }
