@@ -2,6 +2,7 @@ import 'package:dima21_migliore_tortorelli/app_theme.dart';
 import 'package:dima21_migliore_tortorelli/models/CategoryModel.dart';
 import 'package:dima21_migliore_tortorelli/providers/authentication.dart';
 import 'package:dima21_migliore_tortorelli/providers/data.dart';
+import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/categories.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/products.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
@@ -17,7 +18,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final _tabControllerKey = GlobalKey();
 
   @override
   void initState() {
@@ -61,7 +61,6 @@ class _HomePageState extends State<HomePage> {
               child: CircularProgressIndicator(),
             )
           : DefaultTabController(
-              key: _tabControllerKey,
               length: categories.length + 1,
               child: Column(
                 children: [
@@ -105,29 +104,26 @@ class _HomePageState extends State<HomePage> {
                                   .toList()),
                     ),
                   ),
-                  const Flexible(
+                  Flexible(
                     flex: 5,
-                    child: HomePageBody(),
+                    //NOTE: builder in order to rebuild the tree only from this point on when a selectedCategory change happen
+                    child: Builder(
+                      builder: (context) {
+                        String? selectedCategory =
+                            context.select<DataProvider, String?>(
+                                (value) => value.selectedCategory);
+
+                        return selectedCategory == null
+                            ? CategoriesPage(categories: categories)
+                            : ProductPage(
+                                selectedCategoryId: selectedCategory,
+                              );
+                      },
+                    ),
                   ),
                 ],
               ),
             ),
     );
-  }
-}
-
-class HomePageBody extends StatelessWidget {
-  const HomePageBody({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    String? selectedCategory = context
-        .select<DataProvider, String?>((value) => value.selectedCategory);
-
-    return selectedCategory == null
-        ? const Text('all categories')
-        : ProductPage(
-            selectedCategoryId: selectedCategory,
-          );
   }
 }
