@@ -1,23 +1,26 @@
 import 'dart:convert';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dima21_migliore_tortorelli/app_theme.dart';
 import 'package:dima21_migliore_tortorelli/models/ProductModel.dart';
+import 'package:dima21_migliore_tortorelli/providers/cart.dart';
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
+import 'package:provider/provider.dart';
+
+Logger _logger = Logger('ProductCard');
 
 class ProductCard extends StatelessWidget {
   final ProductModel product;
-  final VoidCallback onAddCallback;
-  final VoidCallback onRemoveCallback;
 
-  const ProductCard(
-      {Key? key,
-      required this.product,
-      required this.onAddCallback,
-      required this.onRemoveCallback})
-      : super(key: key);
+  const ProductCard({Key? key, required this.product}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    _logger.info('ProductCard build ${product.id}');
+    int? quantity =
+        context.select<CartProvider, int?>((value) => value.cart[product]);
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -31,24 +34,29 @@ class ProductCard extends StatelessWidget {
                   color: Colors.white,
                   border: Border.all(
                       width: 1,
-                      color: product.quantity == 0
+                      color: quantity == null
                           ? OptiShopAppTheme.grey
                           : OptiShopAppTheme.primaryColor),
                   borderRadius: BorderRadius.circular(5.0),
                 ),
                 child: AspectRatio(
                   aspectRatio: 1,
-                  child: Image.memory(
-                    base64Decode(product.image),
+                  child: CachedNetworkImage(
+                    imageUrl: product.image,
+                    errorWidget: (context, url, error) => const Icon(Icons.error),
                   ),
                 ),
               ),
               Align(
                 alignment: Alignment.topRight,
                 child: ItemCounter(
-                  number: product.quantity,
-                  addCallback: onAddCallback,
-                  removeCallback: onRemoveCallback,
+                  number: quantity ?? 0,
+                  addCallback: () =>
+                      Provider.of<CartProvider>(context, listen: false)
+                          .addToCart(product),
+                  removeCallback: () =>
+                      Provider.of<CartProvider>(context, listen: false)
+                          .removeFromCart(product),
                 ),
               ),
             ],

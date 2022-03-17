@@ -39,6 +39,13 @@ dependencies:
   cloud_firestore: ^3.1.10
   provider: ^6.0.2
   logging: ^1.0.2
+  flutter_map: ^0.14.0
+  flutter_osm_plugin: ^0.32.1
+  geoflutterfire: ^3.0.3
+  location: ^4.3.0
+  app_settings: ^4.1.1
+  firebase_storage: ^10.2.9
+  cached_network_image: ^3.2.0
 
 dev_dependencies:
   flutter_test:
@@ -70,30 +77,40 @@ flutter:
     - assets/images/Ill_ooops_2.png
     - assets/images/Ill_ooops_1.png
     - assets/images/Ill_inizia_a_esplorare.png
+    - assets/images/Ill_attiva_posizione.png
+    - assets/images/logo_scritta.png
     - assets/images/1.5x/logo_positivo_payoff.png
     - assets/images/1.5x/logo_negativo.png
     - assets/images/1.5x/Ill_modifica_password.png
     - assets/images/1.5x/Ill_ooops_2.png
     - assets/images/1.5x/Ill_ooops_1.png
     - assets/images/1.5x/Ill_inizia_a_esplorare.png
+    - assets/images/1.5x/Ill_attiva_posizione.png
+    - assets/images/1.5x/logo_scritta.png
     - assets/images/2.0x/logo_positivo_payoff.png
     - assets/images/2.0x/logo_negativo.png
     - assets/images/2.0x/Ill_modifica_password.png
     - assets/images/2.0x/Ill_ooops_2.png
     - assets/images/2.0x/Ill_ooops_1.png
     - assets/images/2.0x/Ill_inizia_a_esplorare.png
+    - assets/images/2.0x/Ill_attiva_posizione.png
+    - assets/images/2.0x/logo_scritta.png
     - assets/images/3.0x/logo_positivo_payoff.png
     - assets/images/3.0x/logo_negativo.png
     - assets/images/3.0x/Ill_ooops_2.png
     - assets/images/3.0x/Ill_ooops_1.png
     - assets/images/3.0x/Ill_modifica_password.png
     - assets/images/3.0x/Ill_inizia_a_esplorare.png
+    - assets/images/3.0x/Ill_attiva_posizione.png
+    - assets/images/3.0x/logo_scritta.png
     - assets/images/4.0x/logo_positivo_payoff.png
     - assets/images/4.0x/logo_negativo.png
     - assets/images/4.0x/Ill_modifica_password.png
     - assets/images/4.0x/Ill_ooops_2.png
     - assets/images/4.0x/Ill_ooops_1.png
     - assets/images/4.0x/Ill_inizia_a_esplorare.png
+    - assets/images/4.0x/Ill_attiva_posizione.png
+    - assets/images/4.0x/logo_scritta.png
 
 flutter_icons:
   android: "launcher_icon"

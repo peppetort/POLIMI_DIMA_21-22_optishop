@@ -341,7 +341,12 @@ class _SignUpPageState extends State<SignUpPage> {
                         ),
                       ),
                       const SizedBox(height: 30.0),
-                      const PrivacyNote()
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          PrivacyNote(),
+                        ],
+                      )
                     ],
                   ),
                 ),

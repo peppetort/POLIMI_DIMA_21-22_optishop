@@ -1,8 +1,12 @@
 import 'package:dima21_migliore_tortorelli/providers/authentication.dart';
+import 'package:dima21_migliore_tortorelli/providers/cart.dart';
 import 'package:dima21_migliore_tortorelli/providers/data.dart';
+import 'package:dima21_migliore_tortorelli/providers/result.dart';
 import 'package:dima21_migliore_tortorelli/providers/user_data.dart';
+import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/allow_location.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/cart.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/home.dart';
+import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/results.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/settings.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/update_password.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/update_profile.dart';
@@ -11,7 +15,9 @@ import 'package:dima21_migliore_tortorelli/ui/pages/unathenticated/recover_passw
 import 'package:dima21_migliore_tortorelli/ui/pages/unathenticated/signin.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/unathenticated/signup.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:location/location.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
 
@@ -29,6 +35,9 @@ class OptiShop extends StatelessWidget {
         ChangeNotifierProvider<AuthenticationProvider>(
           create: (_) => AuthenticationProvider(FirebaseAuth.instance),
         ),
+        ChangeNotifierProvider<CartProvider>(
+          create: (_) => CartProvider(),
+        ),
         ChangeNotifierProxyProvider<AuthenticationProvider, UserDataProvider>(
           create: (_) => UserDataProvider(),
           lazy: false,
@@ -42,6 +51,15 @@ class OptiShop extends StatelessWidget {
           update: (_, authenticationProvider, dataProvider) => dataProvider!
             ..update(authenticationProvider: authenticationProvider),
         ),
+        ChangeNotifierProxyProvider2<UserDataProvider, CartProvider,
+            ResultProvider>(
+          create: (_) => ResultProvider(),
+          update: (_, userDataProvider, cartProvider, resultProvider) =>
+              resultProvider!
+                ..update(
+                    userDataProvider: userDataProvider,
+                    cartProvider: cartProvider),
+        ),
       ],
       child: MaterialApp(
         title: 'OptiShop',
@@ -52,6 +70,7 @@ class OptiShop extends StatelessWidget {
           '/recover': (BuildContext context) => const RecoverPasswordPage(),
           '/settings': (BuildContext context) => const SettingsPage(),
           '/cart': (BuildContext context) => const CartPage(),
+          '/results': (BuildContext context) => const ResultsPage(),
           '/updateprofile': (BuildContext context) => const UpdateProfilePage(),
           '/updatepassword': (BuildContext context) =>
               const UpdatePasswordPage(),
@@ -67,12 +86,36 @@ class Root extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Future<PermissionStatus> locationPermissionsFuture =
+        Provider.of<UserDataProvider>(context, listen: false).getPermissions();
+
     return StreamBuilder<User?>(
         stream: Provider.of<AuthenticationProvider>(context)
             .firebaseAuth
             .idTokenChanges(),
         builder: (context, snapshot) {
-          return snapshot.data != null ? const HomeScreen() : const FirstPage();
+          if (snapshot.data == null) {
+            return const FirstPage();
+          } else {
+            return FutureBuilder(
+                future: locationPermissionsFuture,
+                builder: (BuildContext context,
+                    AsyncSnapshot<PermissionStatus> snapshot) {
+                  _logger.info('Future build');
+                  if (snapshot.hasData) {
+                    PermissionStatus locationPermission = snapshot.data!;
+
+                    if (locationPermission != PermissionStatus.denied &&
+                        locationPermission != PermissionStatus.deniedForever) {
+                      return const HomePage();
+                    } else {
+                      return AllowLocationPage();
+                    }
+                  } else {
+                    return const Center(child: CupertinoActivityIndicator());
+                  }
+                });
+          }
         });
   }
 }

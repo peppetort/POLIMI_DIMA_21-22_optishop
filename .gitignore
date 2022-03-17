@@ -283,3 +283,4 @@ fabric.properties
 !/gradle/wrapper/gradle-wrapper.jar
 
 # End of https://www.toptal.com/developers/gitignore/api/androidstudio,android,macos,flutter,xcode,firebase
+ios/Runner.xcodeproj/project.pbxproj
