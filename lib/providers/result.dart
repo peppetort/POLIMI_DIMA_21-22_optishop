@@ -114,9 +114,6 @@ class ResultProvider with ChangeNotifier {
             double productPrice =
                 marketsOfProduct[market.id]! * cartProducts[product.id];
             double totalOfMarket = resultMarkets[market]!['total'] ?? 0;
-
-            _logger.info(productPrice);
-
             resultMarkets[market]!['total'] = totalOfMarket + productPrice;
           }
         }
