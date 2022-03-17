@@ -1,8 +1,6 @@
 import 'package:dima21_migliore_tortorelli/app_theme.dart';
 import 'package:dima21_migliore_tortorelli/models/MarketModel.dart';
-import 'package:dima21_migliore_tortorelli/providers/data.dart';
 import 'package:dima21_migliore_tortorelli/providers/result.dart';
-import 'package:dima21_migliore_tortorelli/ui/widgets/alert_dialog.dart';
 import 'package:dima21_migliore_tortorelli/ui/widgets/big_button.dart';
 import 'package:dima21_migliore_tortorelli/ui/widgets/loading.dart';
 import 'package:dima21_migliore_tortorelli/ui/widgets/scroll_column_view.dart';
@@ -39,11 +37,11 @@ class _ResultsPageState extends State<ResultsPage> {
     return FutureBuilder(
         future:
             Provider.of<ResultProvider>(context, listen: false).findResults(),
-        builder:
-            (BuildContext context, AsyncSnapshot<List<MarketModel>> snapshot) {
+        builder: (BuildContext context,
+            AsyncSnapshot<Map<MarketModel, Map<String, double>>> snapshot) {
           _logger.info('ResultPage future build');
           if (snapshot.hasData) {
-            List<MarketModel> markets = snapshot.data!;
+            Map<MarketModel, Map<String, double>> markets = snapshot.data!;
 
             return Scaffold(
               appBar: AppBar(
@@ -118,14 +116,15 @@ class _ResultsPageState extends State<ResultsPage> {
                             ),
                           ),
                           Flexible(
-                            flex: 2,
+                            flex: 1,
                             child: ListView.builder(
                                 itemCount: markets.length,
                                 itemBuilder: (BuildContext context, int index) {
-                                  MarketModel market = markets[index];
+                                  MarketModel market =
+                                      markets.keys.toList()[index];
 
                                   return SizedBox(
-                                    height: 80.0,
+                                    height: 100.0,
                                     child: Card(
                                       clipBehavior: Clip.hardEdge,
                                       shape: RoundedRectangleBorder(
@@ -146,6 +145,7 @@ class _ResultsPageState extends State<ResultsPage> {
                                                 children: [
                                                   Text(
                                                     market.name,
+                                                    overflow: TextOverflow.ellipsis,
                                                     textAlign: TextAlign.start,
                                                     style: Theme.of(context)
                                                         .textTheme
@@ -161,7 +161,7 @@ class _ResultsPageState extends State<ResultsPage> {
                                                     height: 5.0,
                                                   ),
                                                   Text(
-                                                    '${market.address} - ${market.distance}m',
+                                                    '${market.address}',
                                                     textAlign: TextAlign.start,
                                                     style: Theme.of(context)
                                                         .textTheme
@@ -184,10 +184,23 @@ class _ResultsPageState extends State<ResultsPage> {
                                                   MainAxisAlignment.center,
                                               children: [
                                                 Text(
-                                                  '10€',
+                                                  '${markets[market]!['total']!.toStringAsFixed(2)}€',
                                                   style: Theme.of(context)
                                                       .textTheme
                                                       .headline5!
+                                                      .copyWith(
+                                                        color: OptiShopAppTheme
+                                                            .darkGray,
+                                                      ),
+                                                ),
+                                                const SizedBox(
+                                                  height: 5.0,
+                                                ),
+                                                Text(
+                                                  '${(markets[market]!['distance']! * 1000).round()}m',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyText1!
                                                       .copyWith(
                                                         color: OptiShopAppTheme
                                                             .darkGray,
