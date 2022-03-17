@@ -145,6 +145,7 @@ class _ResultsPageState extends State<ResultsPage> {
                                                 children: [
                                                   Text(
                                                     market.name,
+                                                    overflow: TextOverflow.ellipsis,
                                                     textAlign: TextAlign.start,
                                                     style: Theme.of(context)
                                                         .textTheme

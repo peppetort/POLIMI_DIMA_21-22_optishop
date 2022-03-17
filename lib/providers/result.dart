@@ -119,11 +119,11 @@ class ResultProvider with ChangeNotifier {
         }
       }
 
+      //NOTE: ranking according to distance and total price with the same weight (top-k where k == |dataset| => ordered skyline)
       return SplayTreeMap<MarketModel, Map<String, double>>.from(
           resultMarkets,
-          (a, b) => resultMarkets[a]!['distance']!
-              .compareTo(resultMarkets[b]!['distance']!) + resultMarkets[a]!['total']!
-              .compareTo(resultMarkets[b]!['total']!));
+              (a, b) => (resultMarkets[a]!['distance']! + resultMarkets[a]!['total']!)
+              .compareTo(resultMarkets[b]!['distance']! + resultMarkets[b]!['total']!));
     } on FirebaseException catch (e) {
       _logger.info(e);
       if (e.message != null) {
