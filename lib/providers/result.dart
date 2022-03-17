@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dima21_migliore_tortorelli/models/MarketModel.dart';
 import 'package:dima21_migliore_tortorelli/providers/cart.dart';
@@ -16,6 +18,7 @@ class ResultProvider with ChangeNotifier {
   late CartProvider cartProvider;
 
   late CollectionReference _marketsReference;
+  late CollectionReference _productsReference;
 
   void update(
       {required UserDataProvider userDataProvider,
@@ -23,6 +26,7 @@ class ResultProvider with ChangeNotifier {
     this.userDataProvider = userDataProvider;
     this.cartProvider = cartProvider;
     _marketsReference = FirebaseFirestore.instance.collection('markets');
+    _productsReference = FirebaseFirestore.instance.collection('products');
   }
 
   //TODO: rimuovere serve solo per inserire i market nel db dal monmento che la posizione viene inserita con hash (utile per la query)
@@ -30,27 +34,24 @@ class ResultProvider with ChangeNotifier {
     final geo = Geoflutterfire();
     GeoFirePoint position =
         geo.point(latitude: market.latitude, longitude: market.longitude);
-    _marketsReference.add({'name': market.name, 'position': position.data});
+    _marketsReference.add({'name': market.name, 'position': position.data, 'address': market.address});
   }
 
+  Future<Map<MarketModel, Map<String, double>>> findResults() async {
+    Map<MarketModel, Map<String, double>> resultMarkets = {};
 
-  Future<List<MarketModel>> findResults() async {
-    List<MarketModel> selectedMarkets = [];
+    PermissionStatus permissionStatus = await userDataProvider.getPermissions();
+    if (permissionStatus == PermissionStatus.denied ||
+        permissionStatus == PermissionStatus.deniedForever) {
+      lastMessage =
+          "Per utilizzare questa funzionalità devi autorizzare OptiShop ad utlizzare la tua posizione";
+      return {};
+    }
 
     try {
       final geo = Geoflutterfire();
 
-      PermissionStatus permissionStatus =
-          await userDataProvider.getPermissions();
-      if (permissionStatus == PermissionStatus.denied ||
-          permissionStatus == PermissionStatus.deniedForever) {
-        lastMessage =
-            "Per utilizzare questa funzionalità devi autorizzare OptiShop ad utlizzare la tua posizione";
-        return selectedMarkets;
-      }
-
       LocationData locationData = await userDataProvider.location.getLocation();
-      _logger.info(locationData);
       GeoFirePoint userLocation = geo.point(
           latitude: locationData.latitude!, longitude: locationData.longitude!);
       double radius = (userDataProvider.user!.distance / 1000);
@@ -58,63 +59,74 @@ class ResultProvider with ChangeNotifier {
       _logger.info(
           'Looking for markets starting from (${locationData.latitude!}, ${locationData.longitude}) in a radius of ${radius}Km');
 
-      List<String> cartProductIdList = cartProvider.cart.keys.map((e) => e.id).toList();
-      _logger.info(cartProductIdList.toString());
-      var x = (await _marketsReference.get()).docs;
-      _logger.info((x.first.data() as Map<String, dynamic>)['products'].toString());
+      List<DistanceDocSnapshot> marketInUserRangeSnapshot = (await geo
+          .collection(
+              collectionRef: _marketsReference as Query<Map<String, dynamic>>)
+          .withinWithDistance(
+              center: userLocation,
+              radius: radius,
+              field: 'position',
+              strictMode: true)
+          .first);
 
-      // List<String> cartProductsIdList = cart.map((e) => e.id).toList();
-      // _logger.info(cartProductsIdList);
+      _logger.info('${marketInUserRangeSnapshot.length} markets found');
 
-      List<QueryDocumentSnapshot> marketsWithAvailableProducts = [];
+      for (var element in marketInUserRangeSnapshot) {
+        Map<String, dynamic> marketData =
+            element.documentSnapshot.data() as Map<String, dynamic>;
 
-      //getting all markets that have all product in carts available
-/*      for (var i = 0; i < cartProductsIdList.length; i++) {
-        var marketList = (await _marketsReference
-            .where('products', arrayContains: cartProductsIdList[i])
-            .get())
-            .docs;
+        MarketModel market = MarketModel(
+            element.documentSnapshot.id,
+            marketData['name'],
+            (marketData['position']['geopoint'] as GeoPoint).latitude,
+            (marketData['position']['geopoint'] as GeoPoint).longitude,
+            marketData['address']);
 
-        //intersection between previously selected markets and new ones
-        if (i == 0) {
-          marketsWithAvailableProducts = marketList;
-        } else {
-          marketsWithAvailableProducts.removeWhere((element) =>
-          !marketList.map((e) => e.id).toList().contains(element.id));
+        resultMarkets[market] = {'distance': element.kmDistance};
+      }
+
+      if (resultMarkets.isEmpty) {
+        return {};
+      }
+
+      Map<String, int> cartProducts =
+          cartProvider.cart.map((key, value) => MapEntry(key.id, value));
+
+      _logger.info(
+          'Looking for markets that have available the following products: ${cartProducts.keys.toList()}');
+
+      List<QueryDocumentSnapshot> productsList = (await _productsReference
+              .where(FieldPath.documentId, whereIn: cartProducts.keys.toList())
+              .get())
+          .docs;
+
+      for (var product in productsList) {
+        Map<String, dynamic> productData =
+            product.data() as Map<String, dynamic>;
+
+        var marketsOfProduct = productData['markets'];
+
+        resultMarkets
+            .removeWhere((key, value) => !marketsOfProduct.containsKey(key.id));
+
+        for (var market in resultMarkets.keys) {
+          if (marketsOfProduct.containsKey(market.id)) {
+            double productPrice =
+                marketsOfProduct[market.id]! * cartProducts[product.id];
+            double totalOfMarket = resultMarkets[market]!['total'] ?? 0;
+
+            _logger.info(productPrice);
+
+            resultMarkets[market]!['total'] = totalOfMarket + productPrice;
+          }
         }
+      }
 
-        if (marketsWithAvailableProducts.isEmpty) {
-          break;
-        }
-      }*/
-
-      // //TODO: filtrare per market che hanno i prodotti presenti in cart
-      // var x = await geo
-      //     .collection(
-      //         collectionRef: _marketsReference as Query<Map<String, dynamic>>)
-      //     .withinWithDistance(
-      //         center: userLocation,
-      //         radius: radius,
-      //         field: 'position',
-      //         strictMode: true)
-      //     .first;
-      //
-      // x.sort((a, b) => a.kmDistance.compareTo(b.kmDistance));
-      //
-      // x.forEach((element) {
-      //   Map<String, dynamic> marketData = element.documentSnapshot.data()!;
-      //   int distance = (element.kmDistance * 100).toInt();
-      //   selectedMarkets.add(MarketModel(
-      //     element.documentSnapshot.id,
-      //     marketData['name'],
-      //     (marketData['position']['geopoint'] as GeoPoint).latitude,
-      //     (marketData['position']['geopoint'] as GeoPoint).longitude,
-      //     distance,
-      //     marketData['address'],
-      //   ));
-      // });
-      // _logger.info('Result search done');
-      return selectedMarkets;
+      return SplayTreeMap<MarketModel, Map<String, double>>.from(
+          resultMarkets,
+          (a, b) => resultMarkets[a]!['distance']!
+              .compareTo(resultMarkets[b]!['distance']!) + resultMarkets[a]!['total']!
+              .compareTo(resultMarkets[b]!['total']!));
     } on FirebaseException catch (e) {
       _logger.info(e);
       if (e.message != null) {
@@ -122,7 +134,10 @@ class ResultProvider with ChangeNotifier {
       } else {
         lastMessage = 'Connection error';
       }
-      return [];
+      return {};
+    } on Exception catch (e) {
+      _logger.warning(e);
+      return {};
     }
   }
 }

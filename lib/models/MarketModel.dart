@@ -1,25 +1,17 @@
-import 'package:dima21_migliore_tortorelli/models/ProductModel.dart';
-
 class MarketModel {
   final String id;
   final String name;
   final double latitude;
   final double longitude;
-  final int distance;
   final String address;
-  final Map<String, double> products;
 
-  MarketModel(this.id, this.name, this.latitude, this.longitude, this.distance,
-      this.address,
-      [this.products = const {}]);
+  MarketModel(this.id, this.name, this.latitude, this.longitude, this.address);
 
   Map<String, dynamic> toJson() => {
         'id': id,
         'name': name,
         'latitude': latitude,
         'longitude': longitude,
-        'distance': distance,
-        'products': products,
       };
 
   @override
@@ -31,9 +23,7 @@ class MarketModel {
           name == other.name &&
           latitude == other.latitude &&
           longitude == other.longitude &&
-          distance == other.distance &&
-          address == other.address &&
-          products == other.products;
+          address == other.address;
 
   @override
   int get hashCode =>
@@ -41,7 +31,5 @@ class MarketModel {
       name.hashCode ^
       latitude.hashCode ^
       longitude.hashCode ^
-      distance.hashCode ^
-      address.hashCode ^
-      products.hashCode;
+      address.hashCode;
 }
