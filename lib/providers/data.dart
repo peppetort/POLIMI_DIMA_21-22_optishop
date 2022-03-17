@@ -43,8 +43,12 @@ class DataProvider with ChangeNotifier {
         Map<String, dynamic> categoryData =
             element.data() as Map<String, dynamic>;
 
-        categories[element.id] = CategoryModel(
-            element.id, categoryData['name'], categoryData['image']);
+        String downloadURL = await firebase_storage.FirebaseStorage.instance
+            .ref(categoryData['image'])
+            .getDownloadURL();
+
+        categories[element.id] =
+            CategoryModel(element.id, categoryData['name'], downloadURL);
       }
       _logger.info('Successfully fetched all categories');
       notifyListeners();
