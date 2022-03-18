@@ -18,7 +18,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   @override
   void initState() {
     super.initState();
@@ -109,15 +108,23 @@ class _HomePageState extends State<HomePage> {
                     //NOTE: builder in order to rebuild the tree only from this point on when a selectedCategory change happen
                     child: Builder(
                       builder: (context) {
+                        _logger.info('HomePageBody build');
                         String? selectedCategory =
                             context.select<DataProvider, String?>(
                                 (value) => value.selectedCategory);
 
-                        return selectedCategory == null
-                            ? CategoriesPage(categories: categories)
-                            : ProductPage(
-                                selectedCategoryId: selectedCategory,
-                              );
+                        bool isLoading = context.select<DataProvider, bool>(
+                            (value) => value.isLoading);
+
+                        return isLoading
+                            ? const Center(
+                                child: CircularProgressIndicator(),
+                              )
+                            : selectedCategory == null
+                                ? CategoriesPage(categories: categories)
+                                : ProductPage(
+                                    selectedCategoryId: selectedCategory,
+                                  );
                       },
                     ),
                   ),

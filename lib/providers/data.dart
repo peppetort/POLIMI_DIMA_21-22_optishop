@@ -17,6 +17,7 @@ class DataProvider with ChangeNotifier {
   final Map<String, CategoryModel> categories = {};
   final Map<String, List<ProductModel>> productsByCategories = {};
   String? selectedCategory;
+  bool isLoading = false;
 
   late CollectionReference _categoriesReference;
   late CollectionReference _productsReference;
@@ -34,7 +35,6 @@ class DataProvider with ChangeNotifier {
   }
 
   Future<bool> getAllCategories() async {
-    categories.clear();
     try {
       List<QueryDocumentSnapshot> categoryList =
           (await _categoriesReference.get()).docs;
@@ -65,8 +65,6 @@ class DataProvider with ChangeNotifier {
   }
 
   Future<bool> getProductsByCategory(String categoryId) async {
-    productsByCategories.clear();
-    notifyListeners();
     List<ProductModel> selectedProducts = [];
     try {
       List<QueryDocumentSnapshot> products = (await _productsReference
@@ -94,6 +92,7 @@ class DataProvider with ChangeNotifier {
       }
       productsByCategories[categoryId] = selectedProducts;
       _logger.info('Successfully fetched products of category $categoryId');
+      isLoading = false;
       notifyListeners();
       return true;
     } on FirebaseException catch (e) {
@@ -109,12 +108,13 @@ class DataProvider with ChangeNotifier {
 
   void selectCategory(String categoryId) {
     selectedCategory = categoryId;
+    isLoading = true;
     getProductsByCategory(categoryId);
+    notifyListeners();
   }
 
   void deselectCategory() {
     selectedCategory = null;
-    productsByCategories.clear();
     notifyListeners();
   }
 }

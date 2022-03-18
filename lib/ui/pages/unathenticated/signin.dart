@@ -236,14 +236,9 @@ class _SignInPageState extends State<SignInPage> {
                         ),
                       ),
                       const Spacer(),
-                       Padding(
-                        padding: const EdgeInsets.only(bottom: 10.0),
-                        child:                       Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children:  const [
-                            PrivacyNote(),
-                          ],
-                        )
+                      const Padding(
+                        padding: EdgeInsets.only(bottom: 10.0),
+                        child: PrivacyNote(),
                       ),
                     ],
                   ),
