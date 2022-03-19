@@ -227,7 +227,6 @@ class _SignInPageState extends State<SignInPage> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            //TODO: fix icons not showing properly
                             GestureDetector(
                               onTap: () => _submitLogin(google: true),
                               child: Container(
