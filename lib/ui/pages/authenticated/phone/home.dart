@@ -46,97 +46,91 @@ class _HomePhonePageState extends State<HomePhonePage> {
           icon: const Icon(Icons.person_outline),
         ),
         actions: [
-          //TODO: rimuovere solo debug
-          IconButton(
-            onPressed: () {
-              Provider.of<AuthenticationProvider>(context, listen: false)
-                  .signOut();
-            },
-            icon: const Icon(Icons.logout),
-          ),
           IconButton(
             onPressed: () => Navigator.pushNamed(context, '/cart'),
             icon: const Icon(Icons.shopping_cart_outlined),
           ),
         ],
       ),
-      body: categories.isEmpty
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
-          : DefaultTabController(
-              length: categories.length + 1,
-              initialIndex: initialIndex,
-              child: Column(
-                children: [
-                  Container(
-                    constraints: const BoxConstraints(maxHeight: 130.0),
-                    child: Material(
-                      color: OptiShopAppTheme.backgroundColor,
-                      child: TabBar(
-                          onTap: (value) {
-                            if (value != 0) {
-                              CategoryModel selectedCategory =
-                                  categories[value - 1];
-                              Provider.of<DataProvider>(context, listen: false)
-                                  .selectCategory(selectedCategory.id);
-                            } else {
-                              Provider.of<DataProvider>(context, listen: false)
-                                  .deselectCategory();
-                            }
-                          },
-                          isScrollable: true,
-                          unselectedLabelStyle: Theme.of(context)
-                              .textTheme
-                              .bodyText2!
-                              .copyWith(color: OptiShopAppTheme.primaryText),
-                          labelStyle: Theme.of(context)
-                              .textTheme
-                              .bodyText2!
-                              .copyWith(fontWeight: FontWeight.bold),
-                          indicatorColor: OptiShopAppTheme.primaryColor,
-                          indicatorSize: TabBarIndicatorSize.label,
-                          indicatorWeight: 4.0,
-                          tabs: [
-                                const Tab(
-                                  text: 'Tutte le categorie',
+      body: SafeArea(
+        child: categories.isEmpty
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : DefaultTabController(
+                length: categories.length + 1,
+                initialIndex: initialIndex,
+                child: Column(
+                  children: [
+                    Container(
+                      constraints: const BoxConstraints(maxHeight: 130.0),
+                      child: Material(
+                        color: OptiShopAppTheme.backgroundColor,
+                        child: TabBar(
+                            onTap: (value) {
+                              if (value != 0) {
+                                CategoryModel selectedCategory =
+                                    categories[value - 1];
+                                Provider.of<DataProvider>(context, listen: false)
+                                    .selectCategory(selectedCategory.id);
+                              } else {
+                                Provider.of<DataProvider>(context, listen: false)
+                                    .deselectCategory();
+                              }
+                            },
+                            isScrollable: true,
+                            unselectedLabelStyle: Theme.of(context)
+                                .textTheme
+                                .bodyText2!
+                                .copyWith(color: OptiShopAppTheme.primaryText),
+                            labelStyle: Theme.of(context)
+                                .textTheme
+                                .bodyText2!
+                                .copyWith(fontWeight: FontWeight.bold),
+                            indicatorColor: OptiShopAppTheme.primaryColor,
+                            indicatorSize: TabBarIndicatorSize.label,
+                            indicatorWeight: 4.0,
+                            tabs: [
+                                  const Tab(
+                                    text: 'Tutte le categorie',
+                                  )
+                                ] +
+                                categories
+                                    .map((entry) => Tab(
+                                          text: entry.name,
+                                        ))
+                                    .toList()),
+                      ),
+                    ),
+                    Flexible(
+                      flex: 5,
+                      //NOTE: builder in order to rebuild the tree only from this point on when a selectedCategory change happen
+                      child: Builder(
+                        builder: (context) {
+                          _logger.info('HomePageBody build');
+                          String? selectedCategory =
+                              context.select<DataProvider, String?>(
+                                  (value) => value.selectedCategory);
+
+                          bool isLoading = context.select<DataProvider, bool>(
+                              (value) => value.isLoading);
+
+                          return isLoading
+                              ? const Center(
+                                  child: CircularProgressIndicator(),
                                 )
-                              ] +
-                              categories
-                                  .map((entry) => Tab(
-                                        text: entry.name,
-                                      ))
-                                  .toList()),
+                              : selectedCategory == null
+                                  ? CategoriesPhonePage(categories: categories)
+                                  : ProductPage(
+                                      selectedCategoryId: selectedCategory,
+                                    );
+                        },
+                      ),
                     ),
-                  ),
-                  Flexible(
-                    flex: 5,
-                    //NOTE: builder in order to rebuild the tree only from this point on when a selectedCategory change happen
-                    child: Builder(
-                      builder: (context) {
-                        _logger.info('HomePageBody build');
-                        String? selectedCategory =
-                            context.select<DataProvider, String?>(
-                                (value) => value.selectedCategory);
-
-                        bool isLoading = context.select<DataProvider, bool>(
-                            (value) => value.isLoading);
-
-                        return isLoading
-                            ? const Center(
-                                child: CircularProgressIndicator(),
-                              )
-                            : selectedCategory == null
-                                ? CategoriesPhonePage(categories: categories)
-                                : ProductPage(
-                                    selectedCategoryId: selectedCategory,
-                                  );
-                      },
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
+      ),
     );
   }
 }
