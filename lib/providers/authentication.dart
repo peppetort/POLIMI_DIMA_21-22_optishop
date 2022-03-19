@@ -78,20 +78,55 @@ class AuthenticationProvider with ChangeNotifier {
   }
 
   Future<bool> signInWithFacebook() async {
-    final LoginResult result = await FacebookAuth.instance.login();
-    if (result.status == LoginStatus.success) {
-      // Create a credential from the access token
-      final OAuthCredential credential =
-          FacebookAuthProvider.credential(result.accessToken!.token);
+    try {
+      final LoginResult result = await FacebookAuth.instance.login();
+      if (result.status == LoginStatus.success) {
+        final OAuthCredential credential =
+            FacebookAuthProvider.credential(result.accessToken!.token);
 
-      // Once signed in, return the UserCredential
-      await firebaseAuth.signInWithCredential(credential);
+        final userData = await FacebookAuth.instance.getUserData();
+
+        String? name = userData['name']?.split(' ').first;
+        String? surname = userData['name']?.split(' ').last;
+
+        UserCredential registeredUserCredentials =
+            await firebaseAuth.signInWithCredential(credential);
+
+        if (registeredUserCredentials.additionalUserInfo != null &&
+            registeredUserCredentials.additionalUserInfo!.isNewUser) {
+          Map<String, dynamic> payload = {
+            'distance': 100,
+            'name': name ?? '',
+            'surname': surname ?? '',
+            'phone': ''
+          };
+
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(registeredUserCredentials.user!.uid)
+              .set(payload);
+          _logger.info('Successfully registered user');
+        }
+
+        notifyListeners();
+        return true;
+      }
+      lastMessage = 'Unable to sigin with facebook';
+      return false;
+    } on FirebaseException catch (e) {
+      _logger.info(e);
+      if (e.message != null) {
+        lastMessage = e.message!;
+      } else {
+        lastMessage = 'Authentication error';
+      }
       notifyListeners();
-
-      return true;
+      return false;
+    } on Exception catch (e) {
+      _logger.info(e);
+      lastMessage = 'Internal error';
+      return false;
     }
-
-    return false;
   }
 
   Future<bool> signIn({

@@ -245,7 +245,7 @@ class _SignInPageState extends State<SignInPage> {
                               ),
                             ),
                             GestureDetector(
-                              onTap: () => {},
+                              onTap: () => _submitLogin(facebook: true),
                               child: Container(
                                 width: 70.0,
                                 height: 70.0,
