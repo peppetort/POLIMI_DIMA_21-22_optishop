@@ -29,15 +29,21 @@ class UserDataProvider with ChangeNotifier {
 
   void _listenForChanges(User userRef) {
     userUpdatesStreamSub = _userDataReference.snapshots().listen((event) {
-      Map<String, dynamic> updatedData = event.data() as Map<String, dynamic>;
-      user = UserModel(
-          userRef.uid,
-          userRef.email!,
-          updatedData['name'] ?? user!.name,
-          updatedData['surname'] ?? user!.surname,
-          updatedData['phone'] ?? user!.phone,
-          double.parse(updatedData['distance'].toString()));
-      notifyListeners();
+      try{
+        if(event.data() != null){
+          Map<String, dynamic> updatedData = event.data() as Map<String, dynamic>;
+          user = UserModel(
+              userRef.uid,
+              userRef.email!,
+              updatedData['name'] ?? user!.name,
+              updatedData['surname'] ?? user!.surname,
+              updatedData['phone'] ?? user!.phone,
+              double.parse(updatedData['distance'].toString()));
+          notifyListeners();
+        }
+      }on Exception catch (e){
+        _logger.info(e);
+      }
     });
   }
 
