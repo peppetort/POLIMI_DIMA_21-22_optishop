@@ -31,6 +31,96 @@ class _ResultsPageState extends State<ResultsPage> {
     ),
   );*/
 
+  Widget _getResultListView(Map<MarketModel, Map<String, double>> markets) {
+    return ListView.builder(
+        itemCount: markets.length,
+        itemBuilder: (BuildContext context, int index) {
+          MarketModel market = markets.keys.toList()[index];
+
+          return SizedBox(
+            height: 100.0,
+            child: Card(
+              clipBehavior: Clip.hardEdge,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(0),
+              ),
+              elevation: 1.0,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 10.0, horizontal: 10.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            market.name,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.start,
+                            style:
+                                Theme.of(context).textTheme.headline5!.copyWith(
+                                      color: OptiShopAppTheme.secondaryColor,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                          ),
+                          const SizedBox(
+                            height: 5.0,
+                          ),
+                          Flexible(
+                            child: Text(
+                              market.address,
+                              textAlign: TextAlign.start,
+                              style:
+                                  Theme.of(context).textTheme.bodyText1!.copyWith(
+                                        color: OptiShopAppTheme.darkGray,
+                                      ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          '${markets[market]!['total']!.toStringAsFixed(2)}€',
+                          style:
+                              Theme.of(context).textTheme.headline5!.copyWith(
+                                    color: OptiShopAppTheme.darkGray,
+                                  ),
+                        ),
+                        const SizedBox(
+                          height: 5.0,
+                        ),
+                        Text(
+                          '${(markets[market]!['distance']! * 1000).round()}m',
+                          style:
+                              Theme.of(context).textTheme.bodyText1!.copyWith(
+                                    color: OptiShopAppTheme.darkGray,
+                                  ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  Widget _getMapView() {
+    return Container(
+      height: double.infinity,
+      width: double.infinity,
+      color: OptiShopAppTheme.secondaryColor,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     _logger.info('ResultPage build');
@@ -51,16 +141,18 @@ class _ResultsPageState extends State<ResultsPage> {
               body: markets.isEmpty
                   ? Padding(
                       padding: OptiShopAppTheme.defaultPagePadding,
-                      child: ScrollColumnView(
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Container(
-                            padding:
-                                const EdgeInsets.only(bottom: 10.0, top: 20.0),
-                            child: Image.asset(
-                              'assets/images/Ill_ooops_1.png',
-                              fit: BoxFit.fitWidth,
+                          Flexible(
+                            child: Container(
+                              padding:
+                                  const EdgeInsets.only(bottom: 10.0, top: 20.0),
+                              child: Image.asset(
+                                'assets/images/Ill_ooops_1.png',
+                                fit: BoxFit.fitWidth,
+                              ),
                             ),
                           ),
                           Column(
@@ -104,120 +196,33 @@ class _ResultsPageState extends State<ResultsPage> {
                         ],
                       ),
                     )
-                  : SafeArea(
-                      child: Column(
-                        children: [
-                          Flexible(
-                            flex: 1,
-                            child: Container(
-                              height: double.infinity,
-                              width: double.infinity,
-                              color: OptiShopAppTheme.secondaryColor,
+                  : MediaQuery.of(context).orientation == Orientation.portrait
+                      ? SafeArea(
+                          child: Column(
+                            children: [
+                              Flexible(
+                                flex: 1,
+                                child: _getMapView(),
+                              ),
+                              Flexible(
+                                flex: 1,
+                                child: _getResultListView(markets),
+                              ),
+                            ],
+                          ),
+                        )
+                      : Row(
+                          children: [
+                            Flexible(
+                              flex: 2,
+                              child: _getResultListView(markets),
                             ),
-                          ),
-                          Flexible(
-                            flex: 1,
-                            child: ListView.builder(
-                                itemCount: markets.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  MarketModel market =
-                                      markets.keys.toList()[index];
-
-                                  return SizedBox(
-                                    height: 100.0,
-                                    child: Card(
-                                      clipBehavior: Clip.hardEdge,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(0),
-                                      ),
-                                      elevation: 1.0,
-                                      child: Row(
-                                        children: [
-                                          Expanded(
-                                            child: Container(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 10.0,
-                                                      horizontal: 10.0),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    market.name,
-                                                    overflow: TextOverflow.ellipsis,
-                                                    textAlign: TextAlign.start,
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .headline5!
-                                                        .copyWith(
-                                                          color: OptiShopAppTheme
-                                                              .secondaryColor,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                  ),
-                                                  const SizedBox(
-                                                    height: 5.0,
-                                                  ),
-                                                  Text(
-                                                    market.address,
-                                                    textAlign: TextAlign.start,
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodyText1!
-                                                        .copyWith(
-                                                          color:
-                                                              OptiShopAppTheme
-                                                                  .darkGray,
-                                                        ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                          Container(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 20.0),
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Text(
-                                                  '${markets[market]!['total']!.toStringAsFixed(2)}€',
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .headline5!
-                                                      .copyWith(
-                                                        color: OptiShopAppTheme
-                                                            .darkGray,
-                                                      ),
-                                                ),
-                                                const SizedBox(
-                                                  height: 5.0,
-                                                ),
-                                                Text(
-                                                  '${(markets[market]!['distance']! * 1000).round()}m',
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyText1!
-                                                      .copyWith(
-                                                        color: OptiShopAppTheme
-                                                            .darkGray,
-                                                      ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                }),
-                          ),
-                        ],
-                      ),
-                    ),
+                            Flexible(
+                              flex: 3,
+                              child: _getMapView(),
+                            ),
+                          ],
+                        ),
             );
           } else {
             return const LoadingPage(
