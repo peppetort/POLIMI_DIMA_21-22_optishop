@@ -2,7 +2,7 @@ import 'package:dima21_migliore_tortorelli/app_theme.dart';
 import 'package:dima21_migliore_tortorelli/models/CategoryModel.dart';
 import 'package:dima21_migliore_tortorelli/providers/authentication.dart';
 import 'package:dima21_migliore_tortorelli/providers/data.dart';
-import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/categories.dart';
+import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/phone/categories.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/products.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
@@ -10,14 +10,14 @@ import 'package:provider/provider.dart';
 
 Logger _logger = Logger('HomePage');
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class HomePhonePage extends StatefulWidget {
+  const HomePhonePage({Key? key}) : super(key: key);
 
   @override
-  _HomePageState createState() => _HomePageState();
+  _HomePhonePageState createState() => _HomePhonePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePhonePageState extends State<HomePhonePage> {
   @override
   void initState() {
     super.initState();
@@ -31,6 +31,11 @@ class _HomePageState extends State<HomePage> {
     List<CategoryModel> categories =
         context.select<DataProvider, List<CategoryModel>>(
             (value) => value.categories.values.toList());
+
+    String? selectedCategory = context.read<DataProvider>().selectedCategory;
+    int initialIndex = selectedCategory != null
+        ? categories.indexWhere((element) => element.id == selectedCategory) + 1
+        : 0;
 
     return Scaffold(
       appBar: AppBar(
@@ -61,6 +66,7 @@ class _HomePageState extends State<HomePage> {
             )
           : DefaultTabController(
               length: categories.length + 1,
+              initialIndex: initialIndex,
               child: Column(
                 children: [
                   Container(
@@ -121,7 +127,7 @@ class _HomePageState extends State<HomePage> {
                                 child: CircularProgressIndicator(),
                               )
                             : selectedCategory == null
-                                ? CategoriesPage(categories: categories)
+                                ? CategoriesPhonePage(categories: categories)
                                 : ProductPage(
                                     selectedCategoryId: selectedCategory,
                                   );

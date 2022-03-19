@@ -9,10 +9,11 @@ import 'package:provider/provider.dart';
 
 Logger _logger = Logger('CategoryPage');
 
-class CategoriesPage extends StatelessWidget {
+class CategoriesPhonePage extends StatelessWidget {
   final List<CategoryModel> categories;
 
-  const CategoriesPage({Key? key, required this.categories}) : super(key: key);
+  const CategoriesPhonePage({Key? key, required this.categories})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +51,7 @@ class CategoriesPage extends StatelessWidget {
                 onTap: () {
                   Provider.of<DataProvider>(context, listen: false)
                       .selectCategory(categories[index].id);
-                  DefaultTabController.of(context)!.animateTo(index+1);
+                  DefaultTabController.of(context)!.animateTo(index + 1);
                 },
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
