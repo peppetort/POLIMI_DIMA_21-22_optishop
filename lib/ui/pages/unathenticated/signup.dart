@@ -96,7 +96,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   padding: OptiShopAppTheme.defaultPagePadding,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       const SizedBox(height: 20.0),
                       TextFormField(

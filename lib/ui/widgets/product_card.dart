@@ -25,42 +25,40 @@ class ProductCard extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Flexible(
-          child: Stack(
-            children: [
-              Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(
-                      width: 1,
-                      color: quantity == null
-                          ? OptiShopAppTheme.grey
-                          : OptiShopAppTheme.primaryColor),
-                  borderRadius: BorderRadius.circular(5.0),
-                ),
-                child: AspectRatio(
-                  aspectRatio: 1,
-                  child: CachedNetworkImage(
-                    imageUrl: product.image,
-                    errorWidget: (context, url, error) => const Icon(Icons.error),
-                  ),
+        Stack(
+          children: [
+            Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(
+                    width: 1,
+                    color: quantity == null
+                        ? OptiShopAppTheme.grey
+                        : OptiShopAppTheme.primaryColor),
+                borderRadius: BorderRadius.circular(5.0),
+              ),
+              child: AspectRatio(
+                aspectRatio: 1,
+                child: CachedNetworkImage(
+                  imageUrl: product.image,
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
                 ),
               ),
-              Align(
-                alignment: Alignment.topRight,
-                child: ItemCounter(
-                  number: quantity ?? 0,
-                  addCallback: () =>
-                      Provider.of<CartProvider>(context, listen: false)
-                          .addToCart(product),
-                  removeCallback: () =>
-                      Provider.of<CartProvider>(context, listen: false)
-                          .removeFromCart(product),
-                ),
+            ),
+            Align(
+              alignment: Alignment.topRight,
+              child: ItemCounter(
+                number: quantity ?? 0,
+                addCallback: () =>
+                    Provider.of<CartProvider>(context, listen: false)
+                        .addToCart(product),
+                removeCallback: () =>
+                    Provider.of<CartProvider>(context, listen: false)
+                        .removeFromCart(product),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
         const SizedBox(
           height: 5.0,
