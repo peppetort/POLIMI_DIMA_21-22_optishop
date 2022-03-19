@@ -5,7 +5,7 @@ import 'package:dima21_migliore_tortorelli/ui/widgets/big_button.dart';
 import 'package:dima21_migliore_tortorelli/ui/widgets/privacy_note.dart';
 import 'package:dima21_migliore_tortorelli/ui/widgets/scroll_column_view.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 class SignInPage extends StatefulWidget {
@@ -22,29 +22,43 @@ class _SignInPageState extends State<SignInPage> {
   bool _hidePassword = true;
   bool _isLoading = false;
 
-  void _submitLogin() async {
-    if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-      });
+  void _submitLogin({bool google = false, bool facebook = false}) async {
 
-      var result =
-          await Provider.of<AuthenticationProvider>(context, listen: false)
-              .signIn(
-                  email: _emailController.text,
-                  password: _passwordController.text);
+    setState(() {
+      _isLoading = true;
+    });
 
-      if (!result) {
-        showAlertDialog(context,
-            title: 'Attenzione',
-            message: Provider.of<AuthenticationProvider>(context, listen: false)
-                .lastMessage);
+    bool result;
+
+    if (google) {
+      result = await Provider.of<AuthenticationProvider>(context, listen: false)
+          .signInWithGoogle();
+    } else if (facebook) {
+      result = await Provider.of<AuthenticationProvider>(context, listen: false)
+          .signInWithFacebook();
+    } else {
+      if (!_formKey.currentState!.validate()) {
         setState(() {
           _isLoading = false;
         });
-      } else {
-        Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+        return;
       }
+
+      result = await Provider.of<AuthenticationProvider>(context, listen: false)
+          .signIn(
+              email: _emailController.text, password: _passwordController.text);
+    }
+
+    if (!result) {
+      showAlertDialog(context,
+          title: 'Attenzione',
+          message: Provider.of<AuthenticationProvider>(context, listen: false)
+              .lastMessage);
+      setState(() {
+        _isLoading = false;
+      });
+    } else {
+      Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
     }
   }
 
@@ -208,33 +222,70 @@ class _SignInPageState extends State<SignInPage> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            //TODO: fix icons not showing properly
                             GestureDetector(
-                              onTap: () async {
-                                await Provider.of<AuthenticationProvider>(context, listen: false)
-                                  .signInWithGoogle();
-                              },
-                              child: const Icon(FontAwesomeIcons.google,
-                              size: 60.0,
-                              color: OptiShopAppTheme.secondaryColor,
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () async {
-                                await Provider.of<AuthenticationProvider>(context, listen: false)
-                                .signInWithFacebook();
-                              },
-                              child: const Icon(FontAwesomeIcons.facebook,
-                              size: 60.0,
-                              color: OptiShopAppTheme.secondaryColor,
+                              onTap: () => _submitLogin(google: true),
+                              child: Container(
+                                width: 70.0,
+                                height: 70.0,
+                                padding: const EdgeInsets.all(20.0),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      width: 1.0,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary),
+                                  borderRadius: const BorderRadius.all(
+                                    Radius.circular(5.0),
+                                  ),
+                                ),
+                                child: SvgPicture.asset(
+                                  'assets/images/Icona_google.svg',
+                                  fit: BoxFit.contain,
+                                ),
                               ),
                             ),
                             GestureDetector(
                               onTap: () => {},
                               child: Container(
-                                height: socialButtonWidth,
-                                width: socialButtonWidth,
-                                color: OptiShopAppTheme.secondaryColor,
+                                width: 70.0,
+                                height: 70.0,
+                                padding: const EdgeInsets.all(20.0),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      width: 1.0,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary),
+                                  borderRadius: const BorderRadius.all(
+                                    Radius.circular(5.0),
+                                  ),
+                                ),
+                                child: SvgPicture.asset(
+                                  'assets/images/Icona_facebook.svg',
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () => {},
+                              child: Container(
+                                width: 70.0,
+                                height: 70.0,
+                                padding: const EdgeInsets.all(20.0),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      width: 1.0,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary),
+                                  borderRadius: const BorderRadius.all(
+                                    Radius.circular(5.0),
+                                  ),
+                                ),
+                                child: SvgPicture.asset(
+                                  'assets/images/Icona_google.svg',
+                                  fit: BoxFit.fill,
+                                ),
                               ),
                             ),
                           ],

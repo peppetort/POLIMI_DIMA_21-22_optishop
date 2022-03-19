@@ -48,7 +48,7 @@ dependencies:
   cached_network_image: ^3.2.0
   google_sign_in: ^5.2.4
   flutter_facebook_auth: ^4.1.1
-  font_awesome_flutter: ^9.2.0
+  flutter_svg: ^1.0.3
 
 dev_dependencies:
   flutter_test:
@@ -83,6 +83,8 @@ flutter:
     - assets/images/Ill_attiva_posizione.png
     - assets/images/logo_scritta.png
     - assets/images/Ill_inizia_a_usare_optishop.png
+    - assets/images/Icona_facebook.svg
+    - assets/images/Icona_google.svg
     - assets/images/1.5x/logo_positivo_payoff.png
     - assets/images/1.5x/logo_negativo.png
     - assets/images/1.5x/Ill_modifica_password.png

@@ -54,14 +54,6 @@ class FirstPage extends StatelessWidget {
                           },
                           child: const Text('Accedi'),
                         ),
-                        //placeholder widget for anonymous login
-                        GestureDetector(
-                          onTap: () async {
-                            await Provider.of<AuthenticationProvider>(context, listen: false)
-                                .anonymousSignIn();
-                          },
-                          child: const Text('Continua come ospite'),
-                          ),
                       ],
                     ),
                     const PrivacyNote(),
