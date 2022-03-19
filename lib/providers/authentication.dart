@@ -13,29 +13,76 @@ class AuthenticationProvider with ChangeNotifier {
 
   AuthenticationProvider(this.firebaseAuth);
 
-  //TODO: finish android setup and fix linking error
   Future<bool> signInWithGoogle() async {
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
-    final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+      if (googleUser == null) {
+        lastMessage = 'Unable to sigin with google';
+        return false;
+      }
 
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth?.accessToken,
-      idToken: googleAuth?.idToken,
-    );
+      _logger.info(googleUser.displayName);
 
-    await firebaseAuth.signInWithCredential(credential);
-    notifyListeners();
+      String? name = googleUser.displayName?.split(' ').first;
+      String? surname = googleUser.displayName?.split(' ').last;
 
-    return true;
+      final GoogleSignInAuthentication? googleAuth =
+          await googleUser.authentication;
+
+      if (googleAuth == null) {
+        lastMessage = 'Unable to sigin with google';
+        return false;
+      }
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      UserCredential registeredUserCredentials =
+          await firebaseAuth.signInWithCredential(credential);
+
+      if (registeredUserCredentials.additionalUserInfo != null &&
+          registeredUserCredentials.additionalUserInfo!.isNewUser) {
+        Map<String, dynamic> payload = {
+          'distance': 100,
+          'name': name ?? '',
+          'surname': surname ?? '',
+          'phone': ''
+        };
+
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(registeredUserCredentials.user!.uid)
+            .set(payload);
+        _logger.info('Successfully registered user');
+      }
+      notifyListeners();
+
+      return true;
+    } on FirebaseException catch (e) {
+      _logger.info(e);
+      if (e.message != null) {
+        lastMessage = e.message!;
+      } else {
+        lastMessage = 'Authentication error';
+      }
+      notifyListeners();
+      return false;
+    } on Exception catch (e) {
+      _logger.info(e);
+      lastMessage = 'Internal error';
+      return false;
+    }
   }
 
   Future<bool> signInWithFacebook() async {
     final LoginResult result = await FacebookAuth.instance.login();
-    if(result.status == LoginStatus.success){
-
+    if (result.status == LoginStatus.success) {
       // Create a credential from the access token
-      final OAuthCredential credential = FacebookAuthProvider.credential(result.accessToken!.token);
+      final OAuthCredential credential =
+          FacebookAuthProvider.credential(result.accessToken!.token);
 
       // Once signed in, return the UserCredential
       await firebaseAuth.signInWithCredential(credential);
@@ -45,13 +92,6 @@ class AuthenticationProvider with ChangeNotifier {
     }
 
     return false;
-  }
-
-  Future<bool> anonymousSignIn() async {
-    await firebaseAuth.signInAnonymously();
-    notifyListeners();
-
-    return true;
   }
 
   Future<bool> signIn({
