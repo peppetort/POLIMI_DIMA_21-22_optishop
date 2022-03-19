@@ -5,10 +5,12 @@
         <provider android:authorities="com.facebook.katana.provider.PlatformProvider" />
     </queries>
     <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon"
         android:label="OptiShop">
+
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
@@ -56,6 +58,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data android:scheme="@string/fb_login_protocol_scheme" />
+                <data
+                    android:host="gizmos"
+                    android:scheme="optishop" />
             </intent-filter>
         </activity>
 

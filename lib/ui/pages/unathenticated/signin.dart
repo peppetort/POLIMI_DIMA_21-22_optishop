@@ -22,8 +22,10 @@ class _SignInPageState extends State<SignInPage> {
   bool _hidePassword = true;
   bool _isLoading = false;
 
-  void _submitLogin({bool google = false, bool facebook = false}) async {
-
+  void _submitLogin(
+      {bool google = false,
+      bool facebook = false,
+      bool twitter = false}) async {
     setState(() {
       _isLoading = true;
     });
@@ -36,6 +38,9 @@ class _SignInPageState extends State<SignInPage> {
     } else if (facebook) {
       result = await Provider.of<AuthenticationProvider>(context, listen: false)
           .signInWithFacebook();
+    } else if (twitter) {
+      result = await Provider.of<AuthenticationProvider>(context, listen: false)
+          .signInWithTwitter();
     } else {
       if (!_formKey.currentState!.validate()) {
         setState(() {
@@ -267,7 +272,7 @@ class _SignInPageState extends State<SignInPage> {
                               ),
                             ),
                             GestureDetector(
-                              onTap: () => {},
+                              onTap: () => _submitLogin(twitter: true),
                               child: Container(
                                 width: 70.0,
                                 height: 70.0,
@@ -283,7 +288,7 @@ class _SignInPageState extends State<SignInPage> {
                                   ),
                                 ),
                                 child: SvgPicture.asset(
-                                  'assets/images/Icona_google.svg',
+                                  'assets/images/Icona_twitter.svg',
                                   fit: BoxFit.fill,
                                 ),
                               ),

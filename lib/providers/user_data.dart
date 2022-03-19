@@ -34,7 +34,7 @@ class UserDataProvider with ChangeNotifier {
           Map<String, dynamic> updatedData = event.data() as Map<String, dynamic>;
           user = UserModel(
               userRef.uid,
-              userRef.email!,
+              userRef.email ?? '',
               updatedData['name'] ?? user!.name,
               updatedData['surname'] ?? user!.surname,
               updatedData['phone'] ?? user!.phone,

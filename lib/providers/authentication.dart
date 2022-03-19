@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:twitter_login/twitter_login.dart';
 
 final _logger = Logger('AuthenticationProvider');
 
@@ -112,6 +113,64 @@ class AuthenticationProvider with ChangeNotifier {
         return true;
       }
       lastMessage = 'Unable to sigin with facebook';
+      return false;
+    } on FirebaseException catch (e) {
+      _logger.info(e);
+      if (e.message != null) {
+        lastMessage = e.message!;
+      } else {
+        lastMessage = 'Authentication error';
+      }
+      notifyListeners();
+      return false;
+    } on Exception catch (e) {
+      _logger.info(e);
+      lastMessage = 'Internal error';
+      return false;
+    }
+  }
+
+  Future<bool> signInWithTwitter() async {
+    try {
+      final twitterLogin = TwitterLogin(
+          apiKey: '***REMOVED***',
+          apiSecretKey: '***REMOVED***',
+          redirectURI: 'optishop://');
+
+      final authResult = await twitterLogin.login();
+
+      if (authResult.status == TwitterLoginStatus.loggedIn) {
+        final credential = TwitterAuthProvider.credential(
+          accessToken: authResult.authToken!,
+          secret: authResult.authTokenSecret!,
+        );
+
+        String? name = authResult.user?.name.split(' ').first;
+        String? surname = authResult.user?.name.split(' ').last;
+
+        UserCredential registeredUserCredentials =
+            await firebaseAuth.signInWithCredential(credential);
+
+        if (registeredUserCredentials.additionalUserInfo != null &&
+            registeredUserCredentials.additionalUserInfo!.isNewUser) {
+          Map<String, dynamic> payload = {
+            'distance': 100,
+            'name': name ?? '',
+            'surname': surname ?? '',
+            'phone': ''
+          };
+
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(registeredUserCredentials.user!.uid)
+              .set(payload);
+          _logger.info('Successfully registered user');
+        }
+
+        notifyListeners();
+        return true;
+      }
+      lastMessage = 'Unable to sigin with twitter';
       return false;
     } on FirebaseException catch (e) {
       _logger.info(e);
