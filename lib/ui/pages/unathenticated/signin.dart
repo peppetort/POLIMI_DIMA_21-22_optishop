@@ -195,7 +195,7 @@ class _SignInPageState extends State<SignInPage> {
                   width: double.infinity,
                   color: Theme.of(context).primaryColor,
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(

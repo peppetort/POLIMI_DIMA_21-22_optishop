@@ -161,7 +161,7 @@ class _ResultsPageState extends State<ResultsPage> {
                                                     height: 5.0,
                                                   ),
                                                   Text(
-                                                    '${market.address}',
+                                                    market.address,
                                                     textAlign: TextAlign.start,
                                                     style: Theme.of(context)
                                                         .textTheme
