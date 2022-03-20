@@ -1,6 +1,5 @@
 import 'package:dima21_migliore_tortorelli/app_theme.dart';
 import 'package:dima21_migliore_tortorelli/models/CategoryModel.dart';
-import 'package:dima21_migliore_tortorelli/providers/authentication.dart';
 import 'package:dima21_migliore_tortorelli/providers/data.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/phone/categories.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/products.dart';
@@ -71,10 +70,12 @@ class _HomePhonePageState extends State<HomePhonePage> {
                               if (value != 0) {
                                 CategoryModel selectedCategory =
                                     categories[value - 1];
-                                Provider.of<DataProvider>(context, listen: false)
+                                Provider.of<DataProvider>(context,
+                                        listen: false)
                                     .selectCategory(selectedCategory.id);
                               } else {
-                                Provider.of<DataProvider>(context, listen: false)
+                                Provider.of<DataProvider>(context,
+                                        listen: false)
                                     .deselectCategory();
                               }
                             },
@@ -112,18 +113,11 @@ class _HomePhonePageState extends State<HomePhonePage> {
                               context.select<DataProvider, String?>(
                                   (value) => value.selectedCategory);
 
-                          bool isLoading = context.select<DataProvider, bool>(
-                              (value) => value.isLoading);
-
-                          return isLoading
-                              ? const Center(
-                                  child: CircularProgressIndicator(),
-                                )
-                              : selectedCategory == null
-                                  ? CategoriesPhonePage(categories: categories)
-                                  : ProductPage(
-                                      selectedCategoryId: selectedCategory,
-                                    );
+                          return selectedCategory == null
+                              ? CategoriesPhonePage(categories: categories)
+                              : ProductPage(
+                                  selectedCategoryId: selectedCategory,
+                                );
                         },
                       ),
                     ),

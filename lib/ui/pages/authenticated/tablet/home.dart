@@ -1,6 +1,5 @@
 import 'package:dima21_migliore_tortorelli/app_theme.dart';
 import 'package:dima21_migliore_tortorelli/models/CategoryModel.dart';
-import 'package:dima21_migliore_tortorelli/providers/authentication.dart';
 import 'package:dima21_migliore_tortorelli/providers/data.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/products.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/tablet/categories.dart';
@@ -74,9 +73,6 @@ class _HomeTabletPageState extends State<HomeTabletPage> {
                             context.select<DataProvider, String?>(
                                 (value) => value.selectedCategory);
 
-                        bool isLoading = context.select<DataProvider, bool>(
-                            (value) => value.isLoading);
-
                         return selectedCategory == null
                             ? Center(
                                 child: Column(
@@ -105,7 +101,8 @@ class _HomeTabletPageState extends State<HomeTabletPage> {
                                       height: 10.0,
                                     ),
                                     Container(
-                                      margin: const EdgeInsets.only(bottom: 30.0),
+                                      margin:
+                                          const EdgeInsets.only(bottom: 30.0),
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 25.0),
                                       child: Text(
@@ -114,8 +111,8 @@ class _HomeTabletPageState extends State<HomeTabletPage> {
                                             .textTheme
                                             .bodyText2!
                                             .copyWith(
-                                                color:
-                                                    OptiShopAppTheme.primaryText,
+                                                color: OptiShopAppTheme
+                                                    .primaryText,
                                                 height: 1.5),
                                         textAlign: TextAlign.center,
                                       ),
@@ -123,13 +120,9 @@ class _HomeTabletPageState extends State<HomeTabletPage> {
                                   ],
                                 ),
                               )
-                            : isLoading
-                                ? const Center(
-                                    child: CircularProgressIndicator(),
-                                  )
-                                : ProductPage(
-                                    selectedCategoryId: selectedCategory,
-                                  );
+                            : ProductPage(
+                                selectedCategoryId: selectedCategory,
+                              );
                       },
                     ),
                   ),

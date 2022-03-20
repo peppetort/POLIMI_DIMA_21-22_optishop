@@ -17,12 +17,60 @@ class DataProvider with ChangeNotifier {
   final Map<String, CategoryModel> categories = {};
   final Map<String, List<ProductModel>> productsByCategories = {};
   String? selectedCategory;
-  bool isLoading = false;
 
   late CollectionReference _categoriesReference;
   late CollectionReference _productsReference;
 
   late AuthenticationProvider authenticationProvider;
+
+  late StreamSubscription productsUpdatesStreamSub;
+
+  @override
+  void dispose() {
+    productsUpdatesStreamSub.cancel();
+    super.dispose();
+  }
+
+  void _listenForChanges() {
+    productsUpdatesStreamSub =
+        _productsReference.snapshots().listen((event) async {
+      try {
+        for (var element in event.docs) {
+          Map<String, dynamic> data = element.data() as Map<String, dynamic>;
+
+          if (data['name'] != null && data['category'] != null) {
+            String downloadURL = '';
+            try {
+              downloadURL = await firebase_storage.FirebaseStorage.instance
+                  .ref(data['image'])
+                  .getDownloadURL();
+            } on firebase_storage.FirebaseException catch (e) {
+              _logger.info(e.message! + ' ' + element.id);
+            }
+
+            ProductModel productChange = ProductModel(element.id, data['name'],
+                data['description'] ?? '', downloadURL, data['category']);
+
+            if (productsByCategories.containsKey(productChange.category)) {
+              int index = productsByCategories[productChange.category]!
+                  .indexWhere((product) => product.id == element.id);
+              if (index != -1) {
+                productsByCategories[productChange.category]![index] =
+                    productChange;
+              } else {
+                productsByCategories[productChange.category]!
+                    .add(productChange);
+              }
+            } else {
+              productsByCategories[productChange.category] = [productChange];
+            }
+          }
+        }
+      } on Exception catch (e) {
+        _logger.info(e);
+      }
+    });
+  }
 
   void update({required AuthenticationProvider authenticationProvider}) {
     this.authenticationProvider = authenticationProvider;
@@ -31,6 +79,7 @@ class DataProvider with ChangeNotifier {
       _categoriesReference =
           FirebaseFirestore.instance.collection('categories');
       _productsReference = FirebaseFirestore.instance.collection('products');
+      _listenForChanges();
     }
   }
 
@@ -65,6 +114,10 @@ class DataProvider with ChangeNotifier {
   }
 
   Future<bool> getProductsByCategory(String categoryId) async {
+    if (productsByCategories.containsKey(categoryId)) {
+      return true;
+    }
+
     List<ProductModel> selectedProducts = [];
     try {
       List<QueryDocumentSnapshot> products = (await _productsReference
@@ -92,7 +145,6 @@ class DataProvider with ChangeNotifier {
       }
       productsByCategories[categoryId] = selectedProducts;
       _logger.info('Successfully fetched products of category $categoryId');
-      isLoading = false;
       notifyListeners();
       return true;
     } on FirebaseException catch (e) {
@@ -108,7 +160,6 @@ class DataProvider with ChangeNotifier {
 
   void selectCategory(String categoryId) {
     selectedCategory = categoryId;
-    isLoading = true;
     getProductsByCategory(categoryId);
     notifyListeners();
   }
