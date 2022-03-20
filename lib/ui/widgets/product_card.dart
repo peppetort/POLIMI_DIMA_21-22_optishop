@@ -65,27 +65,30 @@ class ProductCard extends StatelessWidget {
         ),
         Row(
           children: [
-            Text(
-              product.name,
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.start,
-              style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                    color: OptiShopAppTheme.secondaryColor,
-                    fontWeight: FontWeight.bold,
-                  ),
+            Flexible(
+              child: Text(
+                product.name,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 2,
+                textAlign: TextAlign.start,
+                style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                      color: OptiShopAppTheme.secondaryColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
             ),
           ],
         ),
-        const SizedBox(
-          height: 5.0,
-        ),
         Row(
           children: [
-            Text(
-              product.description,
-              style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                    color: OptiShopAppTheme.darkGray,
-                  ),
+            Flexible(
+              child: Text(
+                product.description,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                      color: OptiShopAppTheme.darkGray,
+                    ),
+              ),
             ),
           ],
         ),
