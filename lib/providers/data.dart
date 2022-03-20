@@ -31,6 +31,28 @@ class DataProvider with ChangeNotifier {
     super.dispose();
   }
 
+  void _getImageUrl(ProductModel productModel) async {
+    try {
+      String downloadURL = await firebase_storage.FirebaseStorage.instance
+          .ref('/products/${productModel.id}.jpeg')
+          .getDownloadURL();
+
+      int? index = productsByCategories[productModel.category]
+          ?.indexWhere((element) => element.id == productModel.id);
+
+      if (index != null && index != -1) {
+        if (productsByCategories[productModel.category]![index].image !=
+            downloadURL) {
+          productsByCategories[productModel.category]![index] =
+              productModel.copyWith(image: downloadURL);
+          notifyListeners();
+        }
+      }
+    } on firebase_storage.FirebaseException catch (e) {
+      _logger.info(e.message! + ' ' + productModel.id);
+    }
+  }
+
   void _listenForChanges() {
     productsUpdatesStreamSub =
         _productsReference.snapshots().listen((event) async {
@@ -39,17 +61,8 @@ class DataProvider with ChangeNotifier {
           Map<String, dynamic> data = element.data() as Map<String, dynamic>;
 
           if (data['name'] != null && data['category'] != null) {
-            String downloadURL = '';
-            try {
-              downloadURL = await firebase_storage.FirebaseStorage.instance
-                  .ref(data['image'])
-                  .getDownloadURL();
-            } on firebase_storage.FirebaseException catch (e) {
-              _logger.info(e.message! + ' ' + element.id);
-            }
-
             ProductModel productChange = ProductModel(element.id, data['name'],
-                data['description'] ?? '', downloadURL, data['category']);
+                data['description'] ?? '', '', data['category']);
 
             if (productsByCategories.containsKey(productChange.category)) {
               int index = productsByCategories[productChange.category]!
@@ -64,6 +77,7 @@ class DataProvider with ChangeNotifier {
             } else {
               productsByCategories[productChange.category] = [productChange];
             }
+            _getImageUrl(productChange);
           }
         }
       } on Exception catch (e) {
@@ -130,19 +144,16 @@ class DataProvider with ChangeNotifier {
         Map<String, dynamic> productData =
             element.data() as Map<String, dynamic>;
 
-        String downloadURL = await firebase_storage.FirebaseStorage.instance
-            .ref(productData['image'])
-            .getDownloadURL();
-
-        selectedProducts.add(
-          ProductModel(
-            element.id,
-            productData['name'],
-            productData['description'],
-            downloadURL,
-            categoryId,
-          ),
+        ProductModel toAdd = ProductModel(
+          element.id,
+          productData['name'],
+          productData['description'],
+          '',
+          categoryId,
         );
+
+        selectedProducts.add(toAdd);
+        _getImageUrl(toAdd);
       }
       productsByCategories[categoryId] = selectedProducts;
       _logger.info('Successfully fetched products of category $categoryId');

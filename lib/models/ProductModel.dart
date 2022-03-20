@@ -1,4 +1,3 @@
-
 class ProductModel {
   final String id;
   final String name;
@@ -34,4 +33,8 @@ class ProductModel {
       description.hashCode ^
       image.hashCode ^
       category.hashCode;
+
+  ProductModel copyWith({String? image}) {
+    return ProductModel(id, name, description, image ?? this.image, category);
+  }
 }
