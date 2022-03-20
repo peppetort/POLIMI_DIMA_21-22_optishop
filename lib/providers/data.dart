@@ -113,8 +113,9 @@ class DataProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> getProductsByCategory(String categoryId) async {
-    if (productsByCategories.containsKey(categoryId)) {
+  Future<bool> getProductsByCategory(String categoryId,
+      {bool force = false}) async {
+    if (productsByCategories.containsKey(categoryId) && !force) {
       return true;
     }
 
