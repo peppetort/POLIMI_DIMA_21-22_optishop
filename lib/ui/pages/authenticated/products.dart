@@ -30,6 +30,15 @@ class ProductPage extends StatelessWidget {
     } else {
       productsPerRow = (a * 6).round();
     }
+
+    //NOTE: setting lower and upper bounds
+    if(productsPerRow < 1){
+      productsPerRow = 1;
+    }
+    if(productsPerRow > 5){
+      productsPerRow = 5;
+    }
+
     _logger.info('AspectRatio: $a');
     _logger.info('Products per Row: $productsPerRow');
 
