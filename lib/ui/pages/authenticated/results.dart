@@ -211,18 +211,20 @@ class _ResultsPageState extends State<ResultsPage> {
                             ],
                           ),
                         )
-                      : Row(
-                          children: [
-                            Flexible(
-                              flex: 2,
-                              child: _getResultListView(markets),
-                            ),
-                            Flexible(
-                              flex: 3,
-                              child: _getMapView(),
-                            ),
-                          ],
-                        ),
+                      : SafeArea(
+                        child: Row(
+                            children: [
+                              Flexible(
+                                flex: 2,
+                                child: _getResultListView(markets),
+                              ),
+                              Flexible(
+                                flex: 3,
+                                child: _getMapView(),
+                              ),
+                            ],
+                          ),
+                      ),
             );
           } else {
             return const LoadingPage(
