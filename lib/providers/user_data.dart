@@ -13,7 +13,8 @@ Logger _logger = Logger('UserDataProvider');
 
 class UserDataProvider with ChangeNotifier {
   late AuthenticationProvider? authenticationProvider;
-  late DocumentReference _userDataReference;
+  final CollectionReference _userDataReference =
+      FirebaseFirestore.instance.collection('users');
   late User? _userAuthReference;
   UserModel? user;
   String lastMessage = '';
@@ -29,16 +30,26 @@ class UserDataProvider with ChangeNotifier {
   }
 
   void _listenForChanges(User userRef) {
-    userUpdatesStreamSub = _userDataReference.snapshots().listen((event) {
-      Map<String, dynamic> updatedData = event.data() as Map<String, dynamic>;
-      user = UserModel(
-          userRef.uid,
-          userRef.email!,
-          updatedData['name'] ?? user!.name,
-          updatedData['surname'] ?? user!.surname,
-          updatedData['phone'] ?? user!.phone,
-          double.parse(updatedData['distance'].toString()));
-      notifyListeners();
+    userUpdatesStreamSub = _userDataReference
+        .doc(_userAuthReference!.uid)
+        .snapshots()
+        .listen((event) {
+      try {
+        if (event.data() != null) {
+          Map<String, dynamic> updatedData =
+              event.data() as Map<String, dynamic>;
+          user = UserModel(
+              userRef.uid,
+              userRef.email ?? '',
+              updatedData['name'] ?? user!.name,
+              updatedData['surname'] ?? user!.surname,
+              updatedData['phone'] ?? user!.phone,
+              double.parse(updatedData['distance'].toString()));
+          notifyListeners();
+        }
+      } on Exception catch (e) {
+        _logger.info(e);
+      }
     });
   }
 
@@ -48,10 +59,11 @@ class UserDataProvider with ChangeNotifier {
     _userAuthReference = this.authenticationProvider?.firebaseAuth.currentUser;
 
     if (_userAuthReference != null) {
-      _userDataReference = FirebaseFirestore.instance
-          .collection('users')
-          .doc(_userAuthReference!.uid);
       _listenForChanges(_userAuthReference!);
+    } else {
+      user = null;
+      lastMessage = '';
+      userUpdatesStreamSub.cancel();
     }
   }
 
@@ -84,7 +96,7 @@ class UserDataProvider with ChangeNotifier {
         'phone': phone ?? user!.phone,
         'distance': distance ?? user!.distance,
       };
-      await _userDataReference.set(payload);
+      await _userDataReference.doc(_userAuthReference!.uid).set(payload);
       _logger.info('Successfully updated user');
       return true;
     } on FirebaseException catch (e) {

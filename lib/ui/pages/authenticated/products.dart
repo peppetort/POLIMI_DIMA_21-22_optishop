@@ -1,7 +1,6 @@
 import 'package:dima21_migliore_tortorelli/models/ProductModel.dart';
 import 'package:dima21_migliore_tortorelli/providers/data.dart';
 import 'package:dima21_migliore_tortorelli/ui/widgets/product_card.dart';
-import 'package:dima21_migliore_tortorelli/ui/widgets/scroll_column_view.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
@@ -22,32 +21,60 @@ class ProductPage extends StatelessWidget {
         context.select<DataProvider, List<ProductModel>?>(
             (value) => value.productsByCategories[selectedCategoryId]);
 
+    double a = ((MediaQuery.of(context).size.width /
+        MediaQuery.of(context).size.height));
+    int productsPerRow = 3;
+
+    if (a > 1.5) {
+      productsPerRow = (a * 3).round();
+    } else {
+      productsPerRow = (a * 6).round();
+    }
+
+    //NOTE: setting lower and upper bounds
+    if (productsPerRow < 1) {
+      productsPerRow = 1;
+    }
+    if (productsPerRow > 5) {
+      productsPerRow = 5;
+    }
+
+    _logger.info('AspectRatio: $a');
+    _logger.info('Products per Row: $productsPerRow');
+
+    //_logger.info(((MediaQuery.of(context).size.width / MediaQuery.of(context).size.height) * 7).round());
+
     return selectedProducts == null
         ? const Center(
             child: CircularProgressIndicator(),
           )
         : selectedProducts.isEmpty
-            ? ScrollColumnView(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.only(bottom: 10.0, top: 20.0),
-                    child: Image.asset(
-                      'assets/images/Ill_ooops_1.png',
-                      fit: BoxFit.fitWidth,
+            ? Center(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Flexible(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 20.0),
+                        child: Image.asset('assets/images/Ill_ooops_1.png',
+                            fit: BoxFit.contain),
+                      ),
                     ),
-                  ),
-                  Text(
-                    'Non ci sono prodotti per questa categoria',
-                    style: Theme.of(context).textTheme.headline5,
-                    textAlign: TextAlign.center,
-                  ),
-                ],
+                    Text(
+                      'Non ci sono prodotti per questa categoria',
+                      style: Theme.of(context).textTheme.headline5,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(
+                      height: 30.0,
+                    ),
+                  ],
+                ),
               )
             : GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: productsPerRow,
                   mainAxisSpacing: 15.0,
                   crossAxisSpacing: 10.0,
                   childAspectRatio: 2 / 3,
@@ -56,7 +83,7 @@ class ProductPage extends StatelessWidget {
                 itemCount: selectedProducts.length,
                 itemBuilder: (BuildContext context, int index) {
                   return ProductCard(
-                    product: selectedProducts[index],
+                    selectedProduct: selectedProducts[index],
                   );
                 });
   }

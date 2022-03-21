@@ -220,21 +220,6 @@ class _SettingsPageState extends State<SettingsPage> {
                         Navigator.pushNamedAndRemoveUntil(
                             context, '/', (route) => false);
                       },
-                      /*
-              TODO:
-                onTap: Provider.of<ApiProvider>(context).isLoading
-                    ? null
-                    : () async {
-                  var res = await showConfirmDialog(context,
-                      title: 'Attenzione',
-                      message: 'Sei sicuro di volerti disconnettere?',
-                      confirmLabel: 'Esci');
-
-                  if (res) {
-                    Provider.of<ApiProvider>(context, listen: false)
-                        .logout(force: true);
-                  }
-                },*/
                       child: Container(
                         padding: OptiShopAppTheme.defaultPagePadding,
                         height: containerHeight,

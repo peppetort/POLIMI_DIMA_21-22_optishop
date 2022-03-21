@@ -6,9 +6,10 @@ import 'package:dima21_migliore_tortorelli/providers/result.dart';
 import 'package:dima21_migliore_tortorelli/providers/user_data.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/allow_location.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/cart.dart';
-import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/home.dart';
+import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/phone/home.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/results.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/settings.dart';
+import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/tablet/home.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/update_password.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/update_profile.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/unathenticated/first.dart';
@@ -36,8 +37,11 @@ class OptiShop extends StatelessWidget {
         ChangeNotifierProvider<AuthenticationProvider>(
           create: (_) => AuthenticationProvider(FirebaseAuth.instance, FirebaseFirestore.instance),
         ),
-        ChangeNotifierProvider<CartProvider>(
+        ChangeNotifierProxyProvider<AuthenticationProvider, CartProvider>(
           create: (_) => CartProvider(),
+          lazy: false,
+          update: (_, authenticationProvider, cartProvider) => cartProvider!
+            ..update(authenticationProvider: authenticationProvider),
         ),
         ChangeNotifierProxyProvider<AuthenticationProvider, UserDataProvider>(
           create: (_) => UserDataProvider(Location()),
@@ -108,7 +112,16 @@ class Root extends StatelessWidget {
 
                     if (locationPermission != PermissionStatus.denied &&
                         locationPermission != PermissionStatus.deniedForever) {
-                      return const HomePage();
+                      return LayoutBuilder(
+                        builder:
+                            (BuildContext context, BoxConstraints constraints) {
+                          if (constraints.maxWidth > 600) {
+                            return const HomeTabletPage();
+                          } else {
+                            return const HomePhonePage();
+                          }
+                        },
+                      );
                     } else {
                       return AllowLocationPage();
                     }
