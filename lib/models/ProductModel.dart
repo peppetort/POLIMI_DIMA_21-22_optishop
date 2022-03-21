@@ -23,7 +23,6 @@ class ProductModel {
           id == other.id &&
           name == other.name &&
           description == other.description &&
-          image == other.image &&
           category == other.category;
 
   @override

@@ -54,8 +54,7 @@ class DataProvider with ChangeNotifier {
   }
 
   void _listenForChanges() {
-    productsUpdatesStreamSub =
-        _productsReference.snapshots().listen((event) async {
+    productsUpdatesStreamSub = _productsReference.snapshots().listen((event) {
       try {
         for (var element in event.docs) {
           Map<String, dynamic> data = element.data() as Map<String, dynamic>;
@@ -68,8 +67,17 @@ class DataProvider with ChangeNotifier {
               int index = productsByCategories[productChange.category]!
                   .indexWhere((product) => product.id == element.id);
               if (index != -1) {
-                productsByCategories[productChange.category]![index] =
-                    productChange;
+                ProductModel actualProduct =
+                    productsByCategories[productChange.category]![index];
+
+                //NOTA: update product only if there is an actual difference between the one in
+                //      the state and the new one
+                if (actualProduct != productChange) {
+                  //NOTA: the image attribute of the product in the state contains the image url,
+                  //      the productChange not
+                  productsByCategories[productChange.category]![index] =
+                      productChange.copyWith(image: actualProduct.image);
+                }
               } else {
                 productsByCategories[productChange.category]!
                     .add(productChange);

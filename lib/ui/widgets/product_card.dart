@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dima21_migliore_tortorelli/app_theme.dart';
 import 'package:dima21_migliore_tortorelli/models/ProductModel.dart';
@@ -150,9 +148,12 @@ class ItemCounter extends StatelessWidget {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(vertical: 5.0),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8.5, vertical: 5.0),
+                color: Colors.white,
                 child: Text(
                   number.toString(),
+                  textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyText1,
                 ),
               ),
