@@ -19,7 +19,8 @@ class UserDataProvider with ChangeNotifier {
   String lastMessage = '';
   late StreamSubscription userUpdatesStreamSub;
 
-  final Location location = Location();
+  final Location location;
+  UserDataProvider(this.location);
 
   @override
   void dispose() {

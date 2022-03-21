@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dima21_migliore_tortorelli/providers/authentication.dart';
 import 'package:dima21_migliore_tortorelli/providers/cart.dart';
 import 'package:dima21_migliore_tortorelli/providers/data.dart';
@@ -33,13 +34,13 @@ class OptiShop extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<AuthenticationProvider>(
-          create: (_) => AuthenticationProvider(FirebaseAuth.instance),
+          create: (_) => AuthenticationProvider(FirebaseAuth.instance, FirebaseFirestore.instance),
         ),
         ChangeNotifierProvider<CartProvider>(
           create: (_) => CartProvider(),
         ),
         ChangeNotifierProxyProvider<AuthenticationProvider, UserDataProvider>(
-          create: (_) => UserDataProvider(),
+          create: (_) => UserDataProvider(Location()),
           lazy: false,
           update: (_, authenticationProvider, userDataProvider) =>
               userDataProvider!
