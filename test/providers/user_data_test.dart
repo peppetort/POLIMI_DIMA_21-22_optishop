@@ -5,13 +5,15 @@ import 'package:dima21_migliore_tortorelli/providers/user_data.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 
+import 'authentication_test.mocks.dart';
 import 'user_data_test.mocks.dart';
 
 @GenerateMocks([UserDataProvider, Location])
 void main() async {
   final instance = FakeFirebaseFirestore();
   final mockloc = MockLocation();
-  final udprov = UserDataProvider(mockloc);
+  final mockfs = MockFirebaseFirestore();
+  final udprov = UserDataProvider(mockloc, mockfs);
 
   test('update user data correctly', () async {
     final docref = await instance.collection('users').add({

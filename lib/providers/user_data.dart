@@ -13,15 +13,16 @@ Logger _logger = Logger('UserDataProvider');
 
 class UserDataProvider with ChangeNotifier {
   late AuthenticationProvider? authenticationProvider;
-  final CollectionReference _userDataReference =
-      FirebaseFirestore.instance.collection('users');
+  final FirebaseFirestore fireStore;
+  late CollectionReference _userDataReference =
+      fireStore.collection('users');
   late User? _userAuthReference;
   UserModel? user;
   String lastMessage = '';
   late StreamSubscription userUpdatesStreamSub;
 
   final Location location;
-  UserDataProvider(this.location);
+  UserDataProvider(this.location, this.fireStore);
 
   @override
   void dispose() {
