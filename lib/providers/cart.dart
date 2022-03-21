@@ -12,12 +12,15 @@ Logger _logger = Logger('CartProvider');
 class CartProvider with ChangeNotifier {
   late AuthenticationProvider authenticationProvider;
 
-  final CollectionReference _productsReference =
-      FirebaseFirestore.instance.collection('products');
+  final FirebaseFirestore fireStore;
+  late CollectionReference _productsReference =
+      fireStore.collection('products');
 
   final Map<ProductModel, int> cart = {};
 
   late StreamSubscription productsUpdatesStreamSub;
+
+  CartProvider(this.fireStore);
 
   @override
   void dispose() {

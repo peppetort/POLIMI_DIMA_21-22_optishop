@@ -2,10 +2,13 @@ import 'package:dima21_migliore_tortorelli/models/ProductModel.dart';
 import 'package:dima21_migliore_tortorelli/providers/cart.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'authentication_test.mocks.dart';
+
 void main() {
   final mod1 = ProductModel('a', 'b', 'c', 'd', 'e');
   final mod2 = ProductModel('e', 'd', 'c', 'b', 'a');
-  final cartprov = CartProvider();
+  final mockfs = MockFirebaseFirestore();
+  final cartprov = CartProvider(mockfs);
 
   test('ensure cart initially empty', () {
     expect(cartprov.cart.isEmpty, true);
