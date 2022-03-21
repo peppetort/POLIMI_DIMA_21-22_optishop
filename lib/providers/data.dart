@@ -18,8 +18,10 @@ class DataProvider with ChangeNotifier {
   final Map<String, List<ProductModel>> productsByCategories = {};
   String? selectedCategory;
 
-  late CollectionReference _categoriesReference;
-  late CollectionReference _productsReference;
+  final CollectionReference _categoriesReference =
+      FirebaseFirestore.instance.collection('categories');
+  final CollectionReference _productsReference =
+      FirebaseFirestore.instance.collection('products');
 
   late AuthenticationProvider authenticationProvider;
 
@@ -98,10 +100,12 @@ class DataProvider with ChangeNotifier {
     this.authenticationProvider = authenticationProvider;
 
     if (this.authenticationProvider.firebaseAuth.currentUser != null) {
-      _categoriesReference =
-          FirebaseFirestore.instance.collection('categories');
-      _productsReference = FirebaseFirestore.instance.collection('products');
       _listenForChanges();
+    } else {
+      categories.clear();
+      productsByCategories.clear();
+      selectedCategory = null;
+      productsUpdatesStreamSub.cancel();
     }
   }
 

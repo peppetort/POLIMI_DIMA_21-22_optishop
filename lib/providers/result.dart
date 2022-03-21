@@ -17,14 +17,14 @@ class ResultProvider with ChangeNotifier {
   late UserDataProvider userDataProvider;
   late CartProvider cartProvider;
 
-  late CollectionReference _marketsReference;
+  final CollectionReference _marketsReference =
+      FirebaseFirestore.instance.collection('markets');
 
   void update(
       {required UserDataProvider userDataProvider,
       required CartProvider cartProvider}) {
     this.userDataProvider = userDataProvider;
     this.cartProvider = cartProvider;
-    _marketsReference = FirebaseFirestore.instance.collection('markets');
   }
 
   //TODO: rimuovere serve solo per inserire i market nel db dal monmento che la posizione viene inserita con hash (utile per la query)

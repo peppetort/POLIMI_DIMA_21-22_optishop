@@ -36,8 +36,11 @@ class OptiShop extends StatelessWidget {
         ChangeNotifierProvider<AuthenticationProvider>(
           create: (_) => AuthenticationProvider(FirebaseAuth.instance),
         ),
-        ChangeNotifierProvider<CartProvider>(
+        ChangeNotifierProxyProvider<AuthenticationProvider, CartProvider>(
           create: (_) => CartProvider(),
+          lazy: false,
+          update: (_, authenticationProvider, cartProvider) => cartProvider!
+            ..update(authenticationProvider: authenticationProvider),
         ),
         ChangeNotifierProxyProvider<AuthenticationProvider, UserDataProvider>(
           create: (_) => UserDataProvider(),
@@ -109,7 +112,8 @@ class Root extends StatelessWidget {
                     if (locationPermission != PermissionStatus.denied &&
                         locationPermission != PermissionStatus.deniedForever) {
                       return LayoutBuilder(
-                        builder: (BuildContext context, BoxConstraints constraints) {
+                        builder:
+                            (BuildContext context, BoxConstraints constraints) {
                           if (constraints.maxWidth > 600) {
                             return const HomeTabletPage();
                           } else {

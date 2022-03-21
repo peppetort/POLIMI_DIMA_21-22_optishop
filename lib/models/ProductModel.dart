@@ -33,7 +33,9 @@ class ProductModel {
       image.hashCode ^
       category.hashCode;
 
-  ProductModel copyWith({String? image}) {
-    return ProductModel(id, name, description, image ?? this.image, category);
+  ProductModel copyWith(
+      {String? image, String? name, String? description, String? category}) {
+    return ProductModel(id, name ?? this.name, description ?? this.description,
+        image ?? this.image, category ?? this.category);
   }
 }
