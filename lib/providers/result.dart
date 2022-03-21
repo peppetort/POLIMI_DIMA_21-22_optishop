@@ -18,7 +18,6 @@ class ResultProvider with ChangeNotifier {
   late CartProvider cartProvider;
 
   late CollectionReference _marketsReference;
-  late CollectionReference _productsReference;
 
   void update(
       {required UserDataProvider userDataProvider,
@@ -26,7 +25,6 @@ class ResultProvider with ChangeNotifier {
     this.userDataProvider = userDataProvider;
     this.cartProvider = cartProvider;
     _marketsReference = FirebaseFirestore.instance.collection('markets');
-    _productsReference = FirebaseFirestore.instance.collection('products');
   }
 
   //TODO: rimuovere serve solo per inserire i market nel db dal monmento che la posizione viene inserita con hash (utile per la query)
@@ -34,7 +32,11 @@ class ResultProvider with ChangeNotifier {
     final geo = Geoflutterfire();
     GeoFirePoint position =
         geo.point(latitude: market.latitude, longitude: market.longitude);
-    _marketsReference.add({'name': market.name, 'position': position.data, 'address': market.address});
+    _marketsReference.add({
+      'name': market.name,
+      'position': position.data,
+      'address': market.address
+    });
   }
 
   Future<Map<MarketModel, Map<String, double>>> findResults() async {
@@ -50,6 +52,9 @@ class ResultProvider with ChangeNotifier {
 
     try {
       final geo = Geoflutterfire();
+
+      Map<String, int> cartProducts =
+          cartProvider.cart.map((key, value) => MapEntry(key.id, value));
 
       LocationData locationData = await userDataProvider.location.getLocation();
       GeoFirePoint userLocation = geo.point(
@@ -75,44 +80,25 @@ class ResultProvider with ChangeNotifier {
         Map<String, dynamic> marketData =
             element.documentSnapshot.data() as Map<String, dynamic>;
 
-        MarketModel market = MarketModel(
+        var availableProducts = marketData['products'];
+
+        Set availableProductKeySet = availableProducts.keys.toSet();
+        Set cartProductKeySet = cartProducts.keys.toSet();
+
+        if (availableProductKeySet.containsAll(cartProductKeySet)) {
+          MarketModel market = MarketModel(
             element.documentSnapshot.id,
             marketData['name'],
             (marketData['position']['geopoint'] as GeoPoint).latitude,
             (marketData['position']['geopoint'] as GeoPoint).longitude,
-            marketData['address']);
+            marketData['address'],
+          );
 
-        resultMarkets[market] = {'distance': element.kmDistance};
-      }
+          resultMarkets[market] = {'distance': element.kmDistance};
 
-      if (resultMarkets.isEmpty) {
-        return {};
-      }
-
-      Map<String, int> cartProducts =
-          cartProvider.cart.map((key, value) => MapEntry(key.id, value));
-
-      _logger.info(
-          'Looking for markets that have available the following products: ${cartProducts.keys.toList()}');
-
-      List<QueryDocumentSnapshot> productsList = (await _productsReference
-              .where(FieldPath.documentId, whereIn: cartProducts.keys.toList())
-              .get())
-          .docs;
-
-      for (var product in productsList) {
-        Map<String, dynamic> productData =
-            product.data() as Map<String, dynamic>;
-
-        var marketsOfProduct = productData['markets'];
-
-        resultMarkets
-            .removeWhere((key, value) => !marketsOfProduct.containsKey(key.id));
-
-        for (var market in resultMarkets.keys) {
-          if (marketsOfProduct.containsKey(market.id)) {
+          for (var productId in cartProductKeySet) {
             double productPrice =
-                marketsOfProduct[market.id]! * cartProducts[product.id];
+                availableProducts[productId]! * cartProducts[productId]!;
             double totalOfMarket = resultMarkets[market]!['total'] ?? 0;
             resultMarkets[market]!['total'] = totalOfMarket + productPrice;
           }
@@ -122,8 +108,10 @@ class ResultProvider with ChangeNotifier {
       //NOTE: ranking according to distance and total price with the same weight (top-k where k == |dataset| => ordered skyline)
       return SplayTreeMap<MarketModel, Map<String, double>>.from(
           resultMarkets,
-              (a, b) => (resultMarkets[a]!['distance']! + resultMarkets[a]!['total']!)
-              .compareTo(resultMarkets[b]!['distance']! + resultMarkets[b]!['total']!));
+          (a, b) =>
+              (resultMarkets[a]!['distance']! + resultMarkets[a]!['total']!)
+                  .compareTo(resultMarkets[b]!['distance']! +
+                      resultMarkets[b]!['total']!));
     } on FirebaseException catch (e) {
       _logger.info(e);
       if (e.message != null) {
