@@ -25,18 +25,35 @@ class DataProvider with ChangeNotifier {
 
   late AuthenticationProvider authenticationProvider;
 
-  late StreamSubscription productsUpdatesStreamSub;
+  StreamSubscription? productsUpdatesStreamSub;
 
   @override
   void dispose() {
-    productsUpdatesStreamSub.cancel();
+    _stopListenForChanges();
     super.dispose();
+  }
+
+  void update({required AuthenticationProvider authenticationProvider}) {
+    this.authenticationProvider = authenticationProvider;
+
+    if (this.authenticationProvider.firebaseAuth.currentUser == null) {
+      categories.clear();
+      productsByCategories.clear();
+      selectedCategory = null;
+      _stopListenForChanges();
+    }
+  }
+
+  void _stopListenForChanges() {
+    if (productsUpdatesStreamSub != null) {
+      productsUpdatesStreamSub!.cancel();
+    }
   }
 
   void _getImageUrl(ProductModel productModel) async {
     try {
       String downloadURL = await firebase_storage.FirebaseStorage.instance
-          .ref('/products/${productModel.id}.jpeg')
+          .ref(productModel.image)
           .getDownloadURL();
 
       int? index = productsByCategories[productModel.category]
@@ -45,8 +62,8 @@ class DataProvider with ChangeNotifier {
       if (index != null && index != -1) {
         if (productsByCategories[productModel.category]![index].image !=
             downloadURL) {
-          productsByCategories[productModel.category]![index] =
-              productModel.copyWith(image: downloadURL);
+          productsByCategories[productModel.category]!.replaceRange(
+              index, index + 1, [productModel.copyWith(image: downloadURL)]);
           notifyListeners();
         }
       }
@@ -58,36 +75,62 @@ class DataProvider with ChangeNotifier {
   void _listenForChanges() {
     productsUpdatesStreamSub = _productsReference.snapshots().listen((event) {
       try {
-        for (var element in event.docs) {
-          Map<String, dynamic> data = element.data() as Map<String, dynamic>;
+        for (var element in event.docChanges) {
+          if (element.type == DocumentChangeType.modified) {
+            Map<String, dynamic> data =
+                element.doc.data() as Map<String, dynamic>;
 
-          if (data['name'] != null && data['category'] != null) {
-            ProductModel productChange = ProductModel(element.id, data['name'],
-                data['description'] ?? '', '', data['category']);
+            if (data['category'] != null) {
+              List<ProductModel>? productOfCategory =
+                  productsByCategories[data['category']];
 
-            if (productsByCategories.containsKey(productChange.category)) {
-              int index = productsByCategories[productChange.category]!
-                  .indexWhere((product) => product.id == element.id);
-              if (index != -1) {
-                ProductModel actualProduct =
-                    productsByCategories[productChange.category]![index];
+              if (productOfCategory != null) {
+                int index = productOfCategory
+                    .indexWhere((product) => product.id == element.doc.id);
 
-                //NOTA: update product only if there is an actual difference between the one in
-                //      the state and the new one
-                if (actualProduct != productChange) {
-                  //NOTA: the image attribute of the product in the state contains the image url,
-                  //      the productChange not
-                  productsByCategories[productChange.category]![index] =
-                      productChange.copyWith(image: actualProduct.image);
+                if (index != -1) {
+                  ProductModel productChange =
+                      productOfCategory[index].copyWith(
+                    name: data['name'],
+                    description: data['description'],
+                  );
+
+                  productOfCategory
+                      .replaceRange(index, index + 1, [productChange]);
+                  _getImageUrl(productChange.copyWith(image: data['image']));
+                  notifyListeners();
+                }
+              }
+            }
+          } else if (element.type == DocumentChangeType.added) {
+            Map<String, dynamic> data =
+                element.doc.data() as Map<String, dynamic>;
+
+            if (data['name'] != null && data['category'] != null) {
+              ProductModel newProduct = ProductModel(
+                  element.doc.id,
+                  data['name'],
+                  data['description'] ?? '',
+                  '',
+                  data['category']);
+
+              if (productsByCategories.containsKey(newProduct.category)) {
+                int index = productsByCategories[newProduct.category]!
+                    .indexWhere((product) => product.id == newProduct.id);
+                if (index == -1) {
+                  List<ProductModel> copy = List<ProductModel>.from(
+                      productsByCategories[newProduct.category]!);
+                  copy.add(newProduct);
+                  productsByCategories[newProduct.category] = copy;
+                  _getImageUrl(newProduct.copyWith(image: data['image']));
+                  notifyListeners();
                 }
               } else {
-                productsByCategories[productChange.category]!
-                    .add(productChange);
+                productsByCategories[newProduct.category] = [newProduct];
+                _getImageUrl(newProduct.copyWith(image: data['image']));
+                notifyListeners();
               }
-            } else {
-              productsByCategories[productChange.category] = [productChange];
             }
-            _getImageUrl(productChange);
           }
         }
       } on Exception catch (e) {
@@ -96,20 +139,9 @@ class DataProvider with ChangeNotifier {
     });
   }
 
-  void update({required AuthenticationProvider authenticationProvider}) {
-    this.authenticationProvider = authenticationProvider;
-
-    if (this.authenticationProvider.firebaseAuth.currentUser != null) {
-      _listenForChanges();
-    } else {
-      categories.clear();
-      productsByCategories.clear();
-      selectedCategory = null;
-      productsUpdatesStreamSub.cancel();
-    }
-  }
-
   Future<bool> getAllCategories() async {
+    _stopListenForChanges();
+
     try {
       List<QueryDocumentSnapshot> categoryList =
           (await _categoriesReference.get()).docs;
@@ -126,6 +158,7 @@ class DataProvider with ChangeNotifier {
             CategoryModel(element.id, categoryData['name'], downloadURL);
       }
       _logger.info('Successfully fetched all categories');
+      _listenForChanges();
       notifyListeners();
       return true;
     } on FirebaseException catch (e) {
@@ -160,7 +193,7 @@ class DataProvider with ChangeNotifier {
           element.id,
           productData['name'],
           productData['description'],
-          '',
+          productData['image'],
           categoryId,
         );
 

@@ -32,10 +32,10 @@ class ProductPage extends StatelessWidget {
     }
 
     //NOTE: setting lower and upper bounds
-    if(productsPerRow < 1){
+    if (productsPerRow < 1) {
       productsPerRow = 1;
     }
-    if(productsPerRow > 5){
+    if (productsPerRow > 5) {
       productsPerRow = 5;
     }
 
@@ -83,7 +83,7 @@ class ProductPage extends StatelessWidget {
                 itemCount: selectedProducts.length,
                 itemBuilder: (BuildContext context, int index) {
                   return ProductCard(
-                    product: selectedProducts[index],
+                    selectedProduct: selectedProducts[index],
                   );
                 });
   }

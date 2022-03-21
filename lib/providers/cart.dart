@@ -27,30 +27,37 @@ class CartProvider with ChangeNotifier {
 
   void _listenForChanges() {
     productsUpdatesStreamSub = _productsReference.snapshots().listen((event) {
-      for (var element in event.docChanges) {
-        List<ProductModel> cartProductList = cart.keys.toList();
-        int index = cartProductList
-            .indexWhere((product) => product.id == element.doc.id);
+      try {
+        for (var element in event.docChanges) {
+          List<ProductModel> cartProductList = cart.keys.toList();
+          int index = cartProductList
+              .indexWhere((product) => product.id == element.doc.id);
 
-        //_logger.info(element.doc.data());
+          if (index != -1) {
+            ProductModel oldProduct = cartProductList[index];
 
-        if (index != -1) {
-          Map<String, dynamic> productChange =
-              element.doc.data() as Map<String, dynamic>;
+            if (element.type == DocumentChangeType.modified) {
+              Map<String, dynamic> productChange =
+                  element.doc.data() as Map<String, dynamic>;
 
-          ProductModel oldProduct = cartProductList[index];
-          ProductModel newProduct = oldProduct.copyWith(
-              name: productChange['name'],
-              description: productChange['description'],
-              category: productChange['category']);
+              ProductModel newProduct = oldProduct.copyWith(
+                name: productChange['name'],
+                description: productChange['description'],
+                category: productChange['category'],
+                image: productChange['image'],
+              );
 
-          if (newProduct != oldProduct) {
-            int quantity = cart[oldProduct]!;
-            cart.remove(oldProduct);
-            cart[newProduct] = quantity;
-            notifyListeners();
+              if (newProduct != oldProduct) {
+                int quantity = cart[oldProduct]!;
+                cart.remove(oldProduct);
+                cart[newProduct] = quantity;
+                notifyListeners();
+              }
+            }
           }
         }
+      } on Exception catch (e) {
+        _logger.info(e);
       }
     });
   }

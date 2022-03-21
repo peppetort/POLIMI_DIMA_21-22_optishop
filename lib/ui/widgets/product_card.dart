@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dima21_migliore_tortorelli/app_theme.dart';
 import 'package:dima21_migliore_tortorelli/models/ProductModel.dart';
 import 'package:dima21_migliore_tortorelli/providers/cart.dart';
+import 'package:dima21_migliore_tortorelli/providers/data.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
@@ -9,15 +10,22 @@ import 'package:provider/provider.dart';
 Logger _logger = Logger('ProductCard');
 
 class ProductCard extends StatelessWidget {
-  final ProductModel product;
+  final ProductModel selectedProduct;
 
-  const ProductCard({Key? key, required this.product}) : super(key: key);
+  const ProductCard({Key? key, required this.selectedProduct})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    _logger.info('ProductCard build ${product.id}');
-    int? quantity =
-        context.select<CartProvider, int?>((value) => value.cart[product]);
+    _logger.info('ProductCard build ${selectedProduct.id}');
+    int? quantity = context.select<CartProvider, int?>((value) => value.cart[
+        value.cart.keys.firstWhere(
+            (element) => element.id == selectedProduct.id,
+            orElse: () => ProductModel('', '', '', '', ''))]);
+
+    ProductModel product = context.select<DataProvider, ProductModel>((value) =>
+        value.productsByCategories[selectedProduct.category]!
+            .firstWhere((element) => element.id == selectedProduct.id));
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -38,10 +46,13 @@ class ProductCard extends StatelessWidget {
               ),
               child: AspectRatio(
                 aspectRatio: 1,
-                child: CachedNetworkImage(
-                  imageUrl: product.image,
-                  errorWidget: (context, url, error) => const Icon(Icons.error),
-                ),
+                child: product.image.isEmpty
+                    ? Container()
+                    : CachedNetworkImage(
+                        imageUrl: product.image,
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.error),
+                      ),
               ),
             ),
             Align(
