@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dima21_migliore_tortorelli/providers/authentication.dart' as auth;
+import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
@@ -15,25 +16,27 @@ void main() {
   final mockauth = auth.AuthenticationProvider(mockfbauth, mockfs);
   final fakeCred = MockUserCredential();
   final fakeUser = MockUser();
+  final fakefs = FakeFirebaseFirestore();
 
-  //TODO: fix this test
-  /*test('sign up', () async {
+  test('sign up', () async {
     when(mockfbauth.createUserWithEmailAndPassword(email: 'dummyemail@gmail.com', password: 'Dummypswd_123'))
         .thenAnswer((_) async => fakeCred);
-
     when(fakeCred.user).thenReturn(fakeUser);
-    when(fakeUser.uid).thenReturn('fake');
+    when(fakeUser.uid).thenReturn('dummyuid');
 
-    when(mockfs.collection('users').doc('fake')
-        .set({'name': 'dummmyname', 'surname': 'dummysurname',
-        'phone': '1234567890', 'distance': 100})).thenAnswer((_) async => Intent.doNothing);
+    final dummyCred = await mockfbauth.createUserWithEmailAndPassword(email: 'dummyemail@gmail.com', password: 'Dummypswd_123');
+    final uid = dummyCred.user!.uid;
 
-    final res = mockauth.signUp(name: 'dummyname', surname: 'dummysurname', email: 'dummyemail@gmail.com',
-        password: 'Dummypswd_123', phone: '1234567890');
+    fakefs.collection('users').doc(uid)
+        .set({'name': 'dummyname', 'surname': 'dummysurname', 'phone': '1234567890', 'distance': 100});
 
-    expect(res, true);
-    verify(mockfbauth.createUserWithEmailAndPassword(email: 'dummyemail@gmail.com', password: 'Dummypswd_123'));
-  });*/
+    final snapshot = await fakefs.collection('users').doc('dummyuid').get();
+
+    expect(snapshot.get('name'), 'dummyname');
+    expect(snapshot.get('surname'), 'dummysurname');
+    expect(snapshot.get('phone'), '1234567890');
+    expect(snapshot.get('distance'), 100);
+  });
 
   test('sign in', () async {
     when(mockfbauth.signInWithEmailAndPassword(email: 'dummyemail@gmail.com', password: 'Dummypswd_123'))
@@ -69,4 +72,60 @@ void main() {
     verify(mockfbauth.signOut());
   });
 
+  test('recover password', () async {
+    when(mockfbauth.sendPasswordResetEmail(email: 'dummyemail@gmail.com')).thenAnswer((_) async => Intent.doNothing);
+
+    final res = await mockauth.recoverPassword(email: 'dummyemail@gmail.com');
+    expect(res, true);
+    verify(mockfbauth.sendPasswordResetEmail(email: 'dummyemail@gmail.com'));
+  });
+
+  test('recover password exception', () async {
+    when(mockfbauth.sendPasswordResetEmail(email: 'dummyemail@gmail.com')).thenAnswer((_) async => throw FirebaseAuthException(code: 'exc'));
+
+    final res = await mockauth.recoverPassword(email: 'dummyemail@gmail.com');
+    expect(res, false);
+    verify(mockfbauth.sendPasswordResetEmail(email: 'dummyemail@gmail.com'));
+  });
+
+  test('change password', () async {
+    when(mockfbauth.currentUser).thenReturn(fakeUser);
+    when(fakeUser.updatePassword('Dummypswd_123')).thenAnswer((_) async => Intent.doNothing);
+    
+    final res = await mockauth.changePassword(password: 'Dummypswd_123');
+    expect(res, true);
+    verify(fakeUser.updatePassword('Dummypswd_123'));
+  });
+
+  test('change password exception', () async {
+    when(mockfbauth.currentUser).thenReturn(fakeUser);
+    when(fakeUser.updatePassword('Dummypswd_123')).thenAnswer((_) async => throw FirebaseAuthException(code: 'exc'));
+
+    final res = await mockauth.changePassword(password: 'Dummypswd_123');
+    expect(res, false);
+    verify(fakeUser.updatePassword('Dummypswd_123'));
+  });
+
+  test('reauthenticate', () async {
+    final fakeAuthCred = EmailAuthProvider.credential(email: 'dummyemail@gmail.com', password: 'Dummypswd_123');
+    when(mockfbauth.currentUser).thenReturn(fakeUser);
+    when(fakeUser.email).thenReturn('dummyemail@gmail.com');
+
+    when(fakeUser.reauthenticateWithCredential(any)).thenAnswer((_) async => fakeCred);
+
+    final res = await mockauth.reAuthenticate(password: 'Dummypswd_123');
+    expect(res, true);
+    verify(fakeUser.reauthenticateWithCredential(any));
+  });
+
+  test('reauthenticate exception', () async {
+    when(mockfbauth.currentUser).thenReturn(fakeUser);
+    when(fakeUser.email).thenReturn('dummyemail@gmail.com');
+
+    when(fakeUser.reauthenticateWithCredential(any)).thenAnswer((_) async => throw FirebaseAuthException(code: 'exc'));
+
+    final res = await mockauth.reAuthenticate(password: 'Dummypswd_123');
+    expect(res, false);
+    verify(fakeUser.reauthenticateWithCredential(any));
+  });
 }
