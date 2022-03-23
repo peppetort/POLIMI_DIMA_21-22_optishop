@@ -51,7 +51,7 @@ class OptiShop extends StatelessWidget {
                 ..update(authenticationProvider: authenticationProvider),
         ),
         ChangeNotifierProxyProvider<AuthenticationProvider, DataProvider>(
-          create: (_) => DataProvider(),
+          create: (_) => DataProvider(FirebaseFirestore.instance),
           lazy: false,
           update: (_, authenticationProvider, dataProvider) => dataProvider!
             ..update(authenticationProvider: authenticationProvider),

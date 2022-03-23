@@ -18,14 +18,17 @@ class DataProvider with ChangeNotifier {
   final Map<String, List<ProductModel>> productsByCategories = {};
   String? selectedCategory;
 
-  final CollectionReference _categoriesReference =
-      FirebaseFirestore.instance.collection('categories');
-  final CollectionReference _productsReference =
-      FirebaseFirestore.instance.collection('products');
+  final FirebaseFirestore fireStore;
+  late CollectionReference _categoriesReference =
+      fireStore.collection('categories');
+  late CollectionReference _productsReference =
+      fireStore.collection('products');
 
   late AuthenticationProvider authenticationProvider;
 
   StreamSubscription? productsUpdatesStreamSub;
+
+  DataProvider(this.fireStore);
 
   @override
   void dispose() {
