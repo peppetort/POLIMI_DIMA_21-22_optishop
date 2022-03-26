@@ -18,13 +18,13 @@ class UserDataProvider with ChangeNotifier {
   late User? _userAuthReference;
   UserModel? user;
   String lastMessage = '';
-  late StreamSubscription userUpdatesStreamSub;
+  StreamSubscription? userUpdatesStreamSub;
 
   final Location location = Location();
 
   @override
   void dispose() {
-    userUpdatesStreamSub.cancel();
+    userUpdatesStreamSub?.cancel();
     super.dispose();
   }
 
@@ -62,7 +62,7 @@ class UserDataProvider with ChangeNotifier {
     } else {
       user = null;
       lastMessage = '';
-      userUpdatesStreamSub.cancel();
+      userUpdatesStreamSub?.cancel();
     }
   }
 

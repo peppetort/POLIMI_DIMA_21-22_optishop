@@ -45,9 +45,7 @@ class DataProvider with ChangeNotifier {
   }
 
   void _stopListenForChanges() {
-    if (productsUpdatesStreamSub != null) {
-      productsUpdatesStreamSub!.cancel();
-    }
+    productsUpdatesStreamSub?.cancel();
   }
 
   void _getImageUrl(ProductModel productModel) async {

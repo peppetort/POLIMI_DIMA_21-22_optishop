@@ -17,11 +17,11 @@ class CartProvider with ChangeNotifier {
 
   final Map<ProductModel, int> cart = {};
 
-  late StreamSubscription productsUpdatesStreamSub;
+  StreamSubscription? productsUpdatesStreamSub;
 
   @override
   void dispose() {
-    productsUpdatesStreamSub.cancel();
+    productsUpdatesStreamSub?.cancel();
     super.dispose();
   }
 
@@ -67,7 +67,7 @@ class CartProvider with ChangeNotifier {
 
     if (this.authenticationProvider.firebaseAuth.currentUser == null) {
       cart.clear();
-      productsUpdatesStreamSub.cancel();
+      productsUpdatesStreamSub?.cancel();
     } else {
       _listenForChanges();
     }
