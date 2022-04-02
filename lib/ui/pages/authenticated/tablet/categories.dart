@@ -35,7 +35,8 @@ class _CategoriesTabletPageState extends State<CategoriesTabletPage> {
     return ListView.builder(
       itemCount: widget.categories.length,
       itemBuilder: (context, index) {
-        return InkWell(
+        return Material(
+            child: InkWell(
           onTap: () {
             Provider.of<DataProvider>(context, listen: false)
                 .selectCategory(widget.categories[index].id);
@@ -101,7 +102,7 @@ class _CategoriesTabletPageState extends State<CategoriesTabletPage> {
               ),
             ],
           ),
-        );
+        ));
       },
     );
   }

@@ -31,7 +31,7 @@ class CategoriesPhonePage extends StatelessWidget {
                 ),
               ),
               Text(
-                'Non ci sono categoria',
+                'Non ci sono categorie',
                 style: Theme.of(context).textTheme.headline5,
                 textAlign: TextAlign.center,
               ),
@@ -47,7 +47,8 @@ class CategoriesPhonePage extends StatelessWidget {
             padding: const EdgeInsets.all(15.0),
             itemCount: categories.length,
             itemBuilder: (BuildContext context, int index) {
-              return InkWell(
+              return Material(
+                  child: InkWell(
                 onTap: () {
                   Provider.of<DataProvider>(context, listen: false)
                       .selectCategory(categories[index].id);
@@ -91,7 +92,7 @@ class CategoriesPhonePage extends StatelessWidget {
                     ),
                   ],
                 ),
-              );
+              ));
             });
   }
 }
