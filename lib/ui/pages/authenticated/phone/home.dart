@@ -41,11 +41,13 @@ class _HomePhonePageState extends State<HomePhonePage> {
         title: const Text('OptiShop'),
         centerTitle: true,
         leading: IconButton(
+          key: const Key('Settings test key'),
           onPressed: () => Navigator.pushNamed(context, '/settings'),
           icon: const Icon(Icons.person_outline),
         ),
         actions: [
           IconButton(
+            key: const Key('Cart test key'),
             onPressed: () => Navigator.pushNamed(context, '/cart'),
             icon: const Icon(Icons.shopping_cart_outlined),
           ),

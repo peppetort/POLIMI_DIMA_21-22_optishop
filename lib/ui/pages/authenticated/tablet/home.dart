@@ -36,11 +36,13 @@ class _HomeTabletPageState extends State<HomeTabletPage> {
         title: const Text('OptiShop'),
         centerTitle: true,
         leading: IconButton(
+          key: const Key('Settings test key'),
           onPressed: () => Navigator.pushNamed(context, '/settings'),
           icon: const Icon(Icons.person_outline),
         ),
         actions: [
           IconButton(
+            key: const Key('Cart test key'),
             onPressed: () => Navigator.pushNamed(context, '/cart'),
             icon: const Icon(Icons.shopping_cart_outlined),
           ),
@@ -106,7 +108,7 @@ class _HomeTabletPageState extends State<HomeTabletPage> {
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 25.0),
                                       child: Text(
-                                        'Seleziona una categoria di prodotti e aggiungi al carrello quelli che vuoi acquistare',
+                                        'Seleziona una categoria di prodotti e aggiungi al carrello quelli che desideri acquistare',
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodyText2!
