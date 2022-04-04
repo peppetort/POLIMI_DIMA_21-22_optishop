@@ -58,7 +58,7 @@ class CartPage extends StatelessWidget {
                     margin: const EdgeInsets.only(bottom: 30.0),
                     padding: const EdgeInsets.symmetric(horizontal: 25.0),
                     child: Text(
-                      'Esplora i prodotti per categorie e aggiungi al carello quelli che desideri acquistare.',
+                      'Esplora i prodotti per categorie e aggiungi al carrello quelli che desideri acquistare.',
                       style: Theme.of(context).textTheme.bodyText2!.copyWith(
                           color: OptiShopAppTheme.primaryText, height: 1.5),
                       textAlign: TextAlign.center,

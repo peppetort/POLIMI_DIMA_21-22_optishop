@@ -2,14 +2,17 @@
 // in dima21_migliore_tortorelli/test/pages/cart_test.dart.
 // Do not manually edit this file.
 
-import 'dart:async' as _i6;
-import 'dart:ui' as _i7;
+import 'dart:async' as _i7;
+import 'dart:ui' as _i8;
 
 import 'package:cloud_firestore/cloud_firestore.dart' as _i3;
-import 'package:dima21_migliore_tortorelli/models/ProductModel.dart' as _i5;
+import 'package:dima21_migliore_tortorelli/models/MarketModel.dart' as _i10;
+import 'package:dima21_migliore_tortorelli/models/ProductModel.dart' as _i6;
 import 'package:dima21_migliore_tortorelli/providers/authentication.dart'
     as _i2;
-import 'package:dima21_migliore_tortorelli/providers/cart.dart' as _i4;
+import 'package:dima21_migliore_tortorelli/providers/cart.dart' as _i5;
+import 'package:dima21_migliore_tortorelli/providers/result.dart' as _i9;
+import 'package:dima21_migliore_tortorelli/providers/user_data.dart' as _i4;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: type=lint
@@ -28,10 +31,15 @@ class _FakeAuthenticationProvider_0 extends _i1.Fake
 class _FakeFirebaseFirestore_1 extends _i1.Fake
     implements _i3.FirebaseFirestore {}
 
+class _FakeUserDataProvider_2 extends _i1.Fake implements _i4.UserDataProvider {
+}
+
+class _FakeCartProvider_3 extends _i1.Fake implements _i5.CartProvider {}
+
 /// A class which mocks [CartProvider].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockCartProvider extends _i1.Mock implements _i4.CartProvider {
+class MockCartProvider extends _i1.Mock implements _i5.CartProvider {
   MockCartProvider() {
     _i1.throwOnMissingStub(this);
   }
@@ -52,12 +60,12 @@ class MockCartProvider extends _i1.Mock implements _i4.CartProvider {
       (super.noSuchMethod(Invocation.getter(#fireStore),
           returnValue: _FakeFirebaseFirestore_1()) as _i3.FirebaseFirestore);
   @override
-  Map<_i5.ProductModel, int> get cart => (super.noSuchMethod(
+  Map<_i6.ProductModel, int> get cart => (super.noSuchMethod(
       Invocation.getter(#cart),
-      returnValue: <_i5.ProductModel, int>{}) as Map<_i5.ProductModel, int>);
+      returnValue: <_i6.ProductModel, int>{}) as Map<_i6.ProductModel, int>);
   @override
   set productsUpdatesStreamSub(
-          _i6.StreamSubscription<dynamic>? _productsUpdatesStreamSub) =>
+          _i7.StreamSubscription<dynamic>? _productsUpdatesStreamSub) =>
       super.noSuchMethod(
           Invocation.setter(
               #productsUpdatesStreamSub, _productsUpdatesStreamSub),
@@ -76,11 +84,11 @@ class MockCartProvider extends _i1.Mock implements _i4.CartProvider {
               #update, [], {#authenticationProvider: authenticationProvider}),
           returnValueForMissingStub: null);
   @override
-  void addToCart(_i5.ProductModel? product) =>
+  void addToCart(_i6.ProductModel? product) =>
       super.noSuchMethod(Invocation.method(#addToCart, [product]),
           returnValueForMissingStub: null);
   @override
-  void removeFromCart(_i5.ProductModel? product, {bool? force = false}) =>
+  void removeFromCart(_i6.ProductModel? product, {bool? force = false}) =>
       super.noSuchMethod(
           Invocation.method(#removeFromCart, [product], {#force: force}),
           returnValueForMissingStub: null);
@@ -88,13 +96,83 @@ class MockCartProvider extends _i1.Mock implements _i4.CartProvider {
   void emptyCart() => super.noSuchMethod(Invocation.method(#emptyCart, []),
       returnValueForMissingStub: null);
   @override
-  void addListener(_i7.VoidCallback? listener) =>
+  void addListener(_i8.VoidCallback? listener) =>
       super.noSuchMethod(Invocation.method(#addListener, [listener]),
           returnValueForMissingStub: null);
   @override
-  void removeListener(_i7.VoidCallback? listener) =>
+  void removeListener(_i8.VoidCallback? listener) =>
       super.noSuchMethod(Invocation.method(#removeListener, [listener]),
           returnValueForMissingStub: null);
+  @override
+  void notifyListeners() =>
+      super.noSuchMethod(Invocation.method(#notifyListeners, []),
+          returnValueForMissingStub: null);
+}
+
+/// A class which mocks [ResultProvider].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockResultProvider extends _i1.Mock implements _i9.ResultProvider {
+  @override
+  String get lastMessage =>
+      (super.noSuchMethod(Invocation.getter(#lastMessage), returnValue: '')
+          as String);
+  @override
+  set lastMessage(String? _lastMessage) =>
+      super.noSuchMethod(Invocation.setter(#lastMessage, _lastMessage),
+          returnValueForMissingStub: null);
+  @override
+  _i4.UserDataProvider get userDataProvider =>
+      (super.noSuchMethod(Invocation.getter(#userDataProvider),
+          returnValue: _FakeUserDataProvider_2()) as _i4.UserDataProvider);
+  @override
+  set userDataProvider(_i4.UserDataProvider? _userDataProvider) => super
+      .noSuchMethod(Invocation.setter(#userDataProvider, _userDataProvider),
+          returnValueForMissingStub: null);
+  @override
+  _i5.CartProvider get cartProvider =>
+      (super.noSuchMethod(Invocation.getter(#cartProvider),
+          returnValue: _FakeCartProvider_3()) as _i5.CartProvider);
+  @override
+  set cartProvider(_i5.CartProvider? _cartProvider) =>
+      super.noSuchMethod(Invocation.setter(#cartProvider, _cartProvider),
+          returnValueForMissingStub: null);
+  @override
+  bool get hasListeners =>
+      (super.noSuchMethod(Invocation.getter(#hasListeners), returnValue: false)
+          as bool);
+  @override
+  void update(
+          {_i4.UserDataProvider? userDataProvider,
+          _i5.CartProvider? cartProvider}) =>
+      super.noSuchMethod(
+          Invocation.method(#update, [], {
+            #userDataProvider: userDataProvider,
+            #cartProvider: cartProvider
+          }),
+          returnValueForMissingStub: null);
+  @override
+  _i7.Future<void> insertMarket(_i10.MarketModel? market) =>
+      (super.noSuchMethod(Invocation.method(#insertMarket, [market]),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i7.Future<void>);
+  @override
+  _i7.Future<Map<_i10.MarketModel, Map<String, double>>> findResults() =>
+      (super.noSuchMethod(Invocation.method(#findResults, []),
+          returnValue: Future<Map<_i10.MarketModel, Map<String, double>>>.value(
+              <_i10.MarketModel, Map<String, double>>{})) as _i7
+          .Future<Map<_i10.MarketModel, Map<String, double>>>);
+  @override
+  void addListener(_i8.VoidCallback? listener) =>
+      super.noSuchMethod(Invocation.method(#addListener, [listener]),
+          returnValueForMissingStub: null);
+  @override
+  void removeListener(_i8.VoidCallback? listener) =>
+      super.noSuchMethod(Invocation.method(#removeListener, [listener]),
+          returnValueForMissingStub: null);
+  @override
+  void dispose() => super.noSuchMethod(Invocation.method(#dispose, []),
+      returnValueForMissingStub: null);
   @override
   void notifyListeners() =>
       super.noSuchMethod(Invocation.method(#notifyListeners, []),
