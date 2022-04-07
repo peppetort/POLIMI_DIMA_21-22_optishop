@@ -70,6 +70,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       height: 10.0,
                     ),
                     InkWell(
+                      key: const Key('Update profile test key'),
                       onTap: () =>
                           Navigator.pushNamed(context, '/updateprofile'),
                       child: Container(
@@ -213,6 +214,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       ),
                     ),
                     InkWell(
+                      key: const Key('Disconnect test key'),
                       onTap: () async {
                         await Provider.of<AuthenticationProvider>(context,
                                 listen: false)

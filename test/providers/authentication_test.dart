@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dima21_migliore_tortorelli/providers/authentication.dart' as auth;
+import 'package:dima21_migliore_tortorelli/providers/authentication.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -9,11 +9,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import 'authentication_test.mocks.dart';
 
-@GenerateMocks([FirebaseAuth, FirebaseFirestore, UserCredential, User])
+@GenerateMocks([FirebaseAuth, FirebaseFirestore, UserCredential, User, AuthenticationProvider])
 void main() {
   final mockfbauth = MockFirebaseAuth();
   final mockfs = MockFirebaseFirestore();
-  final mockauth = auth.AuthenticationProvider(mockfbauth, mockfs);
+  final mockauth = AuthenticationProvider(mockfbauth, mockfs);
   final fakeCred = MockUserCredential();
   final fakeUser = MockUser();
   final fakefs = FakeFirebaseFirestore();

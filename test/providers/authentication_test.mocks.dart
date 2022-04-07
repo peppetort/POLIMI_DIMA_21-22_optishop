@@ -4,10 +4,13 @@
 
 import 'dart:async' as _i7;
 import 'dart:typed_data' as _i8;
+import 'dart:ui' as _i10;
 
 import 'package:cloud_firestore/cloud_firestore.dart' as _i6;
 import 'package:cloud_firestore_platform_interface/cloud_firestore_platform_interface.dart'
     as _i5;
+import 'package:dima21_migliore_tortorelli/providers/authentication.dart'
+    as _i9;
 import 'package:firebase_auth/firebase_auth.dart' as _i4;
 import 'package:firebase_auth_platform_interface/firebase_auth_platform_interface.dart'
     as _i3;
@@ -56,6 +59,11 @@ class _FakeUserMetadata_11 extends _i1.Fake implements _i3.UserMetadata {}
 class _FakeIdTokenResult_12 extends _i1.Fake implements _i3.IdTokenResult {}
 
 class _FakeUser_13 extends _i1.Fake implements _i4.User {}
+
+class _FakeFirebaseAuth_14 extends _i1.Fake implements _i4.FirebaseAuth {}
+
+class _FakeFirebaseFirestore_15 extends _i1.Fake
+    implements _i6.FirebaseFirestore {}
 
 /// A class which mocks [FirebaseAuth].
 ///
@@ -529,4 +537,99 @@ class MockUser extends _i1.Mock implements _i4.User {
               #verifyBeforeUpdateEmail, [newEmail, actionCodeSettings]),
           returnValue: Future<void>.value(),
           returnValueForMissingStub: Future<void>.value()) as _i7.Future<void>);
+}
+
+/// A class which mocks [AuthenticationProvider].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockAuthenticationProvider extends _i1.Mock
+    implements _i9.AuthenticationProvider {
+  MockAuthenticationProvider() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i4.FirebaseAuth get firebaseAuth =>
+      (super.noSuchMethod(Invocation.getter(#firebaseAuth),
+          returnValue: _FakeFirebaseAuth_14()) as _i4.FirebaseAuth);
+  @override
+  String get lastMessage =>
+      (super.noSuchMethod(Invocation.getter(#lastMessage), returnValue: '')
+          as String);
+  @override
+  set lastMessage(String? _lastMessage) =>
+      super.noSuchMethod(Invocation.setter(#lastMessage, _lastMessage),
+          returnValueForMissingStub: null);
+  @override
+  _i6.FirebaseFirestore get fireStore =>
+      (super.noSuchMethod(Invocation.getter(#fireStore),
+          returnValue: _FakeFirebaseFirestore_15()) as _i6.FirebaseFirestore);
+  @override
+  bool get hasListeners =>
+      (super.noSuchMethod(Invocation.getter(#hasListeners), returnValue: false)
+          as bool);
+  @override
+  _i7.Future<bool> signInWithGoogle() =>
+      (super.noSuchMethod(Invocation.method(#signInWithGoogle, []),
+          returnValue: Future<bool>.value(false)) as _i7.Future<bool>);
+  @override
+  _i7.Future<bool> signInWithFacebook() =>
+      (super.noSuchMethod(Invocation.method(#signInWithFacebook, []),
+          returnValue: Future<bool>.value(false)) as _i7.Future<bool>);
+  @override
+  _i7.Future<bool> signInWithTwitter() =>
+      (super.noSuchMethod(Invocation.method(#signInWithTwitter, []),
+          returnValue: Future<bool>.value(false)) as _i7.Future<bool>);
+  @override
+  _i7.Future<bool> signIn({String? email, String? password}) =>
+      (super.noSuchMethod(
+          Invocation.method(#signIn, [], {#email: email, #password: password}),
+          returnValue: Future<bool>.value(false)) as _i7.Future<bool>);
+  @override
+  _i7.Future<bool> signUp(
+          {String? name,
+          String? surname,
+          String? email,
+          String? password,
+          String? phone}) =>
+      (super.noSuchMethod(
+          Invocation.method(#signUp, [], {
+            #name: name,
+            #surname: surname,
+            #email: email,
+            #password: password,
+            #phone: phone
+          }),
+          returnValue: Future<bool>.value(false)) as _i7.Future<bool>);
+  @override
+  _i7.Future<bool> signOut() =>
+      (super.noSuchMethod(Invocation.method(#signOut, []),
+          returnValue: Future<bool>.value(false)) as _i7.Future<bool>);
+  @override
+  _i7.Future<bool> recoverPassword({String? email}) => (super.noSuchMethod(
+      Invocation.method(#recoverPassword, [], {#email: email}),
+      returnValue: Future<bool>.value(false)) as _i7.Future<bool>);
+  @override
+  _i7.Future<bool> reAuthenticate({String? password}) => (super.noSuchMethod(
+      Invocation.method(#reAuthenticate, [], {#password: password}),
+      returnValue: Future<bool>.value(false)) as _i7.Future<bool>);
+  @override
+  _i7.Future<bool> changePassword({String? password}) => (super.noSuchMethod(
+      Invocation.method(#changePassword, [], {#password: password}),
+      returnValue: Future<bool>.value(false)) as _i7.Future<bool>);
+  @override
+  void addListener(_i10.VoidCallback? listener) =>
+      super.noSuchMethod(Invocation.method(#addListener, [listener]),
+          returnValueForMissingStub: null);
+  @override
+  void removeListener(_i10.VoidCallback? listener) =>
+      super.noSuchMethod(Invocation.method(#removeListener, [listener]),
+          returnValueForMissingStub: null);
+  @override
+  void dispose() => super.noSuchMethod(Invocation.method(#dispose, []),
+      returnValueForMissingStub: null);
+  @override
+  void notifyListeners() =>
+      super.noSuchMethod(Invocation.method(#notifyListeners, []),
+          returnValueForMissingStub: null);
 }
