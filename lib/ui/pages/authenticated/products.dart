@@ -1,4 +1,3 @@
-import 'package:dima21_migliore_tortorelli/models/ProductModel.dart';
 import 'package:dima21_migliore_tortorelli/providers/data.dart';
 import 'package:dima21_migliore_tortorelli/ui/widgets/product_card.dart';
 import 'package:flutter/material.dart';
@@ -17,9 +16,9 @@ class ProductPage extends StatelessWidget {
   Widget build(BuildContext context) {
     _logger.info('ProductPage build $selectedCategoryId');
 
-    List<ProductModel>? selectedProducts =
-        context.select<DataProvider, List<ProductModel>?>(
-            (value) => value.productsByCategories[selectedCategoryId]);
+    List<String>? selectedProducts =
+        context.select<DataProvider, List<String>?>(
+            (value) => value.productsByCategory[selectedCategoryId]);
 
     double a = ((MediaQuery.of(context).size.width /
         MediaQuery.of(context).size.height));
@@ -41,8 +40,6 @@ class ProductPage extends StatelessWidget {
 
     _logger.info('AspectRatio: $a');
     _logger.info('Products per Row: $productsPerRow');
-
-    //_logger.info(((MediaQuery.of(context).size.width / MediaQuery.of(context).size.height) * 7).round());
 
     return selectedProducts == null
         ? const Center(
@@ -83,7 +80,7 @@ class ProductPage extends StatelessWidget {
                 itemCount: selectedProducts.length,
                 itemBuilder: (BuildContext context, int index) {
                   return ProductCard(
-                    selectedProduct: selectedProducts[index],
+                    selectedProductId: selectedProducts[index],
                   );
                 });
   }

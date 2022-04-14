@@ -10,22 +10,21 @@ import 'package:provider/provider.dart';
 Logger _logger = Logger('ProductCard');
 
 class ProductCard extends StatelessWidget {
-  final ProductModel selectedProduct;
+  final String selectedProductId;
 
-  const ProductCard({Key? key, required this.selectedProduct})
+  const ProductCard({Key? key, required this.selectedProductId})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    _logger.info('ProductCard build ${selectedProduct.id}');
+    _logger.info('ProductCard build $selectedProductId');
+
     int? quantity = context.select<CartProvider, int?>((value) => value.cart[
-        value.cart.keys.firstWhere(
-            (element) => element.id == selectedProduct.id,
+        value.cart.keys.firstWhere((element) => element.id == selectedProductId,
             orElse: () => ProductModel('', '', '', '', ''))]);
 
-    ProductModel product = context.select<DataProvider, ProductModel>((value) =>
-        value.productsByCategories[selectedProduct.category]!
-            .firstWhere((element) => element.id == selectedProduct.id));
+    ProductModel product = context.select<DataProvider, ProductModel>(
+        (value) => value.loadedProducts[selectedProductId]!);
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -46,7 +45,7 @@ class ProductCard extends StatelessWidget {
               ),
               child: AspectRatio(
                 aspectRatio: 1,
-                child: product.image.isEmpty
+                child: product.image == ''
                     ? Container()
                     : CachedNetworkImage(
                         imageUrl: product.image,

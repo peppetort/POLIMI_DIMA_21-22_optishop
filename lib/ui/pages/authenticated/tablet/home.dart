@@ -3,6 +3,7 @@ import 'package:dima21_migliore_tortorelli/models/CategoryModel.dart';
 import 'package:dima21_migliore_tortorelli/providers/data.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/products.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/tablet/categories.dart';
+import 'package:dima21_migliore_tortorelli/ui/widgets/big_button.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
@@ -17,10 +18,27 @@ class HomeTabletPage extends StatefulWidget {
 }
 
 class _HomeTabletPageState extends State<HomeTabletPage> {
+  bool errorLoadingCategory = false;
+
   @override
   void initState() {
     super.initState();
-    Provider.of<DataProvider>(context, listen: false).getAllCategories();
+    _loadCategories();
+  }
+
+  void _loadCategories() async {
+    setState(() {
+      errorLoadingCategory = false;
+    });
+
+    bool res = await Provider.of<DataProvider>(context, listen: false)
+        .getAllCategories();
+
+    if (!res) {
+      setState(() {
+        errorLoadingCategory = true;
+      });
+    }
   }
 
   @override
@@ -29,7 +47,7 @@ class _HomeTabletPageState extends State<HomeTabletPage> {
 
     List<CategoryModel> categories =
         context.select<DataProvider, List<CategoryModel>>(
-            (value) => value.categories.values.toList());
+            (value) => value.loadedCategories.values.toList());
 
     return Scaffold(
       appBar: AppBar(
@@ -47,87 +65,123 @@ class _HomeTabletPageState extends State<HomeTabletPage> {
         ],
       ),
       body: SafeArea(
-        child: categories.isEmpty
-            ? const Center(
-                child: CircularProgressIndicator(),
-              )
-            : Row(
-                children: [
-                  Flexible(
-                    flex: 1,
-                    child: Container(
-                      height: double.infinity,
-                      //width: 130.0,
-                      padding: const EdgeInsets.all(10.0),
-                      child: CategoriesTabletPage(
-                        categories: categories,
+        child: errorLoadingCategory
+            ? Center(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Flexible(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 20.0),
+                        child: Image.asset('assets/images/Ill_ooops_1.png',
+                            fit: BoxFit.contain),
                       ),
                     ),
-                  ),
-                  Flexible(
-                    flex: 7,
-                    child: Builder(
-                      builder: (context) {
-                        _logger.info('HomePageBody build');
-                        String? selectedCategory =
-                            context.select<DataProvider, String?>(
-                                (value) => value.selectedCategory);
-
-                        return selectedCategory == null
-                            ? Center(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Flexible(
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 20.0),
-                                        //margin: const EdgeInsets.only(top: 30.0),
-                                        child: Image.asset(
-                                          'assets/images/Ill_inizia_a_usare_optishop.png',
-                                        ),
-                                      ),
-                                    ),
-                                    Text(
-                                      'Inizia a usare OptiShop',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .headline4!
-                                          .copyWith(height: 1.4),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    const SizedBox(
-                                      height: 10.0,
-                                    ),
-                                    Container(
-                                      margin:
-                                          const EdgeInsets.only(bottom: 30.0),
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 25.0),
-                                      child: Text(
-                                        'Seleziona una categoria di prodotti e aggiungi al carrello quelli che vuoi acquistare',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyText2!
-                                            .copyWith(
-                                                color: OptiShopAppTheme
-                                                    .primaryText,
-                                                height: 1.5),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              )
-                            : ProductPage(
-                                selectedCategoryId: selectedCategory,
-                              );
-                      },
+                    Text(
+                      'Errore durante il caricamento dell categorie',
+                      style: Theme.of(context).textTheme.headline5,
+                      textAlign: TextAlign.center,
                     ),
+                    const SizedBox(
+                      height: 30.0,
+                    ),
+                    Padding(
+                      padding: OptiShopAppTheme.defaultPagePadding,
+                      child: BigElevatedButton(
+                        onPressed: () => _loadCategories(),
+                        // Navigator.pushNamed(context, '/results'),
+                        child: Text(
+                          'Riprova'.toUpperCase(),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            : categories.isEmpty
+                ? const Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : Row(
+                    children: [
+                      Flexible(
+                        flex: 1,
+                        child: Container(
+                          height: double.infinity,
+                          //width: 130.0,
+                          padding: const EdgeInsets.all(10.0),
+                          child: CategoriesTabletPage(
+                            categories: categories,
+                          ),
+                        ),
+                      ),
+                      Flexible(
+                        flex: 7,
+                        child: Builder(
+                          builder: (context) {
+                            _logger.info('HomePageBody build');
+                            String? selectedCategory =
+                                context.select<DataProvider, String?>(
+                                    (value) => value.selectedCategory);
+
+                            return selectedCategory == null
+                                ? Center(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Flexible(
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 20.0),
+                                            //margin: const EdgeInsets.only(top: 30.0),
+                                            child: Image.asset(
+                                              'assets/images/Ill_inizia_a_usare_optishop.png',
+                                            ),
+                                          ),
+                                        ),
+                                        Text(
+                                          'Inizia a usare OptiShop',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .headline4!
+                                              .copyWith(height: 1.4),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        const SizedBox(
+                                          height: 10.0,
+                                        ),
+                                        Container(
+                                          margin: const EdgeInsets.only(
+                                              bottom: 30.0),
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 25.0),
+                                          child: Text(
+                                            'Seleziona una categoria di prodotti e aggiungi al carrello quelli che vuoi acquistare',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyText2!
+                                                .copyWith(
+                                                    color: OptiShopAppTheme
+                                                        .primaryText,
+                                                    height: 1.5),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : ProductPage(
+                                    selectedCategoryId: selectedCategory,
+                                  );
+                          },
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
       ),
     );
   }
