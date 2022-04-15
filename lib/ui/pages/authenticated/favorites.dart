@@ -159,7 +159,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => FavoriteDetailsPage(
-                                        preference: preference),
+                                        preferenceId: preference.id),
                                   ),
                                 ),
                                 child: SizedBox(

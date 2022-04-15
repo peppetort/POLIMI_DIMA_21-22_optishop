@@ -3,6 +3,7 @@ import 'package:dima21_migliore_tortorelli/models/MarketModel.dart';
 import 'package:dima21_migliore_tortorelli/providers/cart.dart';
 import 'package:dima21_migliore_tortorelli/providers/result.dart';
 import 'package:dima21_migliore_tortorelli/providers/user_data.dart';
+import 'package:dima21_migliore_tortorelli/ui/widgets/alert_dialog.dart';
 import 'package:dima21_migliore_tortorelli/ui/widgets/big_button.dart';
 import 'package:dima21_migliore_tortorelli/ui/widgets/loading.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +21,6 @@ class ResultsPage extends StatefulWidget {
 
 class _ResultsPageState extends State<ResultsPage> {
   List<MarketModel>? markets;
-
   bool saved = false;
 
 /*  final MapController _mapController = MapController(
@@ -143,13 +143,22 @@ class _ResultsPageState extends State<ResultsPage> {
                 centerTitle: true,
                 actions: [
                   IconButton(
-                    onPressed: () {
-                      setState(() {
-                        saved = true;
-                      });
-                      Provider.of<UserDataProvider>(context, listen: false)
-                          .createNewShopPreference(
-                              'Prova', context.read<CartProvider>().cart);
+                    onPressed: () async {
+                      String name = await showInputAlertDialog(context,
+                          title: 'Inserisci un nome per la preferenza');
+
+                      if (name != '') {
+                        _logger.info(
+                            'Nome selezionato $name}');
+
+                        setState(() {
+                          saved = true;
+                        });
+
+                        Provider.of<UserDataProvider>(context, listen: false)
+                            .createNewShopPreference(
+                                name, context.read<CartProvider>().cart);
+                      }
                     },
                     icon: saved
                         ? const Icon(Icons.star)

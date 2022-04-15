@@ -2,6 +2,7 @@ import 'package:dima21_migliore_tortorelli/app_theme.dart';
 import 'package:dima21_migliore_tortorelli/models/ShopPreferenceModel.dart';
 import 'package:dima21_migliore_tortorelli/providers/cart.dart';
 import 'package:dima21_migliore_tortorelli/providers/user_data.dart';
+import 'package:dima21_migliore_tortorelli/ui/widgets/alert_dialog.dart';
 import 'package:dima21_migliore_tortorelli/ui/widgets/big_button.dart';
 import 'package:dima21_migliore_tortorelli/ui/widgets/cart_card.dart';
 import 'package:flutter/material.dart';
@@ -11,18 +12,22 @@ import 'package:provider/provider.dart';
 Logger _logger = Logger('PreferenceDetailsPage');
 
 class FavoriteDetailsPage extends StatelessWidget {
-  final ShopPreferenceModel preference;
+  final String preferenceId;
 
-  const FavoriteDetailsPage({Key? key, required this.preference})
+  const FavoriteDetailsPage({Key? key, required this.preferenceId})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     _logger.info('Preference details page build');
 
+    ShopPreferenceModel preference =
+        context.select<UserDataProvider, ShopPreferenceModel>(
+            (value) => value.userShopPreferences[preferenceId]!);
+
     Map<String, dynamic>? savedProducts = context
         .watch<UserDataProvider>()
-        .userShopPreferences[preference.id]
+        .userShopPreferences[preferenceId]
         ?.savedProducts;
 
     return Scaffold(
@@ -31,15 +36,23 @@ class FavoriteDetailsPage extends StatelessWidget {
         centerTitle: true,
         actions: [
           IconButton(
-            onPressed: () {
-              //TODO: modificare nome
+            onPressed: () async {
+              String name = await showInputAlertDialog(context,
+                  title: 'Inserisci un nome per la preferenza');
+
+              if (name != '') {
+                _logger.info('Nome selezionato $name');
+
+                Provider.of<UserDataProvider>(context, listen: false)
+                    .changePreferenceName(preferenceId, name);
+              }
             },
             icon: const Icon(Icons.mode_outlined),
           ),
           IconButton(
             onPressed: () {
               Provider.of<UserDataProvider>(context, listen: false)
-                  .removePreference(preference.id);
+                  .removePreference(preferenceId);
               Navigator.pop(context);
             },
             icon: const Icon(Icons.delete_outline),
@@ -69,17 +82,17 @@ class FavoriteDetailsPage extends StatelessWidget {
                                   Provider.of<UserDataProvider>(context,
                                           listen: false)
                                       .removeProductFromReference(
-                                          preference.id, productId),
+                                          preferenceId, productId),
                               onAddCallback: () =>
                                   Provider.of<UserDataProvider>(context,
                                           listen: false)
                                       .addProductToPreference(
-                                          preference.id, productId),
+                                          preferenceId, productId),
                               onDismissedCallback: () =>
                                   Provider.of<UserDataProvider>(context,
                                           listen: false)
                                       .removeProductFromReference(
-                                          preference.id, productId,
+                                          preferenceId, productId,
                                           delete: true),
                             );
                           }),
