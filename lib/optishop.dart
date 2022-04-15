@@ -8,10 +8,8 @@ import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/allow_location
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/cart.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/favorites.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/home.dart';
-import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/phone/home.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/results.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/settings.dart';
-import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/tablet/home.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/update_password.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/update_profile.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/unathenticated/first.dart';
@@ -30,29 +28,34 @@ import 'app_theme.dart';
 Logger _logger = Logger('OptiShop');
 
 class OptiShop extends StatelessWidget {
-  const OptiShop({Key? key}) : super(key: key);
+  final FirebaseFirestore fireStoreInstance = FirebaseFirestore.instance;
+  final FirebaseAuth firebaseAuthInstance = FirebaseAuth.instance;
+  final Location location = Location();
+
+  OptiShop({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<AuthenticationProvider>(
-          create: (_) => AuthenticationProvider(FirebaseAuth.instance, FirebaseFirestore.instance),
+          create: (_) =>
+              AuthenticationProvider(firebaseAuthInstance, fireStoreInstance),
         ),
         ChangeNotifierProxyProvider<AuthenticationProvider, CartProvider>(
-          create: (_) => CartProvider(FirebaseFirestore.instance),
+          create: (_) => CartProvider(),
           lazy: false,
           update: (_, authenticationProvider, cartProvider) => cartProvider!
             ..update(authenticationProvider: authenticationProvider),
         ),
         ChangeNotifierProxyProvider<AuthenticationProvider, DataProvider>(
-          create: (_) => DataProvider(FirebaseFirestore.instance),
+          create: (_) => DataProvider(fireStoreInstance),
           lazy: false,
           update: (_, authenticationProvider, dataProvider) => dataProvider!
             ..update(authenticationProvider: authenticationProvider),
         ),
         ChangeNotifierProxyProvider<AuthenticationProvider, UserDataProvider>(
-          create: (_) => UserDataProvider(),
+          create: (_) => UserDataProvider(location, fireStoreInstance),
           update: (_, authenticationProvider, userDataProvider) =>
               userDataProvider!
                 ..update(authenticationProvider: authenticationProvider),

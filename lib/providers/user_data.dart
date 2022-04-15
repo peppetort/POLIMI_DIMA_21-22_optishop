@@ -15,10 +15,10 @@ Logger _logger = Logger('UserDataProvider');
 class UserDataProvider with ChangeNotifier {
   late AuthenticationProvider? authenticationProvider;
 
-  final CollectionReference _userDataReference =
-      FirebaseFirestore.instance.collection('users');
-  final CollectionReference _userShopPreferencesReference =
-      FirebaseFirestore.instance.collection('users-preferences');
+  late final CollectionReference _userDataReference =
+      fireStore.collection('users');
+  late final CollectionReference _userShopPreferencesReference =
+      fireStore.collection('users-preferences');
 
   late User? _userAuthReference;
   UserModel? user;
@@ -31,6 +31,8 @@ class UserDataProvider with ChangeNotifier {
   StreamSubscription? userPreferencesUpdatesSteamSub;
 
   final Location location;
+  final FirebaseFirestore fireStore;
+
   UserDataProvider(this.location, this.fireStore);
 
   @override
