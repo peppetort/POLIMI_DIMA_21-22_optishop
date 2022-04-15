@@ -23,7 +23,6 @@ class UserDataProvider with ChangeNotifier {
   late User? _userAuthReference;
   UserModel? user;
 
-  //List<ShopPreferenceModel> userShopPreferences = [];
   Map<String, ShopPreferenceModel> userShopPreferences = {};
 
   String lastMessage = '';
