@@ -3,9 +3,12 @@ import 'package:dima21_migliore_tortorelli/app_theme.dart';
 import 'package:dima21_migliore_tortorelli/models/ProductModel.dart';
 import 'package:dima21_migliore_tortorelli/providers/data.dart';
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
 
-class CartCard extends StatelessWidget {
+Logger _logger = Logger('CartCard');
+
+class CartCard extends StatefulWidget {
   final Function onDismissedCallback;
   final Function onAddCallback;
   final Function onRemoveCallback;
@@ -22,15 +25,29 @@ class CartCard extends StatelessWidget {
       : super(key: key);
 
   @override
+  State<CartCard> createState() => _CartCardState();
+}
+
+class _CartCardState extends State<CartCard> {
+  @override
+  void initState() {
+    Provider.of<DataProvider>(context, listen: false)
+        .getProduct(widget.productId);
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    _logger.info('CartCard build');
+
     ProductModel? product = context.select<DataProvider, ProductModel?>(
-        (value) => value.loadedProducts[productId]);
+        (value) => value.loadedProducts[widget.productId]);
 
     return product == null
         ? Container()
         : Dismissible(
             key: Key(product.id),
-            onDismissed: (direction) => onDismissedCallback(),
+            onDismissed: (direction) => widget.onDismissedCallback(),
             direction: DismissDirection.endToStart,
             dismissThresholds: const <DismissDirection, double>{
               DismissDirection.endToStart: 0.7,
@@ -119,9 +136,9 @@ class CartCard extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 10.0),
                       child: ItemCounter(
-                        number: quantity,
-                        addCallback: () => onAddCallback(),
-                        removeCallback: () => onRemoveCallback(),
+                        number: widget.quantity,
+                        addCallback: () => widget.onAddCallback(),
+                        removeCallback: () => widget.onRemoveCallback(),
                       ),
                     )
                   ],

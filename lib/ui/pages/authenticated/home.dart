@@ -59,6 +59,10 @@ class _HomePageState extends State<HomePage> {
         ),
         actions: [
           IconButton(
+            onPressed: () => Navigator.pushNamed(context, '/favorites'),
+            icon: const Icon(Icons.favorite_border_outlined),
+          ),
+          IconButton(
             onPressed: () => Navigator.pushNamed(context, '/cart'),
             icon: const Icon(Icons.shopping_cart_outlined),
           ),

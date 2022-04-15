@@ -1,11 +1,11 @@
 import 'package:dima21_migliore_tortorelli/app_theme.dart';
 import 'package:dima21_migliore_tortorelli/models/MarketModel.dart';
+import 'package:dima21_migliore_tortorelli/providers/cart.dart';
 import 'package:dima21_migliore_tortorelli/providers/result.dart';
+import 'package:dima21_migliore_tortorelli/providers/user_data.dart';
 import 'package:dima21_migliore_tortorelli/ui/widgets/big_button.dart';
 import 'package:dima21_migliore_tortorelli/ui/widgets/loading.dart';
-import 'package:dima21_migliore_tortorelli/ui/widgets/scroll_column_view.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
 
@@ -20,6 +20,8 @@ class ResultsPage extends StatefulWidget {
 
 class _ResultsPageState extends State<ResultsPage> {
   List<MarketModel>? markets;
+
+  bool saved = false;
 
 /*  final MapController _mapController = MapController(
     initMapWithUserPosition: false,
@@ -71,10 +73,12 @@ class _ResultsPageState extends State<ResultsPage> {
                             child: Text(
                               market.address,
                               textAlign: TextAlign.start,
-                              style:
-                                  Theme.of(context).textTheme.bodyText1!.copyWith(
-                                        color: OptiShopAppTheme.darkGray,
-                                      ),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1!
+                                  .copyWith(
+                                    color: OptiShopAppTheme.darkGray,
+                                  ),
                             ),
                           ),
                         ],
@@ -137,6 +141,21 @@ class _ResultsPageState extends State<ResultsPage> {
               appBar: AppBar(
                 title: const Text('Risultati'),
                 centerTitle: true,
+                actions: [
+                  IconButton(
+                    onPressed: () {
+                      setState(() {
+                        saved = true;
+                      });
+                      Provider.of<UserDataProvider>(context, listen: false)
+                          .createNewShopPreference(
+                              'Prova', context.read<CartProvider>().cart);
+                    },
+                    icon: saved
+                        ? const Icon(Icons.star)
+                        : const Icon(Icons.star_outline),
+                  ),
+                ],
               ),
               body: markets.isEmpty
                   ? Padding(
@@ -147,8 +166,8 @@ class _ResultsPageState extends State<ResultsPage> {
                         children: [
                           Flexible(
                             child: Container(
-                              padding:
-                                  const EdgeInsets.only(bottom: 10.0, top: 20.0),
+                              padding: const EdgeInsets.only(
+                                  bottom: 10.0, top: 20.0),
                               child: Image.asset(
                                 'assets/images/Ill_ooops_1.png',
                                 fit: BoxFit.fitWidth,
@@ -212,7 +231,7 @@ class _ResultsPageState extends State<ResultsPage> {
                           ),
                         )
                       : SafeArea(
-                        child: Row(
+                          child: Row(
                             children: [
                               Flexible(
                                 flex: 2,
@@ -224,7 +243,7 @@ class _ResultsPageState extends State<ResultsPage> {
                               ),
                             ],
                           ),
-                      ),
+                        ),
             );
           } else {
             return const LoadingPage(

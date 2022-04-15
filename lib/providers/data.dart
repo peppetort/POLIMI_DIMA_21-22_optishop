@@ -218,4 +218,43 @@ class DataProvider with ChangeNotifier {
       return false;
     }
   }
+
+  Future<bool> getProduct(String productId) async {
+    if (loadedProducts.containsKey(productId)) {
+      return true;
+    }
+
+    try {
+      DocumentSnapshot product = await _productsReference.doc(productId).get();
+
+      Map<String, dynamic> productData = product.data() as Map<String, dynamic>;
+
+      ProductModel toAdd = ProductModel(
+        product.id,
+        productData['name'],
+        productData['description'],
+        '',
+        productData['category'],
+      );
+
+      loadedProducts[toAdd.id] = toAdd;
+
+      if (productsByCategory.containsKey(toAdd.category) &&
+          !productsByCategory[toAdd.category]!.contains(toAdd.id)) {
+        productsByCategory[toAdd.category]!.add(toAdd.id);
+      }
+
+      _getImageUrl(toAdd.copyWith(image: productData['image']));
+      notifyListeners();
+      return true;
+    } on FirebaseException catch (e) {
+      _logger.info(e);
+      if (e.message != null) {
+        lastMessage = e.message!;
+      } else {
+        lastMessage = 'Connection error';
+      }
+      return false;
+    }
+  }
 }
