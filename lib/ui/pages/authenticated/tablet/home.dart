@@ -31,7 +31,6 @@ class _HomeTabletPageState extends State<HomeTabletPage> {
           flex: 1,
           child: Container(
             height: double.infinity,
-            //width: 130.0,
             padding: const EdgeInsets.all(10.0),
             child: ListView.builder(
               itemCount: widget.categories.length,
@@ -122,7 +121,6 @@ class _HomeTabletPageState extends State<HomeTabletPage> {
                       Flexible(
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 20.0),
-                          //margin: const EdgeInsets.only(top: 30.0),
                           child: Image.asset(
                             'assets/images/Ill_inizia_a_usare_optishop.png',
                           ),

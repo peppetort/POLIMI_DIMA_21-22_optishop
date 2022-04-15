@@ -75,7 +75,6 @@ class _HomePhonePageState extends State<HomePhonePage> {
           ),
           Flexible(
             flex: 5,
-            //NOTE: builder in order to rebuild the tree only from this point on when a selectedCategory change happen
             child: selectedCategory == null
                 ? GridView.builder(
                     gridDelegate:

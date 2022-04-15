@@ -1,3 +1,4 @@
+import 'package:dima21_migliore_tortorelli/providers/cart.dart';
 import 'package:dima21_migliore_tortorelli/providers/data.dart';
 import 'package:dima21_migliore_tortorelli/ui/widgets/product_card.dart';
 import 'package:flutter/material.dart';
@@ -74,14 +75,28 @@ class ProductPage extends StatelessWidget {
                   crossAxisCount: productsPerRow,
                   mainAxisSpacing: 15.0,
                   crossAxisSpacing: 10.0,
-                  childAspectRatio: 2 / 3,
+                  childAspectRatio: 4 / 7,
                 ),
                 padding: const EdgeInsets.all(15.0),
                 itemCount: selectedProducts.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return ProductCard(
-                    selectedProductId: selectedProducts[index],
-                  );
+                  String productId = selectedProducts[index];
+
+                  return Builder(builder: (context) {
+                    int? quantity = context.select<CartProvider, int?>(
+                        (value) => value.cart[productId]);
+
+                    return ProductCard(
+                      selectedProductId: productId,
+                      onAddCallback: () =>
+                          Provider.of<CartProvider>(context, listen: false)
+                              .addToCart(productId),
+                      onRemoveCallback: () =>
+                          Provider.of<CartProvider>(context, listen: false)
+                              .removeFromCart(productId),
+                      quantity: quantity ?? 0,
+                    );
+                  });
                 });
   }
 }

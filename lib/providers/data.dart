@@ -154,7 +154,6 @@ class DataProvider with ChangeNotifier {
       }
       _logger.info('Successfully fetched all categories');
       notifyListeners();
-      //productsUpdatesStreamSub?.resume();
       return true;
     } on FirebaseException catch (e) {
       _logger.info(e);
@@ -180,32 +179,49 @@ class DataProvider with ChangeNotifier {
           .docs;
 
       for (var element in products) {
-        Map<String, dynamic> productData =
-            element.data() as Map<String, dynamic>;
-
-        ProductModel toAdd = ProductModel(
-          element.id,
-          productData['name'],
-          productData['description'],
-          '',
-          categoryId,
-        );
-
-        if (!loadedProducts.containsKey(toAdd.id)) {
-          loadedProducts[toAdd.id] = toAdd;
-          _getImageUrl(toAdd.copyWith(image: productData['image']));
-        }
-
         if (productsByCategory[categoryId] == null) {
           productsByCategory[categoryId] = [];
         }
 
-        if (!productsByCategory[categoryId]!.contains(toAdd.id)) {
-          productsByCategory[categoryId]!.add(toAdd.id);
+        if (!productsByCategory[categoryId]!.contains(element.id)) {
+          productsByCategory[categoryId]!.add(element.id);
         }
       }
 
       _logger.info('Successfully fetched products of category $categoryId');
+      notifyListeners();
+      return true;
+    } on FirebaseException catch (e) {
+      _logger.info(e);
+      if (e.message != null) {
+        lastMessage = e.message!;
+      } else {
+        lastMessage = 'Connection error';
+      }
+      return false;
+    }
+  }
+
+  Future<bool> getProduct(String productId) async {
+    if (loadedProducts.containsKey(productId)) {
+      return true;
+    }
+
+    try {
+      DocumentSnapshot product = await _productsReference.doc(productId).get();
+
+      Map<String, dynamic> productData = product.data() as Map<String, dynamic>;
+
+      ProductModel toAdd = ProductModel(
+        product.id,
+        productData['name'],
+        productData['description'],
+        '',
+        productData['category'],
+      );
+
+      loadedProducts[toAdd.id] = toAdd;
+      _getImageUrl(toAdd.copyWith(image: productData['image']));
       notifyListeners();
       return true;
     } on FirebaseException catch (e) {
