@@ -75,7 +75,7 @@ class ProductPage extends StatelessWidget {
                   crossAxisCount: productsPerRow,
                   mainAxisSpacing: 15.0,
                   crossAxisSpacing: 10.0,
-                  childAspectRatio: 2 / 3,
+                  childAspectRatio: 4 / 7,
                 ),
                 padding: const EdgeInsets.all(15.0),
                 itemCount: selectedProducts.length,

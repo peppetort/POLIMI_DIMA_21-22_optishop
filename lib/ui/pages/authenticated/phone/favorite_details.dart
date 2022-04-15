@@ -21,9 +21,9 @@ class FavoriteDetailsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     _logger.info('Preference details page build');
 
-    ShopPreferenceModel preference =
-        context.select<UserDataProvider, ShopPreferenceModel>(
-            (value) => value.userShopPreferences[preferenceId]!);
+    ShopPreferenceModel? preference =
+        context.select<UserDataProvider, ShopPreferenceModel?>(
+            (value) => value.userShopPreferences[preferenceId]);
 
     Map<String, dynamic>? savedProducts = context
         .watch<UserDataProvider>()
@@ -32,7 +32,7 @@ class FavoriteDetailsPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(preference.name),
+        title: preference != null ? Text(preference.name) : const Text(''),
         centerTitle: true,
         actions: [
           IconButton(

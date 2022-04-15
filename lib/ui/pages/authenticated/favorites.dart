@@ -1,7 +1,8 @@
 import 'package:dima21_migliore_tortorelli/app_theme.dart';
 import 'package:dima21_migliore_tortorelli/models/ShopPreferenceModel.dart';
 import 'package:dima21_migliore_tortorelli/providers/user_data.dart';
-import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/favorite_details.dart';
+import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/phone/favorites.dart';
+import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/tablet/favorites.dart';
 import 'package:dima21_migliore_tortorelli/ui/widgets/big_button.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
@@ -148,56 +149,20 @@ class _FavoritesPageState extends State<FavoritesPage> {
                   : SafeArea(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 5.0),
-                        child: ListView.builder(
-                            itemCount: userSavedBags.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              ShopPreferenceModel preference =
-                                  userSavedBags[index];
-
-                              return InkWell(
-                                onTap: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => FavoriteDetailsPage(
-                                        preferenceId: preference.id),
-                                  ),
-                                ),
-                                child: SizedBox(
-                                  height: 50.0,
-                                  child: Card(
-                                    clipBehavior: Clip.hardEdge,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(0),
-                                    ),
-                                    elevation: 1.0,
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 10.0),
-                                            child: Text(
-                                              preference.name,
-                                              overflow: TextOverflow.ellipsis,
-                                              textAlign: TextAlign.start,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .headline5!
-                                                  .copyWith(
-                                                    color: OptiShopAppTheme
-                                                        .secondaryColor,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                            ),
-                                          ),
-                                        ),
-                                        const Icon(Icons.arrow_forward_ios),
-                                      ],
-                                    ),
-                                  ),
-                                ),
+                        child: LayoutBuilder(
+                          builder: (BuildContext context,
+                              BoxConstraints constraints) {
+                            if (constraints.maxWidth > 600) {
+                              return FavoritesTabletPage(
+                                userSavedBags: userSavedBags,
                               );
-                            }),
+                            } else {
+                              return FavoritesPhonePage(
+                                userSavedBags: userSavedBags,
+                              );
+                            }
+                          },
+                        ),
                       ),
                     ),
     );
