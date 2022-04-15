@@ -19,9 +19,12 @@ class ProductCard extends StatelessWidget {
   Widget build(BuildContext context) {
     _logger.info('ProductCard build $selectedProductId');
 
-    int? quantity = context.select<CartProvider, int?>((value) => value.cart[
+    int? quantity = context
+        .select<CartProvider, int?>((value) => value.cart[selectedProductId]);
+
+/*    int? quantity = context.select<CartProvider, int?>((value) => value.cart[
         value.cart.keys.firstWhere((element) => element.id == selectedProductId,
-            orElse: () => ProductModel('', '', '', '', ''))]);
+            orElse: () => ProductModel('', '', '', '', ''))]);*/
 
     ProductModel product = context.select<DataProvider, ProductModel>(
         (value) => value.loadedProducts[selectedProductId]!);
@@ -60,10 +63,10 @@ class ProductCard extends StatelessWidget {
                 number: quantity ?? 0,
                 addCallback: () =>
                     Provider.of<CartProvider>(context, listen: false)
-                        .addToCart(product),
+                        .addToCart(product.id),
                 removeCallback: () =>
                     Provider.of<CartProvider>(context, listen: false)
-                        .removeFromCart(product),
+                        .removeFromCart(product.id),
               ),
             ),
           ],

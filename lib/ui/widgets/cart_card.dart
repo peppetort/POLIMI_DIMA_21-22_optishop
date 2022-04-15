@@ -2,25 +2,27 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dima21_migliore_tortorelli/app_theme.dart';
 import 'package:dima21_migliore_tortorelli/models/ProductModel.dart';
 import 'package:dima21_migliore_tortorelli/providers/data.dart';
-import 'package:dima21_migliore_tortorelli/providers/user_data.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class CartCard extends StatelessWidget {
-  final String preferenceId;
+  final Function onDismissedCallback;
+  final Function onAddCallback;
+  final Function onRemoveCallback;
   final String productId;
   final int quantity;
 
   const CartCard(
       {Key? key,
       required this.productId,
-      required this.preferenceId,
-      required this.quantity})
+      required this.quantity,
+      required this.onDismissedCallback,
+      required this.onAddCallback,
+      required this.onRemoveCallback})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-
     ProductModel? product = context.select<DataProvider, ProductModel?>(
         (value) => value.loadedProducts[productId]);
 
@@ -28,9 +30,7 @@ class CartCard extends StatelessWidget {
         ? Container()
         : Dismissible(
             key: Key(product.id),
-            onDismissed: (direction) async {
-              //TODO: rimuovere da preferito
-            },
+            onDismissed: (direction) => onDismissedCallback(),
             direction: DismissDirection.endToStart,
             dismissThresholds: const <DismissDirection, double>{
               DismissDirection.endToStart: 0.7,
@@ -116,15 +116,13 @@ class CartCard extends StatelessWidget {
                         ),
                       ),
                     ),
-                    ItemCounter(
-                      number: quantity,
-                      addCallback: () =>
-                          Provider.of<UserDataProvider>(context, listen: false)
-                              .addProductToPreference(preferenceId, productId),
-                      removeCallback: () =>
-                          Provider.of<UserDataProvider>(context, listen: false)
-                              .removeProductFromReference(
-                                  preferenceId, productId),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      child: ItemCounter(
+                        number: quantity,
+                        addCallback: () => onAddCallback(),
+                        removeCallback: () => onRemoveCallback(),
+                      ),
                     )
                   ],
                 ),
@@ -151,17 +149,17 @@ class ItemCounter extends StatelessWidget {
     return Row(
       children: [
         InkWell(
-          onTap: addCallback,
+          onTap: removeCallback,
           child: Container(
             decoration: const BoxDecoration(
               color: OptiShopAppTheme.primaryColor,
               borderRadius: BorderRadius.only(
-                topRight: Radius.circular(5.0),
+                bottomLeft: Radius.circular(5.0),
                 topLeft: Radius.circular(5.0),
               ),
             ),
             child: const Icon(
-              Icons.add,
+              Icons.remove,
               color: Colors.white,
             ),
           ),
@@ -176,17 +174,17 @@ class ItemCounter extends StatelessWidget {
           ),
         ),
         InkWell(
-          onTap: removeCallback,
+          onTap: addCallback,
           child: Container(
             decoration: const BoxDecoration(
               color: OptiShopAppTheme.primaryColor,
               borderRadius: BorderRadius.only(
                 bottomRight: Radius.circular(5.0),
-                bottomLeft: Radius.circular(5.0),
+                topRight: Radius.circular(5.0),
               ),
             ),
             child: const Icon(
-              Icons.remove,
+              Icons.add,
               color: Colors.white,
             ),
           ),
