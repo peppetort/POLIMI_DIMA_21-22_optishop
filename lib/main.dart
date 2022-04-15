@@ -1,5 +1,6 @@
 import 'package:dima21_migliore_tortorelli/optishop.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 
@@ -11,7 +12,9 @@ Logger _logger = Logger('flutterMain');
 Future<void> main() async{
   Logger.root.level = Level.ALL;
   Logger.root.onRecord.listen((record) {
-    print('${record.level.name}: ${record.time}: [${record.loggerName}] ${record.message}');
+    if (kDebugMode) {
+      print('${record.level.name}: ${record.time}: [${record.loggerName}] ${record.message}');
+    }
   });
 
   WidgetsFlutterBinding.ensureInitialized();

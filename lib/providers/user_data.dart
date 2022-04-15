@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:app_settings/app_settings.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dima21_migliore_tortorelli/models/ShopPreferenceModel.dart';
 import 'package:dima21_migliore_tortorelli/models/UserModel.dart';
 import 'package:dima21_migliore_tortorelli/providers/authentication.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -13,13 +14,21 @@ Logger _logger = Logger('UserDataProvider');
 
 class UserDataProvider with ChangeNotifier {
   late AuthenticationProvider? authenticationProvider;
-  final FirebaseFirestore fireStore;
-  late CollectionReference _userDataReference =
-      fireStore.collection('users');
+
+  final CollectionReference _userDataReference =
+      FirebaseFirestore.instance.collection('users');
+  final CollectionReference _userShopPreferencesReference =
+      FirebaseFirestore.instance.collection('users-preferences');
+
   late User? _userAuthReference;
   UserModel? user;
+
+  Map<String, ShopPreferenceModel> userShopPreferences = {};
+
   String lastMessage = '';
+
   StreamSubscription? userUpdatesStreamSub;
+  StreamSubscription? userPreferencesUpdatesSteamSub;
 
   final Location location;
   UserDataProvider(this.location, this.fireStore);
@@ -27,10 +36,11 @@ class UserDataProvider with ChangeNotifier {
   @override
   void dispose() {
     userUpdatesStreamSub?.cancel();
+    userPreferencesUpdatesSteamSub?.cancel();
     super.dispose();
   }
 
-  void _listenForChanges(User userRef) {
+  void _listenForUserChanges() {
     userUpdatesStreamSub = _userDataReference
         .doc(_userAuthReference!.uid)
         .snapshots()
@@ -40,8 +50,8 @@ class UserDataProvider with ChangeNotifier {
           Map<String, dynamic> updatedData =
               event.data() as Map<String, dynamic>;
           user = UserModel(
-              userRef.uid,
-              userRef.email ?? '',
+              _userAuthReference!.uid,
+              _userAuthReference!.email ?? '',
               updatedData['name'] ?? user!.name,
               updatedData['surname'] ?? user!.surname,
               updatedData['phone'] ?? user!.phone,
@@ -60,11 +70,13 @@ class UserDataProvider with ChangeNotifier {
     _userAuthReference = this.authenticationProvider?.firebaseAuth.currentUser;
 
     if (_userAuthReference != null) {
-      _listenForChanges(_userAuthReference!);
+      _listenForUserChanges();
     } else {
       user = null;
       lastMessage = '';
       userUpdatesStreamSub?.cancel();
+      userPreferencesUpdatesSteamSub?.cancel();
+      userShopPreferences.clear();
     }
   }
 
@@ -90,6 +102,10 @@ class UserDataProvider with ChangeNotifier {
 
   Future<bool> updateUserData(
       {String? name, String? surname, String? phone, double? distance}) async {
+    if (user == null) {
+      return false;
+    }
+
     try {
       Map<String, dynamic> payload = {
         'name': name ?? user!.name,
@@ -97,8 +113,229 @@ class UserDataProvider with ChangeNotifier {
         'phone': phone ?? user!.phone,
         'distance': distance ?? user!.distance,
       };
-      await _userDataReference.doc(_userAuthReference!.uid).set(payload);
+      await _userDataReference.doc(user!.uid).set(payload);
       _logger.info('Successfully updated user');
+      return true;
+    } on FirebaseException catch (e) {
+      _logger.info(e);
+      if (e.message != null) {
+        lastMessage = e.message!;
+      } else {
+        lastMessage = 'Connection error';
+      }
+      return false;
+    }
+  }
+
+  Future<bool> getUserPreferences() async {
+    if (user == null) {
+      return false;
+    }
+
+    try {
+      List<QueryDocumentSnapshot> userPreferences =
+          (await _userShopPreferencesReference
+                  .where('user', isEqualTo: user!.uid)
+                  .get())
+              .docs;
+
+      for (var pref in userPreferences) {
+        Map<String, dynamic> preferenceData =
+            pref.data() as Map<String, dynamic>;
+
+        Map<String, int> savedProducts =
+            (preferenceData['cart'] as Map<String, dynamic>).map(
+          (key, value) => MapEntry(
+            key,
+            value as int,
+          ),
+        );
+
+        ShopPreferenceModel shopPreference = ShopPreferenceModel(
+          pref.id,
+          preferenceData['name'],
+          preferenceData['user'],
+          savedProducts,
+        );
+
+        userShopPreferences[pref.id] = shopPreference;
+      }
+      notifyListeners();
+      return true;
+    } on FirebaseException catch (e) {
+      _logger.info(e);
+      if (e.message != null) {
+        lastMessage = e.message!;
+      } else {
+        lastMessage = 'Connection error';
+      }
+      return false;
+    }
+  }
+
+  Future<bool> createNewShopPreference(
+      String name, Map<String, int> shopList) async {
+    if (user == null) {
+      return false;
+    }
+
+    try {
+      Map<String, dynamic> payload = {
+        'name': name,
+        'user': user!.uid,
+        'cart': shopList,
+      };
+      DocumentReference shopPreferenceDR =
+          await _userShopPreferencesReference.add(payload);
+
+      userShopPreferences[shopPreferenceDR.id] =
+          ShopPreferenceModel(shopPreferenceDR.id, name, user!.uid, shopList);
+      notifyListeners();
+
+      _logger.info('Successfully inserted user preference $name');
+      return true;
+    } on FirebaseException catch (e) {
+      _logger.info(e);
+      if (e.message != null) {
+        lastMessage = e.message!;
+      } else {
+        lastMessage = 'Connection error';
+      }
+      return false;
+    }
+  }
+
+  Future<bool> removePreference(String preferenceId) async {
+    ShopPreferenceModel? shopPreference = userShopPreferences[preferenceId];
+
+    if (shopPreference == null) {
+      return false;
+    }
+
+    userShopPreferences.remove(preferenceId);
+    notifyListeners();
+
+    try {
+      _userShopPreferencesReference.doc(preferenceId).delete();
+      _logger.info('Successfully update user preference');
+      return true;
+    } on FirebaseException catch (e) {
+      _logger.info(e);
+      if (e.message != null) {
+        lastMessage = e.message!;
+      } else {
+        lastMessage = 'Connection error';
+      }
+      return false;
+    }
+  }
+
+  Future<bool> addProductToPreference(
+      String preferenceId, String productId) async {
+    if (user == null) {
+      return false;
+    }
+
+    ShopPreferenceModel? shopPreference = userShopPreferences[preferenceId];
+
+    if (shopPreference == null) {
+      return false;
+    }
+
+    Map<String, int> savedProducts = shopPreference.savedProducts;
+    savedProducts.putIfAbsent(productId, () => 0);
+    savedProducts[productId] = savedProducts[productId]! + 1;
+    ShopPreferenceModel updatedShopPreference =
+        shopPreference.copyWith(savedProducts: savedProducts);
+
+    userShopPreferences[preferenceId] = updatedShopPreference;
+    notifyListeners();
+
+    try {
+      Map<String, dynamic> payload = {
+        'cart': updatedShopPreference.savedProducts,
+      };
+      _userShopPreferencesReference
+          .doc(updatedShopPreference.id)
+          .update(payload);
+      _logger.info('Successfully update user preference');
+      return true;
+    } on FirebaseException catch (e) {
+      _logger.info(e);
+      if (e.message != null) {
+        lastMessage = e.message!;
+      } else {
+        lastMessage = 'Connection error';
+      }
+      return false;
+    }
+  }
+
+  Future<bool> removeProductFromReference(String preferenceId, String productId,
+      {bool delete = false}) async {
+    if (user == null) {
+      return false;
+    }
+
+    ShopPreferenceModel? shopPreference = userShopPreferences[preferenceId];
+    if (shopPreference == null) {
+      return false;
+    }
+
+    Map<String, int> savedProducts = shopPreference.savedProducts;
+
+    if (!savedProducts.containsKey(productId)) {
+      return false;
+    }
+
+    savedProducts[productId] = savedProducts[productId]! - 1;
+    if (savedProducts[productId] == 0 || delete) {
+      savedProducts.remove(productId);
+    }
+    ShopPreferenceModel updatedShopPreference =
+        shopPreference.copyWith(savedProducts: savedProducts);
+
+    userShopPreferences[preferenceId] = updatedShopPreference;
+    notifyListeners();
+
+    try {
+      Map<String, dynamic> payload = {
+        'cart': savedProducts,
+      };
+      _userShopPreferencesReference.doc(preferenceId).update(payload);
+      _logger.info('Successfully update user preference');
+      return true;
+    } on FirebaseException catch (e) {
+      _logger.info(e);
+      if (e.message != null) {
+        lastMessage = e.message!;
+      } else {
+        lastMessage = 'Connection error';
+      }
+      return false;
+    }
+  }
+
+  Future<bool> changePreferenceName(String preferenceId, String name) async {
+    if (user == null) {
+      return false;
+    }
+
+    ShopPreferenceModel? shopPreference = userShopPreferences[preferenceId];
+    if (shopPreference == null) {
+      return false;
+    }
+    ShopPreferenceModel updatedShopPreference =
+        shopPreference.copyWith(name: name);
+    userShopPreferences[preferenceId] = updatedShopPreference;
+    notifyListeners();
+
+    try {
+      Map<String, dynamic> payload = {
+        'name': name,
+      };
+      await _userShopPreferencesReference.doc(preferenceId).update(payload);
+      _logger.info('Successfully update user preference');
       return true;
     } on FirebaseException catch (e) {
       _logger.info(e);

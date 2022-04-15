@@ -54,7 +54,7 @@ class ResultProvider with ChangeNotifier {
       final geo = Geoflutterfire();
 
       Map<String, int> cartProducts =
-          cartProvider.cart.map((key, value) => MapEntry(key.id, value));
+          cartProvider.cart.map((key, value) => MapEntry(key, value));
 
       LocationData locationData = await userDataProvider.location.getLocation();
       GeoFirePoint userLocation = geo.point(

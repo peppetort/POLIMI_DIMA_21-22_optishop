@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dima21_migliore_tortorelli/app_theme.dart';
 import 'package:dima21_migliore_tortorelli/models/ProductModel.dart';
-import 'package:dima21_migliore_tortorelli/providers/cart.dart';
 import 'package:dima21_migliore_tortorelli/providers/data.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
@@ -10,99 +9,105 @@ import 'package:provider/provider.dart';
 Logger _logger = Logger('ProductCard');
 
 class ProductCard extends StatelessWidget {
-  final ProductModel selectedProduct;
+  final String selectedProductId;
+  final int quantity;
+  final VoidCallback onAddCallback;
+  final VoidCallback onRemoveCallback;
 
-  const ProductCard({Key? key, required this.selectedProduct})
+  const ProductCard(
+      {Key? key,
+      required this.selectedProductId,
+      required this.onAddCallback,
+      required this.onRemoveCallback,
+      required this.quantity})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    _logger.info('ProductCard build ${selectedProduct.id}');
-    int? quantity = context.select<CartProvider, int?>((value) => value.cart[
-        value.cart.keys.firstWhere(
-            (element) => element.id == selectedProduct.id,
-            orElse: () => ProductModel('', '', '', '', ''))]);
+    _logger.info('ProductCard build $selectedProductId');
 
-    ProductModel product = context.select<DataProvider, ProductModel>((value) =>
-        value.productsByCategories[selectedProduct.category]!
-            .firstWhere((element) => element.id == selectedProduct.id));
+    Provider.of<DataProvider>(context, listen: false)
+        .getProduct(selectedProductId);
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Stack(
-          children: [
-            Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(
-                    width: 1,
-                    color: quantity == null
-                        ? OptiShopAppTheme.grey
-                        : OptiShopAppTheme.primaryColor),
-                borderRadius: BorderRadius.circular(5.0),
-              ),
-              child: AspectRatio(
-                aspectRatio: 1,
-                child: product.image.isEmpty
-                    ? Container()
-                    : CachedNetworkImage(
-                        imageUrl: product.image,
-                        errorWidget: (context, url, error) =>
-                            const Icon(Icons.error),
-                      ),
-              ),
-            ),
-            Align(
-              alignment: Alignment.topRight,
-              child: ItemCounter(
-                number: quantity ?? 0,
-                addCallback: () =>
-                    Provider.of<CartProvider>(context, listen: false)
-                        .addToCart(product),
-                removeCallback: () =>
-                    Provider.of<CartProvider>(context, listen: false)
-                        .removeFromCart(product),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(
-          height: 5.0,
-        ),
-        Row(
-          children: [
-            Flexible(
-              child: Text(
-                product.name,
-                overflow: TextOverflow.ellipsis,
-                maxLines: 2,
-                textAlign: TextAlign.start,
-                style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                      color: OptiShopAppTheme.secondaryColor,
-                      fontWeight: FontWeight.bold,
+    ProductModel? product = context.select<DataProvider, ProductModel?>(
+        (value) => value.loadedProducts[selectedProductId]);
+
+    return product == null
+        ? Container(
+            color: OptiShopAppTheme.grey,
+          )
+        : Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Stack(
+                children: [
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(
+                          width: 1,
+                          color: quantity == 0
+                              ? OptiShopAppTheme.grey
+                              : OptiShopAppTheme.primaryColor),
+                      borderRadius: BorderRadius.circular(5.0),
                     ),
-              ),
-            ),
-          ],
-        ),
-        Row(
-          children: [
-            Flexible(
-              child: Text(
-                product.description,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                      color: OptiShopAppTheme.darkGray,
+                    child: AspectRatio(
+                      aspectRatio: 1,
+                      child: product.image == ''
+                          ? Container()
+                          : CachedNetworkImage(
+                              imageUrl: product.image,
+                              errorWidget: (context, url, error) =>
+                                  const Icon(Icons.error),
+                            ),
                     ),
+                  ),
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: ItemCounter(
+                      number: quantity,
+                      addCallback: () => onAddCallback(),
+                      removeCallback: () => onRemoveCallback(),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
-      ],
-    );
+              const SizedBox(
+                height: 5.0,
+              ),
+              Row(
+                children: [
+                  Flexible(
+                    child: Text(
+                      product.name,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                      textAlign: TextAlign.start,
+                      style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                            color: OptiShopAppTheme.secondaryColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Flexible(
+                    child: Text(
+                      product.description,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                            color: OptiShopAppTheme.darkGray,
+                          ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          );
   }
 }
 

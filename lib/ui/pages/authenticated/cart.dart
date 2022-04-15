@@ -1,10 +1,7 @@
-import 'dart:convert';
-
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dima21_migliore_tortorelli/app_theme.dart';
-import 'package:dima21_migliore_tortorelli/models/ProductModel.dart';
 import 'package:dima21_migliore_tortorelli/providers/cart.dart';
 import 'package:dima21_migliore_tortorelli/ui/widgets/big_button.dart';
+import 'package:dima21_migliore_tortorelli/ui/widgets/cart_card.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -13,7 +10,7 @@ class CartPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Map<ProductModel, int> cart = context.watch<CartProvider>().cart;
+    Map<String, int> cart = context.watch<CartProvider>().cart;
 
     return Scaffold(
       appBar: AppBar(
@@ -82,129 +79,22 @@ class CartPage extends StatelessWidget {
                       child: ListView.builder(
                           itemCount: cart.length,
                           itemBuilder: (BuildContext context, int index) {
-                            ProductModel product = cart.keys.toList()[index];
-
-                            return Dismissible(
-                              key: Key(product.id),
-                              onDismissed: (direction) async {
-                                Provider.of<CartProvider>(context,
-                                        listen: false)
-                                    .removeFromCart(product, force: true);
-                              },
-                              direction: DismissDirection.endToStart,
-                              dismissThresholds: const <DismissDirection,
-                                  double>{
-                                DismissDirection.endToStart: 0.7,
-                              },
-                              background: Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 30.0),
-                                margin:
-                                    const EdgeInsets.symmetric(vertical: 3.0),
-                                color: OptiShopAppTheme.secondaryColor,
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: const [
-                                    Padding(
-                                      padding: EdgeInsets.only(left: 8.0),
-                                      child: Icon(
-                                        Icons.delete_outline,
-                                        color: OptiShopAppTheme.backgroundColor,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              child: SizedBox(
-                                height: 100.0,
-                                child: Card(
-                                  margin: const EdgeInsets.symmetric(
-                                      vertical: 3.0, horizontal: 0),
-                                  clipBehavior: Clip.hardEdge,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(0),
-                                  ),
-                                  elevation: 2.0,
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        decoration: const BoxDecoration(
-                                            color: Colors.white,
-                                            border: Border(
-                                              right: BorderSide(
-                                                  width: 2,
-                                                  color: OptiShopAppTheme.grey),
-                                            )),
-                                        child: AspectRatio(
-                                          aspectRatio: 1,
-                                          child: CachedNetworkImage(
-                                            imageUrl: product.image,
-                                            errorWidget:
-                                                (context, url, error) =>
-                                                    const Icon(Icons.error),
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 10.0, horizontal: 10.0),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                product.name,
-                                                textAlign: TextAlign.start,
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyText2!
-                                                    .copyWith(
-                                                      color: OptiShopAppTheme
-                                                          .secondaryColor,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                              ),
-                                              const SizedBox(
-                                                height: 5.0,
-                                              ),
-                                              Text(
-                                                product.description,
-                                                textAlign: TextAlign.start,
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyText1!
-                                                    .copyWith(
-                                                      color: OptiShopAppTheme
-                                                          .darkGray,
-                                                    ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 20.0),
-                                        child: Center(
-                                          child: Text(
-                                            'x${cart.values.toList()[index]}',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .headline5!
-                                                .copyWith(
-                                                  color: OptiShopAppTheme
-                                                      .secondaryColor,
-                                                ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
+                            return CartCard(
+                              productId: cart.keys.toList()[index],
+                              onRemoveCallback: () => Provider.of<CartProvider>(
+                                      context,
+                                      listen: false)
+                                  .removeFromCart(cart.keys.toList()[index]),
+                              onDismissedCallback: () =>
+                                  Provider.of<CartProvider>(context,
+                                          listen: false)
+                                      .removeFromCart(cart.keys.toList()[index],
+                                          force: true),
+                              onAddCallback: () => Provider.of<CartProvider>(
+                                      context,
+                                      listen: false)
+                                  .addToCart(cart.keys.toList()[index]),
+                              quantity: cart.values.toList()[index],
                             );
                           }),
                     ),
