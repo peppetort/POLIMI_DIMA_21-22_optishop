@@ -1,9 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dima21_migliore_tortorelli/app_theme.dart';
 import 'package:dima21_migliore_tortorelli/models/CategoryModel.dart';
 import 'package:dima21_migliore_tortorelli/providers/data.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/products.dart';
-import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/tablet/categories.dart';
-import 'package:dima21_migliore_tortorelli/ui/widgets/big_button.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
@@ -11,178 +10,157 @@ import 'package:provider/provider.dart';
 Logger _logger = Logger('HomePage');
 
 class HomeTabletPage extends StatefulWidget {
-  const HomeTabletPage({Key? key}) : super(key: key);
+  final List<CategoryModel> categories;
+
+  const HomeTabletPage({Key? key, required this.categories}) : super(key: key);
 
   @override
   _HomeTabletPageState createState() => _HomeTabletPageState();
 }
 
 class _HomeTabletPageState extends State<HomeTabletPage> {
-  bool errorLoadingCategory = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadCategories();
-  }
-
-  void _loadCategories() async {
-    setState(() {
-      errorLoadingCategory = false;
-    });
-
-    bool res = await Provider.of<DataProvider>(context, listen: false)
-        .getAllCategories();
-
-    if (!res) {
-      setState(() {
-        errorLoadingCategory = true;
-      });
-    }
-  }
+  String? selectedCategory;
 
   @override
   Widget build(BuildContext context) {
-    _logger.info('Home build');
+    _logger.info('Home Tablet build');
 
-    List<CategoryModel> categories =
-        context.select<DataProvider, List<CategoryModel>>(
-            (value) => value.loadedCategories.values.toList());
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('OptiShop'),
-        centerTitle: true,
-        leading: IconButton(
-          onPressed: () => Navigator.pushNamed(context, '/settings'),
-          icon: const Icon(Icons.person_outline),
-        ),
-        actions: [
-          IconButton(
-            onPressed: () => Navigator.pushNamed(context, '/cart'),
-            icon: const Icon(Icons.shopping_cart_outlined),
-          ),
-        ],
-      ),
-      body: SafeArea(
-        child: errorLoadingCategory
-            ? Center(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Flexible(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 20.0),
-                        child: Image.asset('assets/images/Ill_ooops_1.png',
-                            fit: BoxFit.contain),
-                      ),
-                    ),
-                    Text(
-                      'Errore durante il caricamento dell categorie',
-                      style: Theme.of(context).textTheme.headline5,
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(
-                      height: 30.0,
-                    ),
-                    Padding(
-                      padding: OptiShopAppTheme.defaultPagePadding,
-                      child: BigElevatedButton(
-                        onPressed: () => _loadCategories(),
-                        // Navigator.pushNamed(context, '/results'),
-                        child: Text(
-                          'Riprova'.toUpperCase(),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              )
-            : categories.isEmpty
-                ? const Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : Row(
+    return Row(
+      children: [
+        Flexible(
+          flex: 1,
+          child: Container(
+            height: double.infinity,
+            //width: 130.0,
+            padding: const EdgeInsets.all(10.0),
+            child: ListView.builder(
+              itemCount: widget.categories.length,
+              itemBuilder: (context, index) {
+                return InkWell(
+                  onTap: () {
+                    setState(() {
+                      selectedCategory = widget.categories[index].id;
+                    });
+                    Provider.of<DataProvider>(context, listen: false)
+                        .getProductsByCategory(widget.categories[index].id);
+                  },
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Flexible(
-                        flex: 1,
-                        child: Container(
-                          height: double.infinity,
-                          //width: 130.0,
-                          padding: const EdgeInsets.all(10.0),
-                          child: CategoriesTabletPage(
-                            categories: categories,
+                      Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(
+                            width:
+                                widget.categories[index].id == selectedCategory
+                                    ? 2
+                                    : 1,
+                            color:
+                                widget.categories[index].id == selectedCategory
+                                    ? OptiShopAppTheme.primaryColor
+                                    : OptiShopAppTheme.grey,
+                          ),
+                          borderRadius:
+                              widget.categories[index].id == selectedCategory
+                                  ? const BorderRadius.only(
+                                      topRight: Radius.circular(5.0),
+                                      topLeft: Radius.circular(5.0),
+                                    )
+                                  : BorderRadius.circular(5.0),
+                        ),
+                        child: AspectRatio(
+                          aspectRatio: 1,
+                          child: CachedNetworkImage(
+                            imageUrl: widget.categories[index].image,
+                            errorWidget: (context, url, error) =>
+                                const Icon(Icons.error),
                           ),
                         ),
                       ),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(5.0),
+                        decoration: BoxDecoration(
+                            color:
+                                widget.categories[index].id == selectedCategory
+                                    ? OptiShopAppTheme.primaryColor
+                                    : OptiShopAppTheme.backgroundColor,
+                            borderRadius: const BorderRadius.only(
+                              bottomLeft: Radius.circular(5.0),
+                              bottomRight: Radius.circular(5.0),
+                            )),
+                        child: Text(
+                          widget.categories[index].name,
+                          textAlign: TextAlign.center,
+                          style:
+                              Theme.of(context).textTheme.bodyText1!.copyWith(
+                                    color: OptiShopAppTheme.secondaryColor,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 20.0,
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+        Flexible(
+          flex: 7,
+          child: selectedCategory == null
+              ? Center(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
                       Flexible(
-                        flex: 7,
-                        child: Builder(
-                          builder: (context) {
-                            _logger.info('HomePageBody build');
-                            String? selectedCategory =
-                                context.select<DataProvider, String?>(
-                                    (value) => value.selectedCategory);
-
-                            return selectedCategory == null
-                                ? Center(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Flexible(
-                                          child: Container(
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 20.0),
-                                            //margin: const EdgeInsets.only(top: 30.0),
-                                            child: Image.asset(
-                                              'assets/images/Ill_inizia_a_usare_optishop.png',
-                                            ),
-                                          ),
-                                        ),
-                                        Text(
-                                          'Inizia a usare OptiShop',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .headline4!
-                                              .copyWith(height: 1.4),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                        const SizedBox(
-                                          height: 10.0,
-                                        ),
-                                        Container(
-                                          margin: const EdgeInsets.only(
-                                              bottom: 30.0),
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 25.0),
-                                          child: Text(
-                                            'Seleziona una categoria di prodotti e aggiungi al carrello quelli che vuoi acquistare',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyText2!
-                                                .copyWith(
-                                                    color: OptiShopAppTheme
-                                                        .primaryText,
-                                                    height: 1.5),
-                                            textAlign: TextAlign.center,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                : ProductPage(
-                                    selectedCategoryId: selectedCategory,
-                                  );
-                          },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 20.0),
+                          //margin: const EdgeInsets.only(top: 30.0),
+                          child: Image.asset(
+                            'assets/images/Ill_inizia_a_usare_optishop.png',
+                          ),
+                        ),
+                      ),
+                      Text(
+                        'Inizia a usare OptiShop',
+                        style: Theme.of(context)
+                            .textTheme
+                            .headline4!
+                            .copyWith(height: 1.4),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(
+                        height: 10.0,
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 30.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                        child: Text(
+                          'Seleziona una categoria di prodotti e aggiungi al carrello quelli che vuoi acquistare',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText2!
+                              .copyWith(
+                                  color: OptiShopAppTheme.primaryText,
+                                  height: 1.5),
+                          textAlign: TextAlign.center,
                         ),
                       ),
                     ],
                   ),
-      ),
+                )
+              : ProductPage(
+                  selectedCategoryId: selectedCategory!,
+                ),
+        ),
+      ],
     );
   }
 }

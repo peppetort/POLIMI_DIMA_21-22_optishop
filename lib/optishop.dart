@@ -5,6 +5,8 @@ import 'package:dima21_migliore_tortorelli/providers/result.dart';
 import 'package:dima21_migliore_tortorelli/providers/user_data.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/allow_location.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/cart.dart';
+import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/favorites.dart';
+import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/home.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/phone/home.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/results.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/settings.dart';
@@ -42,18 +44,17 @@ class OptiShop extends StatelessWidget {
           update: (_, authenticationProvider, cartProvider) => cartProvider!
             ..update(authenticationProvider: authenticationProvider),
         ),
-        ChangeNotifierProxyProvider<AuthenticationProvider, UserDataProvider>(
-          create: (_) => UserDataProvider(),
-          lazy: false,
-          update: (_, authenticationProvider, userDataProvider) =>
-              userDataProvider!
-                ..update(authenticationProvider: authenticationProvider),
-        ),
         ChangeNotifierProxyProvider<AuthenticationProvider, DataProvider>(
           create: (_) => DataProvider(),
           lazy: false,
           update: (_, authenticationProvider, dataProvider) => dataProvider!
             ..update(authenticationProvider: authenticationProvider),
+        ),
+        ChangeNotifierProxyProvider<AuthenticationProvider, UserDataProvider>(
+          create: (_) => UserDataProvider(),
+          update: (_, authenticationProvider, userDataProvider) =>
+              userDataProvider!
+                ..update(authenticationProvider: authenticationProvider),
         ),
         ChangeNotifierProxyProvider2<UserDataProvider, CartProvider,
             ResultProvider>(
@@ -74,6 +75,7 @@ class OptiShop extends StatelessWidget {
           '/recover': (BuildContext context) => const RecoverPasswordPage(),
           '/settings': (BuildContext context) => const SettingsPage(),
           '/cart': (BuildContext context) => const CartPage(),
+          '/favorites': (BuildContext context) => const FavoritesPage(),
           '/results': (BuildContext context) => const ResultsPage(),
           '/updateprofile': (BuildContext context) => const UpdateProfilePage(),
           '/updatepassword': (BuildContext context) =>
@@ -111,16 +113,7 @@ class Root extends StatelessWidget {
 
                     if (locationPermission != PermissionStatus.denied &&
                         locationPermission != PermissionStatus.deniedForever) {
-                      return LayoutBuilder(
-                        builder:
-                            (BuildContext context, BoxConstraints constraints) {
-                          if (constraints.maxWidth > 600) {
-                            return const HomeTabletPage();
-                          } else {
-                            return const HomePhonePage();
-                          }
-                        },
-                      );
+                      return const HomePage();
                     } else {
                       return AllowLocationPage();
                     }
