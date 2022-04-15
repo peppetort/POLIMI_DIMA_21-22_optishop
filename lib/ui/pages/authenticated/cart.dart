@@ -5,6 +5,7 @@ import 'package:dima21_migliore_tortorelli/app_theme.dart';
 import 'package:dima21_migliore_tortorelli/models/ProductModel.dart';
 import 'package:dima21_migliore_tortorelli/providers/cart.dart';
 import 'package:dima21_migliore_tortorelli/ui/widgets/big_button.dart';
+import 'package:dima21_migliore_tortorelli/ui/widgets/cart_card.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -13,7 +14,8 @@ class CartPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Map<ProductModel, int> cart = context.watch<CartProvider>().cart;
+    // Map<ProductModel, int> cart = context.watch<CartProvider>().cart;
+    Map<String, int> cart = context.watch<CartProvider>().cart;
 
     return Scaffold(
       appBar: AppBar(
@@ -82,7 +84,24 @@ class CartPage extends StatelessWidget {
                       child: ListView.builder(
                           itemCount: cart.length,
                           itemBuilder: (BuildContext context, int index) {
-                            ProductModel product = cart.keys.toList()[index];
+                            return CartCard(
+                              productId: cart.keys.toList()[index],
+                              onRemoveCallback: () => Provider.of<CartProvider>(
+                                      context,
+                                      listen: false)
+                                  .removeFromCart(cart.keys.toList()[index]),
+                              onDismissedCallback: () =>
+                                  Provider.of<CartProvider>(context,
+                                          listen: false)
+                                      .removeFromCart(cart.keys.toList()[index],
+                                          force: true),
+                              onAddCallback: () => Provider.of<CartProvider>(
+                                      context,
+                                      listen: false)
+                                  .addToCart(cart.keys.toList()[index]),
+                              quantity: cart.values.toList()[index],
+                            );
+/*                            ProductModel product = cart.keys.toList()[index];
 
                             return Dismissible(
                               key: Key(product.id),
@@ -205,7 +224,7 @@ class CartPage extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                            );
+                            );*/
                           }),
                     ),
                     Container(

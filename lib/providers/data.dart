@@ -14,9 +14,9 @@ Logger _logger = Logger('DataProvider');
 class DataProvider with ChangeNotifier {
   String lastMessage = '';
 
-  final Map<String, CategoryModel> categories = {};
-  final Map<String, List<ProductModel>> productsByCategories = {};
-  String? selectedCategory;
+  final Map<String, ProductModel> loadedProducts = {};
+  final Map<String, CategoryModel> loadedCategories = {};
+  final Map<String, List<String>?> productsByCategory = {};
 
   final CollectionReference _categoriesReference =
       FirebaseFirestore.instance.collection('categories');
@@ -29,7 +29,7 @@ class DataProvider with ChangeNotifier {
 
   @override
   void dispose() {
-    _stopListenForChanges();
+    productsUpdatesStreamSub?.cancel();
     super.dispose();
   }
 
@@ -37,15 +37,13 @@ class DataProvider with ChangeNotifier {
     this.authenticationProvider = authenticationProvider;
 
     if (this.authenticationProvider.firebaseAuth.currentUser == null) {
-      categories.clear();
-      productsByCategories.clear();
-      selectedCategory = null;
-      _stopListenForChanges();
+      productsUpdatesStreamSub?.cancel();
+      loadedProducts.clear();
+      loadedCategories.clear();
+      productsByCategory.clear();
+    } else {
+      _listenForChanges();
     }
-  }
-
-  void _stopListenForChanges() {
-    productsUpdatesStreamSub?.cancel();
   }
 
   void _getImageUrl(ProductModel productModel) async {
@@ -54,17 +52,11 @@ class DataProvider with ChangeNotifier {
           .ref(productModel.image)
           .getDownloadURL();
 
-      int? index = productsByCategories[productModel.category]
-          ?.indexWhere((element) => element.id == productModel.id);
+      ProductModel? productWithImage =
+          productModel.copyWith(image: downloadURL);
 
-      if (index != null && index != -1) {
-        if (productsByCategories[productModel.category]![index].image !=
-            downloadURL) {
-          productsByCategories[productModel.category]!.replaceRange(
-              index, index + 1, [productModel.copyWith(image: downloadURL)]);
-          notifyListeners();
-        }
-      }
+      loadedProducts[productModel.id] = productWithImage;
+      notifyListeners();
     } on firebase_storage.FirebaseException catch (e) {
       _logger.info(e.message! + ' ' + productModel.id);
     }
@@ -78,54 +70,59 @@ class DataProvider with ChangeNotifier {
             Map<String, dynamic> data =
                 element.doc.data() as Map<String, dynamic>;
 
-            if (data['category'] != null) {
-              List<ProductModel>? productOfCategory =
-                  productsByCategories[data['category']];
+            String productId = element.doc.id;
+            String categoryId = data['category'];
+            String productName = data['name'];
+            String productDescription = data['description'];
+            String productImagePath = data['image'];
 
-              if (productOfCategory != null) {
-                int index = productOfCategory
-                    .indexWhere((product) => product.id == element.doc.id);
+            ProductModel? loadedProduct = loadedProducts[productId];
+            if (loadedProduct != null) {
+              ProductModel newProduct = loadedProduct.copyWith(
+                name: productName,
+                description: productDescription,
+              );
 
-                if (index != -1) {
-                  ProductModel productChange =
-                      productOfCategory[index].copyWith(
-                    name: data['name'],
-                    description: data['description'],
-                  );
+              loadedProducts[productId] = newProduct;
 
-                  productOfCategory
-                      .replaceRange(index, index + 1, [productChange]);
-                  _getImageUrl(productChange.copyWith(image: data['image']));
-                  notifyListeners();
-                }
+              if (productsByCategory[categoryId] != null &&
+                  !productsByCategory[categoryId]!.contains(productId)) {
+                productsByCategory[categoryId]!.add(productId);
               }
+
+              if (newProduct.image == '') {
+                _getImageUrl(newProduct.copyWith(image: productImagePath));
+              }
+
+              notifyListeners();
             }
           } else if (element.type == DocumentChangeType.added) {
             Map<String, dynamic> data =
                 element.doc.data() as Map<String, dynamic>;
 
             if (data['name'] != null && data['category'] != null) {
-              ProductModel newProduct = ProductModel(
-                  element.doc.id,
-                  data['name'],
-                  data['description'] ?? '',
-                  '',
-                  data['category']);
+              String productId = element.doc.id;
+              String categoryId = data['category'];
+              String productName = data['name'];
+              String productDescription = data['description'];
+              String productImagePath = data['image'];
 
-              if (productsByCategories.containsKey(newProduct.category)) {
-                int index = productsByCategories[newProduct.category]!
-                    .indexWhere((product) => product.id == newProduct.id);
-                if (index == -1) {
-                  List<ProductModel> copy = List<ProductModel>.from(
-                      productsByCategories[newProduct.category]!);
-                  copy.add(newProduct);
-                  productsByCategories[newProduct.category] = copy;
-                  _getImageUrl(newProduct.copyWith(image: data['image']));
-                  notifyListeners();
+              ProductModel newProduct = ProductModel(
+                  productId, productName, productDescription, '', categoryId);
+
+              if (loadedProducts[productId] != null) {
+                loadedProducts[productId] = newProduct;
+
+                if (productsByCategory[categoryId] != null) {
+                  if (!productsByCategory[categoryId]!.contains(productId)) {
+                    productsByCategory[categoryId]!.add(productId);
+                  }
+                } else {
+                  productsByCategory[categoryId] = [productId];
                 }
-              } else {
-                productsByCategories[newProduct.category] = [newProduct];
-                _getImageUrl(newProduct.copyWith(image: data['image']));
+
+                _getImageUrl(newProduct.copyWith(image: productImagePath));
+
                 notifyListeners();
               }
             }
@@ -138,8 +135,8 @@ class DataProvider with ChangeNotifier {
   }
 
   Future<bool> getAllCategories() async {
-    _stopListenForChanges();
-
+    //productsUpdatesStreamSub?.pause();
+    loadedCategories.clear();
     try {
       List<QueryDocumentSnapshot> categoryList =
           (await _categoriesReference.get()).docs;
@@ -152,12 +149,12 @@ class DataProvider with ChangeNotifier {
             .ref(categoryData['image'])
             .getDownloadURL();
 
-        categories[element.id] =
+        loadedCategories[element.id] =
             CategoryModel(element.id, categoryData['name'], downloadURL);
       }
       _logger.info('Successfully fetched all categories');
-      _listenForChanges();
       notifyListeners();
+      //productsUpdatesStreamSub?.resume();
       return true;
     } on FirebaseException catch (e) {
       _logger.info(e);
@@ -172,11 +169,10 @@ class DataProvider with ChangeNotifier {
 
   Future<bool> getProductsByCategory(String categoryId,
       {bool force = false}) async {
-    if (productsByCategories.containsKey(categoryId) && !force) {
+    if (productsByCategory.containsKey(categoryId) && !force) {
       return true;
     }
 
-    List<ProductModel> selectedProducts = [];
     try {
       List<QueryDocumentSnapshot> products = (await _productsReference
               .where('category', isEqualTo: categoryId)
@@ -191,14 +187,24 @@ class DataProvider with ChangeNotifier {
           element.id,
           productData['name'],
           productData['description'],
-          productData['image'],
+          '',
           categoryId,
         );
 
-        selectedProducts.add(toAdd);
-        _getImageUrl(toAdd);
+        if (!loadedProducts.containsKey(toAdd.id)) {
+          loadedProducts[toAdd.id] = toAdd;
+          _getImageUrl(toAdd.copyWith(image: productData['image']));
+        }
+
+        if (productsByCategory[categoryId] == null) {
+          productsByCategory[categoryId] = [];
+        }
+
+        if (!productsByCategory[categoryId]!.contains(toAdd.id)) {
+          productsByCategory[categoryId]!.add(toAdd.id);
+        }
       }
-      productsByCategories[categoryId] = selectedProducts;
+
       _logger.info('Successfully fetched products of category $categoryId');
       notifyListeners();
       return true;
@@ -211,16 +217,5 @@ class DataProvider with ChangeNotifier {
       }
       return false;
     }
-  }
-
-  void selectCategory(String categoryId) {
-    selectedCategory = categoryId;
-    getProductsByCategory(categoryId);
-    notifyListeners();
-  }
-
-  void deselectCategory() {
-    selectedCategory = null;
-    notifyListeners();
   }
 }
