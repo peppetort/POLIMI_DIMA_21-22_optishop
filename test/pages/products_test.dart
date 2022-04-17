@@ -9,13 +9,13 @@ import 'package:provider/provider.dart';
 import 'package:mockito/mockito.dart';
 
 import 'cart_test.mocks.dart';
-import 'categories_test.mocks.dart';
+import 'home_test.mocks.dart';
 
 void main() {
   testWidgets('display loading product page', (WidgetTester tester) async {
     final mockDataProv = MockDataProvider();
 
-    when(mockDataProv.productsByCategories).thenReturn({});
+    when(mockDataProv.productsByCategory).thenReturn({});
 
     await tester.pumpWidget(ChangeNotifierProvider<DataProvider>.value(
       value: mockDataProv,
@@ -31,9 +31,9 @@ void main() {
 
   testWidgets('display empty product page', (WidgetTester tester) async {
     final mockDataProv = MockDataProvider();
-    Map<String, List<ProductModel>> dummyProducts = {'dummycategoryid' : []};
+    Map<String, List<String>> dummyProducts = {'dummycategoryid' : []};
 
-    when(mockDataProv.productsByCategories).thenReturn(dummyProducts);
+    when(mockDataProv.productsByCategory).thenReturn(dummyProducts);
 
     await tester.pumpWidget(ChangeNotifierProvider<DataProvider>.value(
       value: mockDataProv,
@@ -50,13 +50,18 @@ void main() {
   testWidgets('display non-empty product page', (WidgetTester tester) async {
     final mockDataProv = MockDataProvider();
     final mockCartProv = MockCartProvider();
-    final prod1 = ProductModel('dummyid1', 'dummyname1', 'dummydesc1', 'dummyimage1', 'dummycategoryid');
-    final prod2 = ProductModel('dummyid2', 'dummyname2', 'dummydesc2', 'dummyimage2', 'dummycategoryid');
+    const prod1 = "prod1";
+    const prod2 = "prod2";
     //different quantities to test the different product cards builds
-    Map<ProductModel, int> dummyCart = {prod1 : 1, prod2 : 0};
+    Map<String, int> dummyCart = {prod1 : 1, prod2 : 0};
     final dummyProducts = {'dummycategoryid' : [prod1, prod2]};
+    final mod1 = ProductModel('a', 'b', 'c', 'd', 'e');
+    final mod2 = ProductModel('e', 'd', 'c', 'b', 'a');
+    Map<String, ProductModel> dummyLoadedProducts = {'prod1': mod1, 'prod2': mod2};
 
-    when(mockDataProv.productsByCategories).thenReturn(dummyProducts);
+    when(mockDataProv.getProduct(any)).thenAnswer((_) async => true);
+    when(mockDataProv.productsByCategory).thenReturn(dummyProducts);
+    when(mockDataProv.loadedProducts).thenReturn(dummyLoadedProducts);
     when(mockCartProv.cart).thenReturn(dummyCart);
 
     await tester.pumpWidget(ChangeNotifierProvider<DataProvider>.value(
