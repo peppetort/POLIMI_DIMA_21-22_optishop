@@ -21,8 +21,9 @@ class FavoritesPhonePage extends StatelessWidget {
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) =>
-                    FavoriteDetailsPage(preferenceId: preference.id),
+                builder: (context) => FavoriteDetailsPage(
+                  selectedPreferenceId: preference.id,
+                ),
               ),
             ),
             child: SizedBox(

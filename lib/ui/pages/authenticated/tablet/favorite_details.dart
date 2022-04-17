@@ -1,4 +1,6 @@
+import 'package:dima21_migliore_tortorelli/providers/cart.dart';
 import 'package:dima21_migliore_tortorelli/providers/user_data.dart';
+import 'package:dima21_migliore_tortorelli/ui/widgets/big_button.dart';
 import 'package:dima21_migliore_tortorelli/ui/widgets/product_card.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
@@ -44,35 +46,64 @@ class FavoriteDetailsTabletPage extends StatelessWidget {
         ? const Center(
             child: CircularProgressIndicator(),
           )
-        : GridView.builder(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: productsPerRow,
-              mainAxisSpacing: 15.0,
-              crossAxisSpacing: 10.0,
-              childAspectRatio: 4 / 7,
-            ),
-            padding: const EdgeInsets.all(15.0),
-            itemCount: savedProducts.length,
-            itemBuilder: (BuildContext context, int index) {
-              String productId = savedProducts[index];
+        : Column(
+            children: [
+              Expanded(
+                child: GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: productsPerRow,
+                      mainAxisSpacing: 15.0,
+                      crossAxisSpacing: 10.0,
+                      childAspectRatio: 4 / 7,
+                    ),
+                    padding: const EdgeInsets.all(15.0),
+                    itemCount: savedProducts.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      String productId = savedProducts[index];
 
-              return Builder(builder: (context) {
-                int? quantity = context.select<UserDataProvider, int?>(
-                    (value) => value.userShopPreferences[selectedPreferenceId]
-                        ?.savedProducts[productId]);
+                      return Builder(builder: (context) {
+                        int? quantity = context.select<UserDataProvider, int?>(
+                            (value) => value
+                                .userShopPreferences[selectedPreferenceId]
+                                ?.savedProducts[productId]);
 
-                return ProductCard(
-                  selectedProductId: productId,
-                  quantity: quantity ?? 0,
-                  onRemoveCallback: () =>
-                      Provider.of<UserDataProvider>(context, listen: false)
-                          .removeProductFromReference(
-                              selectedPreferenceId, productId),
-                  onAddCallback: () => Provider.of<UserDataProvider>(context,
-                          listen: false)
-                      .addProductToPreference(selectedPreferenceId, productId),
-                );
-              });
-            });
+                        return ProductCard(
+                          selectedProductId: productId,
+                          quantity: quantity ?? 0,
+                          onRemoveCallback: () => Provider.of<UserDataProvider>(
+                                  context,
+                                  listen: false)
+                              .removeProductFromReference(
+                                  selectedPreferenceId, productId),
+                          onAddCallback: () => Provider.of<UserDataProvider>(
+                                  context,
+                                  listen: false)
+                              .addProductToPreference(
+                                  selectedPreferenceId, productId),
+                        );
+                      });
+                    }),
+              ),
+              Center(
+                child: BigElevatedButton(
+                  onPressed: () {
+                    Map<String, int>? savedProducts = context
+                        .read<UserDataProvider>()
+                        .userShopPreferences[selectedPreferenceId]
+                        ?.savedProducts;
+
+                    if (savedProducts != null) {
+                      Provider.of<CartProvider>(context, listen: false)
+                          .createCart(savedProducts);
+                      Navigator.pushNamed(context, '/results');
+                    }
+                  },
+                  child: Text(
+                    'Avvia ricerca'.toUpperCase(),
+                  ),
+                ),
+              ),
+            ],
+          );
   }
 }

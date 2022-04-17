@@ -12,23 +12,32 @@ import 'package:provider/provider.dart';
 Logger _logger = Logger('PreferenceDetailsPage');
 
 class FavoriteDetailsPage extends StatelessWidget {
-  final String preferenceId;
+  final String selectedPreferenceId;
 
-  const FavoriteDetailsPage({Key? key, required this.preferenceId})
+  const FavoriteDetailsPage({Key? key, required this.selectedPreferenceId})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     _logger.info('Preference details page build');
 
+/*    ShopPreferenceModel? preference =
+        context.select<UserDataProvider, ShopPreferenceModel?>(
+            (value) => value.userShopPreferences[selectedPreferenceId]);
+
+    Map<String, int>? savedProducts = context
+        .watch<UserDataProvider>()
+        .userShopPreferences[selectedPreferenceId]
+        ?.savedProducts;*/
+
     ShopPreferenceModel? preference =
         context.select<UserDataProvider, ShopPreferenceModel?>(
-            (value) => value.userShopPreferences[preferenceId]);
+            (value) => value.userShopPreferences[selectedPreferenceId]);
 
-    Map<String, dynamic>? savedProducts = context
-        .watch<UserDataProvider>()
-        .userShopPreferences[preferenceId]
-        ?.savedProducts;
+    List<String>? savedProducts =
+        context.select<UserDataProvider, List<String>?>((value) => value
+            .userShopPreferences[selectedPreferenceId]?.savedProducts.keys
+            .toList());
 
     return Scaffold(
       appBar: AppBar(
@@ -44,7 +53,7 @@ class FavoriteDetailsPage extends StatelessWidget {
                 _logger.info('Nome selezionato $name');
 
                 Provider.of<UserDataProvider>(context, listen: false)
-                    .changePreferenceName(preferenceId, name);
+                    .changePreferenceName(selectedPreferenceId, name);
               }
             },
             icon: const Icon(Icons.mode_outlined),
@@ -52,7 +61,7 @@ class FavoriteDetailsPage extends StatelessWidget {
           IconButton(
             onPressed: () {
               Provider.of<UserDataProvider>(context, listen: false)
-                  .removePreference(preferenceId);
+                  .removePreference(selectedPreferenceId);
               Navigator.pop(context);
             },
             icon: const Icon(Icons.delete_outline),
@@ -72,29 +81,39 @@ class FavoriteDetailsPage extends StatelessWidget {
                       child: ListView.builder(
                           itemCount: savedProducts.length,
                           itemBuilder: (BuildContext context, int index) {
-                            String productId =
-                                savedProducts.keys.toList()[index];
+                            /*          String productId =
+                                savedProducts.keys.toList()[index];*/
+                            String productId = savedProducts[index];
 
-                            return CartCard(
-                              productId: productId,
-                              quantity: savedProducts.values.toList()[index],
-                              onRemoveCallback: () =>
-                                  Provider.of<UserDataProvider>(context,
-                                          listen: false)
-                                      .removeProductFromReference(
-                                          preferenceId, productId),
-                              onAddCallback: () =>
-                                  Provider.of<UserDataProvider>(context,
-                                          listen: false)
-                                      .addProductToPreference(
-                                          preferenceId, productId),
-                              onDismissedCallback: () =>
-                                  Provider.of<UserDataProvider>(context,
-                                          listen: false)
-                                      .removeProductFromReference(
-                                          preferenceId, productId,
-                                          delete: true),
-                            );
+                            return Builder(builder: (context) {
+                              int? quantity = context.select<UserDataProvider,
+                                      int?>(
+                                  (value) => value
+                                      .userShopPreferences[selectedPreferenceId]
+                                      ?.savedProducts[productId]);
+
+                              return CartCard(
+                                productId: productId,
+                                //quantity: savedProducts.values.toList()[index],
+                                quantity: quantity ?? 0,
+                                onRemoveCallback: () =>
+                                    Provider.of<UserDataProvider>(context,
+                                            listen: false)
+                                        .removeProductFromReference(
+                                            selectedPreferenceId, productId),
+                                onAddCallback: () =>
+                                    Provider.of<UserDataProvider>(context,
+                                            listen: false)
+                                        .addProductToPreference(
+                                            selectedPreferenceId, productId),
+                                onDismissedCallback: () =>
+                                    Provider.of<UserDataProvider>(context,
+                                            listen: false)
+                                        .removeProductFromReference(
+                                            selectedPreferenceId, productId,
+                                            delete: true),
+                              );
+                            });
                           }),
                     ),
                     Container(
@@ -115,9 +134,16 @@ class FavoriteDetailsPage extends StatelessWidget {
                       child: Center(
                         child: BigElevatedButton(
                           onPressed: () {
-                            Provider.of<CartProvider>(context, listen: false)
-                                .createCart(savedProducts);
-                            Navigator.pushNamed(context, '/results');
+                            Map<String, int>? savedProducts = context
+                                .read<UserDataProvider>()
+                                .userShopPreferences[selectedPreferenceId]
+                                ?.savedProducts;
+
+                            if (savedProducts != null) {
+                              Provider.of<CartProvider>(context, listen: false)
+                                  .createCart(savedProducts);
+                              Navigator.pushNamed(context, '/results');
+                            }
                           },
                           child: Text(
                             'Avvia ricerca'.toUpperCase(),

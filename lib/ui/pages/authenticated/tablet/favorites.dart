@@ -52,24 +52,66 @@ class _FavoritesTabletPageState extends State<FavoritesTabletPage> {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10.0),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Center(
-                              child: Text(
-                                preference.name,
-                                overflow: TextOverflow.ellipsis,
-                                textAlign: TextAlign.start,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headline5!
-                                    .copyWith(
-                                      color: OptiShopAppTheme.secondaryColor,
-                                      fontWeight: selectedIndex == index
-                                          ? FontWeight.bold
-                                          : FontWeight.normal,
-                                    ),
-                              ),
+                            Text(
+                              preference.name,
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.start,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline5!
+                                  .copyWith(
+                                    color: OptiShopAppTheme.secondaryColor,
+                                    fontWeight: selectedIndex == index
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
+                                  ),
+                            ),
+                            Row(
+                              children: [
+                                InkWell(
+                                  onTap: () async {
+                                    String name = await showInputAlertDialog(
+                                        context,
+                                        title:
+                                            'Inserisci un nome per la preferenza');
+
+                                    if (name != '') {
+                                      Provider.of<UserDataProvider>(context,
+                                              listen: false)
+                                          .changePreferenceName(
+                                              widget
+                                                  .userSavedBags[selectedIndex]
+                                                  .id,
+                                              name);
+                                    }
+                                  },
+                                  child: const Icon(
+                                    Icons.mode_outlined,
+                                    color: OptiShopAppTheme.secondaryColor,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 10.0,
+                                ),
+                                InkWell(
+                                  onTap: () {
+                                    Provider.of<UserDataProvider>(context,
+                                            listen: false)
+                                        .removePreference(widget
+                                            .userSavedBags[selectedIndex].id);
+                                    setState(() {
+                                      selectedIndex = 0;
+                                    });
+                                  },
+                                  child: const Icon(
+                                    Icons.delete_outline,
+                                    color: OptiShopAppTheme.secondaryColor,
+                                  ),
+                                )
+                              ],
                             ),
                           ],
                         ),
@@ -81,52 +123,8 @@ class _FavoritesTabletPageState extends State<FavoritesTabletPage> {
         ),
         Flexible(
           flex: 2,
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  InkWell(
-                    onTap: () async {
-                      String name = await showInputAlertDialog(context,
-                          title: 'Inserisci un nome per la preferenza');
-
-                      if (name != '') {
-                        Provider.of<UserDataProvider>(context, listen: false)
-                            .changePreferenceName(
-                                widget.userSavedBags[selectedIndex].id, name);
-                      }
-                    },
-                    child: const Icon(
-                      Icons.mode_outlined,
-                      color: OptiShopAppTheme.secondaryColor,
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 10.0,
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Provider.of<UserDataProvider>(context, listen: false)
-                          .removePreference(
-                              widget.userSavedBags[selectedIndex].id);
-                      setState(() {
-                        selectedIndex = 0;
-                      });
-                    },
-                    child: const Icon(
-                      Icons.delete_outline,
-                      color: OptiShopAppTheme.secondaryColor,
-                    ),
-                  )
-                ],
-              ),
-              Expanded(
-                child: FavoriteDetailsTabletPage(
-                  selectedPreferenceId: widget.userSavedBags[selectedIndex].id,
-                ),
-              ),
-            ],
+          child: FavoriteDetailsTabletPage(
+            selectedPreferenceId: widget.userSavedBags[selectedIndex].id,
           ),
         ),
       ],
