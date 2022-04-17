@@ -35,8 +35,6 @@ class UserDataProvider with ChangeNotifier {
 
   UserDataProvider(this.location, this.fireStore);
 
-  UserDataProvider(this.location, this.fireStore);
-
   @override
   void dispose() {
     userUpdatesStreamSub?.cancel();

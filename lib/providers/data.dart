@@ -19,10 +19,6 @@ class DataProvider with ChangeNotifier {
   final Map<String, List<String>?> productsByCategory = {};
 
   final FirebaseFirestore fireStore;
-  late CollectionReference _categoriesReference =
-      fireStore.collection('categories');
-  late CollectionReference _productsReference =
-      fireStore.collection('products');
 
   late final CollectionReference _categoriesReference =
       fireStore.collection('categories');
