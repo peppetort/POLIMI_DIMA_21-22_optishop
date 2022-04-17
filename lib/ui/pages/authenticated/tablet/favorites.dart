@@ -82,9 +82,7 @@ class _FavoritesTabletPageState extends State<FavoritesTabletPage> {
                                       Provider.of<UserDataProvider>(context,
                                               listen: false)
                                           .changePreferenceName(
-                                              widget
-                                                  .userSavedBags[selectedIndex]
-                                                  .id,
+                                              widget.userSavedBags[index].id,
                                               name);
                                     }
                                   },
@@ -101,7 +99,7 @@ class _FavoritesTabletPageState extends State<FavoritesTabletPage> {
                                     Provider.of<UserDataProvider>(context,
                                             listen: false)
                                         .removePreference(widget
-                                            .userSavedBags[selectedIndex].id);
+                                            .userSavedBags[index].id);
                                     setState(() {
                                       selectedIndex = 0;
                                     });

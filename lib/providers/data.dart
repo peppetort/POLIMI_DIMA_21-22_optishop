@@ -56,6 +56,8 @@ class DataProvider with ChangeNotifier {
           .ref(productModel.image)
           .getDownloadURL();
 
+      _logger.info(downloadURL);
+
       ProductModel? productWithImage =
           productModel.copyWith(image: downloadURL);
 
