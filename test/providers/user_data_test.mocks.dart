@@ -2,17 +2,19 @@
 // in dima21_migliore_tortorelli/test/providers/user_data_test.dart.
 // Do not manually edit this file.
 
-import 'dart:async' as _i7;
-import 'dart:ui' as _i8;
+import 'dart:async' as _i8;
+import 'dart:ui' as _i9;
 
-import 'package:cloud_firestore/cloud_firestore.dart' as _i2;
+import 'package:cloud_firestore/cloud_firestore.dart' as _i3;
+import 'package:dima21_migliore_tortorelli/models/ShopPreferenceModel.dart'
+    as _i7;
 import 'package:dima21_migliore_tortorelli/models/UserModel.dart' as _i6;
 import 'package:dima21_migliore_tortorelli/providers/authentication.dart'
     as _i5;
 import 'package:dima21_migliore_tortorelli/providers/user_data.dart' as _i4;
-import 'package:location/location.dart' as _i3;
+import 'package:location/location.dart' as _i2;
 import 'package:location_platform_interface/location_platform_interface.dart'
-    as _i9;
+    as _i10;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: type=lint
@@ -25,12 +27,12 @@ import 'package:mockito/mockito.dart' as _i1;
 // ignore_for_file: unnecessary_parenthesis
 // ignore_for_file: camel_case_types
 
-class _FakeFirebaseFirestore_0 extends _i1.Fake
-    implements _i2.FirebaseFirestore {}
+class _FakeLocation_0 extends _i1.Fake implements _i2.Location {}
 
-class _FakeLocation_1 extends _i1.Fake implements _i3.Location {}
+class _FakeFirebaseFirestore_1 extends _i1.Fake
+    implements _i3.FirebaseFirestore {}
 
-class _FakeLocationData_2 extends _i1.Fake implements _i3.LocationData {}
+class _FakeLocationData_2 extends _i1.Fake implements _i2.LocationData {}
 
 /// A class which mocks [UserDataProvider].
 ///
@@ -47,12 +49,26 @@ class MockUserDataProvider extends _i1.Mock implements _i4.UserDataProvider {
           Invocation.setter(#authenticationProvider, _authenticationProvider),
           returnValueForMissingStub: null);
   @override
-  _i2.FirebaseFirestore get fireStore =>
+  _i2.Location get location => (super.noSuchMethod(Invocation.getter(#location),
+      returnValue: _FakeLocation_0()) as _i2.Location);
+  @override
+  _i3.FirebaseFirestore get fireStore =>
       (super.noSuchMethod(Invocation.getter(#fireStore),
-          returnValue: _FakeFirebaseFirestore_0()) as _i2.FirebaseFirestore);
+          returnValue: _FakeFirebaseFirestore_1()) as _i3.FirebaseFirestore);
   @override
   set user(_i6.UserModel? _user) =>
       super.noSuchMethod(Invocation.setter(#user, _user),
+          returnValueForMissingStub: null);
+  @override
+  Map<String, _i7.ShopPreferenceModel> get userShopPreferences =>
+      (super.noSuchMethod(Invocation.getter(#userShopPreferences),
+              returnValue: <String, _i7.ShopPreferenceModel>{})
+          as Map<String, _i7.ShopPreferenceModel>);
+  @override
+  set userShopPreferences(
+          Map<String, _i7.ShopPreferenceModel>? _userShopPreferences) =>
+      super.noSuchMethod(
+          Invocation.setter(#userShopPreferences, _userShopPreferences),
           returnValueForMissingStub: null);
   @override
   String get lastMessage =>
@@ -64,13 +80,17 @@ class MockUserDataProvider extends _i1.Mock implements _i4.UserDataProvider {
           returnValueForMissingStub: null);
   @override
   set userUpdatesStreamSub(
-          _i7.StreamSubscription<dynamic>? _userUpdatesStreamSub) =>
+          _i8.StreamSubscription<dynamic>? _userUpdatesStreamSub) =>
       super.noSuchMethod(
           Invocation.setter(#userUpdatesStreamSub, _userUpdatesStreamSub),
           returnValueForMissingStub: null);
   @override
-  _i3.Location get location => (super.noSuchMethod(Invocation.getter(#location),
-      returnValue: _FakeLocation_1()) as _i3.Location);
+  set userPreferencesUpdatesSteamSub(
+          _i8.StreamSubscription<dynamic>? _userPreferencesUpdatesSteamSub) =>
+      super.noSuchMethod(
+          Invocation.setter(
+              #userPreferencesUpdatesSteamSub, _userPreferencesUpdatesSteamSub),
+          returnValueForMissingStub: null);
   @override
   bool get hasListeners =>
       (super.noSuchMethod(Invocation.getter(#hasListeners), returnValue: false)
@@ -85,18 +105,18 @@ class MockUserDataProvider extends _i1.Mock implements _i4.UserDataProvider {
               #update, [], {#authenticationProvider: authenticationProvider}),
           returnValueForMissingStub: null);
   @override
-  _i7.Future<_i3.PermissionStatus> getPermissions() => (super.noSuchMethod(
+  _i8.Future<_i2.PermissionStatus> getPermissions() => (super.noSuchMethod(
           Invocation.method(#getPermissions, []),
           returnValue:
-              Future<_i3.PermissionStatus>.value(_i3.PermissionStatus.granted))
-      as _i7.Future<_i3.PermissionStatus>);
+              Future<_i2.PermissionStatus>.value(_i2.PermissionStatus.granted))
+      as _i8.Future<_i2.PermissionStatus>);
   @override
-  _i7.Future<void> askPermissions() =>
+  _i8.Future<void> askPermissions() =>
       (super.noSuchMethod(Invocation.method(#askPermissions, []),
           returnValue: Future<void>.value(),
-          returnValueForMissingStub: Future<void>.value()) as _i7.Future<void>);
+          returnValueForMissingStub: Future<void>.value()) as _i8.Future<void>);
   @override
-  _i7.Future<bool> updateUserData(
+  _i8.Future<bool> updateUserData(
           {String? name, String? surname, String? phone, double? distance}) =>
       (super.noSuchMethod(
           Invocation.method(#updateUserData, [], {
@@ -105,13 +125,45 @@ class MockUserDataProvider extends _i1.Mock implements _i4.UserDataProvider {
             #phone: phone,
             #distance: distance
           }),
-          returnValue: Future<bool>.value(false)) as _i7.Future<bool>);
+          returnValue: Future<bool>.value(false)) as _i8.Future<bool>);
   @override
-  void addListener(_i8.VoidCallback? listener) =>
+  _i8.Future<bool> getUserPreferences() =>
+      (super.noSuchMethod(Invocation.method(#getUserPreferences, []),
+          returnValue: Future<bool>.value(false)) as _i8.Future<bool>);
+  @override
+  _i8.Future<bool> createNewShopPreference(
+          String? name, Map<String, int>? shopList) =>
+      (super.noSuchMethod(
+          Invocation.method(#createNewShopPreference, [name, shopList]),
+          returnValue: Future<bool>.value(false)) as _i8.Future<bool>);
+  @override
+  _i8.Future<bool> removePreference(String? preferenceId) =>
+      (super.noSuchMethod(Invocation.method(#removePreference, [preferenceId]),
+          returnValue: Future<bool>.value(false)) as _i8.Future<bool>);
+  @override
+  _i8.Future<bool> addProductToPreference(
+          String? preferenceId, String? productId) =>
+      (super.noSuchMethod(
+          Invocation.method(#addProductToPreference, [preferenceId, productId]),
+          returnValue: Future<bool>.value(false)) as _i8.Future<bool>);
+  @override
+  _i8.Future<bool> removeProductFromReference(
+          String? preferenceId, String? productId, {bool? delete = false}) =>
+      (super.noSuchMethod(
+          Invocation.method(#removeProductFromReference,
+              [preferenceId, productId], {#delete: delete}),
+          returnValue: Future<bool>.value(false)) as _i8.Future<bool>);
+  @override
+  _i8.Future<bool> changePreferenceName(String? preferenceId, String? name) =>
+      (super.noSuchMethod(
+          Invocation.method(#changePreferenceName, [preferenceId, name]),
+          returnValue: Future<bool>.value(false)) as _i8.Future<bool>);
+  @override
+  void addListener(_i9.VoidCallback? listener) =>
       super.noSuchMethod(Invocation.method(#addListener, [listener]),
           returnValueForMissingStub: null);
   @override
-  void removeListener(_i8.VoidCallback? listener) =>
+  void removeListener(_i9.VoidCallback? listener) =>
       super.noSuchMethod(Invocation.method(#removeListener, [listener]),
           returnValueForMissingStub: null);
   @override
@@ -123,19 +175,19 @@ class MockUserDataProvider extends _i1.Mock implements _i4.UserDataProvider {
 /// A class which mocks [Location].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockLocation extends _i1.Mock implements _i3.Location {
+class MockLocation extends _i1.Mock implements _i2.Location {
   MockLocation() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i7.Stream<_i3.LocationData> get onLocationChanged =>
+  _i8.Stream<_i2.LocationData> get onLocationChanged =>
       (super.noSuchMethod(Invocation.getter(#onLocationChanged),
-              returnValue: Stream<_i3.LocationData>.empty())
-          as _i7.Stream<_i3.LocationData>);
+              returnValue: Stream<_i2.LocationData>.empty())
+          as _i8.Stream<_i2.LocationData>);
   @override
-  _i7.Future<bool> changeSettings(
-          {_i3.LocationAccuracy? accuracy = _i3.LocationAccuracy.high,
+  _i8.Future<bool> changeSettings(
+          {_i2.LocationAccuracy? accuracy = _i2.LocationAccuracy.high,
           int? interval = 1000,
           double? distanceFilter = 0.0}) =>
       (super.noSuchMethod(
@@ -144,49 +196,49 @@ class MockLocation extends _i1.Mock implements _i3.Location {
             #interval: interval,
             #distanceFilter: distanceFilter
           }),
-          returnValue: Future<bool>.value(false)) as _i7.Future<bool>);
+          returnValue: Future<bool>.value(false)) as _i8.Future<bool>);
   @override
-  _i7.Future<bool> isBackgroundModeEnabled() =>
+  _i8.Future<bool> isBackgroundModeEnabled() =>
       (super.noSuchMethod(Invocation.method(#isBackgroundModeEnabled, []),
-          returnValue: Future<bool>.value(false)) as _i7.Future<bool>);
+          returnValue: Future<bool>.value(false)) as _i8.Future<bool>);
   @override
-  _i7.Future<bool> enableBackgroundMode({bool? enable = true}) =>
+  _i8.Future<bool> enableBackgroundMode({bool? enable = true}) =>
       (super.noSuchMethod(
           Invocation.method(#enableBackgroundMode, [], {#enable: enable}),
-          returnValue: Future<bool>.value(false)) as _i7.Future<bool>);
+          returnValue: Future<bool>.value(false)) as _i8.Future<bool>);
   @override
-  _i7.Future<_i3.LocationData> getLocation() => (super.noSuchMethod(
+  _i8.Future<_i2.LocationData> getLocation() => (super.noSuchMethod(
           Invocation.method(#getLocation, []),
-          returnValue: Future<_i3.LocationData>.value(_FakeLocationData_2()))
-      as _i7.Future<_i3.LocationData>);
+          returnValue: Future<_i2.LocationData>.value(_FakeLocationData_2()))
+      as _i8.Future<_i2.LocationData>);
   @override
-  _i7.Future<_i3.PermissionStatus> hasPermission() => (super.noSuchMethod(
+  _i8.Future<_i2.PermissionStatus> hasPermission() => (super.noSuchMethod(
           Invocation.method(#hasPermission, []),
           returnValue:
-              Future<_i3.PermissionStatus>.value(_i3.PermissionStatus.granted))
-      as _i7.Future<_i3.PermissionStatus>);
+              Future<_i2.PermissionStatus>.value(_i2.PermissionStatus.granted))
+      as _i8.Future<_i2.PermissionStatus>);
   @override
-  _i7.Future<_i3.PermissionStatus> requestPermission() => (super.noSuchMethod(
+  _i8.Future<_i2.PermissionStatus> requestPermission() => (super.noSuchMethod(
           Invocation.method(#requestPermission, []),
           returnValue:
-              Future<_i3.PermissionStatus>.value(_i3.PermissionStatus.granted))
-      as _i7.Future<_i3.PermissionStatus>);
+              Future<_i2.PermissionStatus>.value(_i2.PermissionStatus.granted))
+      as _i8.Future<_i2.PermissionStatus>);
   @override
-  _i7.Future<bool> serviceEnabled() =>
+  _i8.Future<bool> serviceEnabled() =>
       (super.noSuchMethod(Invocation.method(#serviceEnabled, []),
-          returnValue: Future<bool>.value(false)) as _i7.Future<bool>);
+          returnValue: Future<bool>.value(false)) as _i8.Future<bool>);
   @override
-  _i7.Future<bool> requestService() =>
+  _i8.Future<bool> requestService() =>
       (super.noSuchMethod(Invocation.method(#requestService, []),
-          returnValue: Future<bool>.value(false)) as _i7.Future<bool>);
+          returnValue: Future<bool>.value(false)) as _i8.Future<bool>);
   @override
-  _i7.Future<_i9.AndroidNotificationData?> changeNotificationOptions(
+  _i8.Future<_i10.AndroidNotificationData?> changeNotificationOptions(
           {String? channelName,
           String? title,
           String? iconName,
           String? subtitle,
           String? description,
-          _i8.Color? color,
+          _i9.Color? color,
           bool? onTapBringToFront}) =>
       (super.noSuchMethod(
               Invocation.method(#changeNotificationOptions, [], {
@@ -198,6 +250,6 @@ class MockLocation extends _i1.Mock implements _i3.Location {
                 #color: color,
                 #onTapBringToFront: onTapBringToFront
               }),
-              returnValue: Future<_i9.AndroidNotificationData?>.value())
-          as _i7.Future<_i9.AndroidNotificationData?>);
+              returnValue: Future<_i10.AndroidNotificationData?>.value())
+          as _i8.Future<_i10.AndroidNotificationData?>);
 }
