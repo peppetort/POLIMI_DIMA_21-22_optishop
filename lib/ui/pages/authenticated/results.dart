@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dima21_migliore_tortorelli/app_theme.dart';
 import 'package:dima21_migliore_tortorelli/models/MarketModel.dart';
 import 'package:dima21_migliore_tortorelli/providers/cart.dart';
@@ -7,31 +9,49 @@ import 'package:dima21_migliore_tortorelli/ui/widgets/alert_dialog.dart';
 import 'package:dima21_migliore_tortorelli/ui/widgets/big_button.dart';
 import 'package:dima21_migliore_tortorelli/ui/widgets/loading.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
 
 Logger _logger = Logger('ResultPage');
 
-class ResultsPage extends StatefulWidget {
+class ResultsPage extends StatelessWidget {
   const ResultsPage({Key? key}) : super(key: key);
 
   @override
-  State<ResultsPage> createState() => _ResultsPageState();
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+        future:
+            Provider.of<ResultProvider>(context, listen: false).findResults(),
+        builder: (BuildContext context,
+            AsyncSnapshot<Map<MarketModel, Map<String, double>>> snapshot) {
+          _logger.info('ResultPage future build');
+          if (snapshot.hasData) {
+            Map<MarketModel, Map<String, double>> markets = snapshot.data!;
+
+            return ResultContent(markets: markets);
+          } else {
+            return const LoadingPage(
+                title: 'Stiamo cercando i migliori supermercati!',
+                subtitle:
+                    'OptiShop sta cercando i supermercati con i prezzi più bassi nelle tue vicinanze');
+          }
+        });
+  }
 }
 
-class _ResultsPageState extends State<ResultsPage> {
-  List<MarketModel>? markets;
-  bool saved = false;
+class ResultContent extends StatefulWidget {
+  final Map<MarketModel, Map<String, double>> markets;
 
-/*  final MapController _mapController = MapController(
-    initMapWithUserPosition: false,
-    areaLimit: BoundingBox(
-      east: 10.4922941,
-      north: 47.8084648,
-      south: 45.817995,
-      west: 5.9559113,
-    ),
-  );*/
+  const ResultContent({Key? key, required this.markets}) : super(key: key);
+
+  @override
+  State<ResultContent> createState() => _ResultContentState();
+}
+
+class _ResultContentState extends State<ResultContent> {
+  bool saved = false;
 
   Widget _getResultListView(Map<MarketModel, Map<String, double>> markets) {
     return ListView.builder(
@@ -117,149 +137,216 @@ class _ResultsPageState extends State<ResultsPage> {
         });
   }
 
-  Widget _getMapView() {
-    return Container(
-      height: double.infinity,
-      width: double.infinity,
-      color: OptiShopAppTheme.secondaryColor,
+  @override
+  Widget build(BuildContext context) {
+    _logger.info('Result page content build');
+
+    LocationData? lastUserLocation =
+        context.read<ResultProvider>().lastUserLocation;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Risultati'),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: () async {
+              String name = await showInputAlertDialog(context,
+                  title: 'Inserisci un nome per la preferenza');
+
+              if (name != '') {
+                _logger.info('Nome selezionato $name}');
+
+                setState(() {
+                  saved = true;
+                });
+
+                Provider.of<UserDataProvider>(context, listen: false)
+                    .createNewShopPreference(
+                        name, context.read<CartProvider>().cart);
+              }
+            },
+            icon:
+                saved ? const Icon(Icons.star) : const Icon(Icons.star_outline),
+          ),
+        ],
+      ),
+      body: widget.markets.isEmpty
+          ? Padding(
+              padding: OptiShopAppTheme.defaultPagePadding,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Flexible(
+                    child: Container(
+                      padding: const EdgeInsets.only(bottom: 10.0, top: 20.0),
+                      child: Image.asset(
+                        'assets/images/Ill_ooops_1.png',
+                        fit: BoxFit.fitWidth,
+                      ),
+                    ),
+                  ),
+                  Column(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(vertical: 15.0),
+                        child: Text(
+                          'Ci dispiace!\nNon abbiamo trovato nessun supermercato intorno a te',
+                          style: Theme.of(context).textTheme.headline5,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.only(bottom: 15.0),
+                        child: Text(
+                          'Prova ad ampliare il raggio di ricerca dalle impostazioni',
+                          style:
+                              Theme.of(context).textTheme.bodyText2!.copyWith(
+                                    height: 1.5,
+                                    color: OptiShopAppTheme.primaryText,
+                                  ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    padding: const EdgeInsets.only(top: 10.0, bottom: 30.0),
+                    child: BigElevatedButton(
+                      onPressed: () =>
+                          Navigator.popUntil(context, (route) => route.isFirst),
+                      child: Text(
+                        'Continua lo shopping'.toUpperCase(),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : MediaQuery.of(context).orientation == Orientation.portrait
+              ? SafeArea(
+                  child: Column(
+                    children: [
+                      Flexible(
+                        flex: 1,
+                        child: lastUserLocation != null
+                            ? MapView(
+                                userLocation: lastUserLocation,
+                                markets: widget.markets.keys.toList(),
+                              )
+                            : Container(),
+                      ),
+                      Flexible(
+                        flex: 1,
+                        child: _getResultListView(widget.markets),
+                      ),
+                    ],
+                  ),
+                )
+              : SafeArea(
+                  child: Row(
+                    children: [
+                      Flexible(
+                        flex: 2,
+                        child: _getResultListView(widget.markets),
+                      ),
+                      Flexible(
+                        flex: 3,
+                        child: lastUserLocation != null
+                            ? MapView(
+                                userLocation: lastUserLocation,
+                                markets: widget.markets.keys.toList(),
+                              )
+                            : Container(),
+
+/*                        FutureBuilder(
+
+                          future: _getMapView(
+                              context, widget.markets.keys.toList()),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<dynamic> snapshot) {
+                            if (snapshot.hasData) {
+                              return snapshot.data as Widget;
+                            } else {
+                              return Container();
+                            }
+                          },
+                        ),*/
+                      ),
+                    ],
+                  ),
+                ),
     );
+  }
+}
+
+class MapView extends StatefulWidget {
+  final List<MarketModel> markets;
+  final LocationData userLocation;
+
+  const MapView({Key? key, required this.markets, required this.userLocation})
+      : super(key: key);
+
+  @override
+  State<MapView> createState() => _MapViewState();
+}
+
+class _MapViewState extends State<MapView> {
+  final Set<Marker> marketsMarkers = {};
+  final Completer<GoogleMapController> _controller = Completer();
+  late final CameraPosition userMapPosition;
+
+  @override
+  void initState() {
+    marketsMarkers.addAll(
+      widget.markets
+          .map(
+            (e) => Marker(
+              markerId: MarkerId(e.id),
+              position: LatLng(e.latitude, e.longitude),
+              infoWindow: InfoWindow(
+                title: e.name,
+                snippet: e.address,
+              ),
+              icon: BitmapDescriptor.defaultMarker,
+            ),
+          )
+          .toSet(),
+    );
+
+    if (widget.userLocation.latitude != null &&
+        widget.userLocation.longitude != null) {
+      userMapPosition = CameraPosition(
+        target: LatLng(
+            widget.userLocation.latitude!, widget.userLocation.longitude!),
+        zoom: 14.4746,
+      );
+    }
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    _logger.info('ResultPage build');
-    return FutureBuilder(
-        future:
-            Provider.of<ResultProvider>(context, listen: false).findResults(),
-        builder: (BuildContext context,
-            AsyncSnapshot<Map<MarketModel, Map<String, double>>> snapshot) {
-          _logger.info('ResultPage future build');
-          if (snapshot.hasData) {
-            Map<MarketModel, Map<String, double>> markets = snapshot.data!;
+    _logger.info('MapView build');
 
-            return Scaffold(
-              appBar: AppBar(
-                title: const Text('Risultati'),
-                centerTitle: true,
-                actions: [
-                  IconButton(
-                    onPressed: () async {
-                      String name = await showInputAlertDialog(context,
-                          title: 'Inserisci un nome per la preferenza');
-
-                      if (name != '') {
-                        _logger.info(
-                            'Nome selezionato $name}');
-
-                        setState(() {
-                          saved = true;
-                        });
-
-                        Provider.of<UserDataProvider>(context, listen: false)
-                            .createNewShopPreference(
-                                name, context.read<CartProvider>().cart);
-                      }
-                    },
-                    icon: saved
-                        ? const Icon(Icons.star)
-                        : const Icon(Icons.star_outline),
-                  ),
-                ],
-              ),
-              body: markets.isEmpty
-                  ? Padding(
-                      padding: OptiShopAppTheme.defaultPagePadding,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Flexible(
-                            child: Container(
-                              padding: const EdgeInsets.only(
-                                  bottom: 10.0, top: 20.0),
-                              child: Image.asset(
-                                'assets/images/Ill_ooops_1.png',
-                                fit: BoxFit.fitWidth,
-                              ),
-                            ),
-                          ),
-                          Column(
-                            children: [
-                              Container(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 15.0),
-                                child: Text(
-                                  'Ci dispiace!\nNon abbiamo trovato nessun supermercato intorno a te',
-                                  style: Theme.of(context).textTheme.headline5,
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                              Container(
-                                padding: const EdgeInsets.only(bottom: 15.0),
-                                child: Text(
-                                  'Prova ad ampliare il raggio di ricerca dalle impostazioni',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyText2!
-                                      .copyWith(
-                                        height: 1.5,
-                                        color: OptiShopAppTheme.primaryText,
-                                      ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Container(
-                            padding:
-                                const EdgeInsets.only(top: 10.0, bottom: 30.0),
-                            child: BigElevatedButton(
-                              onPressed: () => Navigator.popUntil(
-                                  context, (route) => route.isFirst),
-                              child: Text(
-                                'Continua lo shopping'.toUpperCase(),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  : MediaQuery.of(context).orientation == Orientation.portrait
-                      ? SafeArea(
-                          child: Column(
-                            children: [
-                              Flexible(
-                                flex: 1,
-                                child: _getMapView(),
-                              ),
-                              Flexible(
-                                flex: 1,
-                                child: _getResultListView(markets),
-                              ),
-                            ],
-                          ),
-                        )
-                      : SafeArea(
-                          child: Row(
-                            children: [
-                              Flexible(
-                                flex: 2,
-                                child: _getResultListView(markets),
-                              ),
-                              Flexible(
-                                flex: 3,
-                                child: _getMapView(),
-                              ),
-                            ],
-                          ),
-                        ),
-            );
-          } else {
-            return const LoadingPage(
-                title: 'Stiamo cercando i migliori supermercati!',
-                subtitle:
-                    'OptiShop sta cercando i supermercati con i prezzi più bassi nelle tue vicinanze');
-          }
-        });
+    return widget.userLocation.longitude == null ||
+            widget.userLocation.latitude == null
+        ? const Center(
+            child: Icon(Icons.error),
+          )
+        : SizedBox(
+            height: double.infinity,
+            width: double.infinity,
+            child: GoogleMap(
+              mapType: MapType.normal,
+              markers: marketsMarkers,
+              initialCameraPosition: userMapPosition,
+              myLocationEnabled: true,
+              onMapCreated: (GoogleMapController controller) {
+                _controller.complete(controller);
+              },
+            ),
+          );
   }
 }
