@@ -1,3 +1,4 @@
+import 'package:dima21_migliore_tortorelli/models/ProductModel.dart';
 import 'package:dima21_migliore_tortorelli/providers/data.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -7,23 +8,17 @@ void main() {
   final mockfs = MockFirebaseFirestore();
   final dataprov = DataProvider(mockfs);
 
-  test('deselect category', () {
-    dataprov.selectedCategory = 'dummycategory';
-    dataprov.deselectCategory();
-
-    expect(dataprov.selectedCategory, null);
-  });
-
-  test('select category', () {
-    dataprov.productsByCategories.putIfAbsent('dummycategory', () => []);
-    dataprov.selectCategory('dummycategory');
-
-    expect(dataprov.selectedCategory, 'dummycategory');
-  });
-
   test('get products by category', () async {
-    dataprov.productsByCategories.putIfAbsent('dummycategory', () => []);
+    dataprov.productsByCategory.putIfAbsent('dummycategory', () => []);
     final res = await dataprov.getProductsByCategory('dummycategory');
+
+    expect(res, true);
+  });
+
+  test('get loaded product', () async {
+    final mod1 = ProductModel('a', 'b', 'c', 'd', 'e');
+    dataprov.loadedProducts.putIfAbsent("prod", () => mod1);
+    final res = await dataprov.getProduct("prod");
 
     expect(res, true);
   });
