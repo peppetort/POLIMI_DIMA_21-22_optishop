@@ -6,14 +6,14 @@ import 'package:logging/logging.dart';
 
 import 'firebase_options.dart';
 
-
 Logger _logger = Logger('flutterMain');
 
-Future<void> main() async{
+Future<void> main() async {
   Logger.root.level = Level.ALL;
   Logger.root.onRecord.listen((record) {
     if (kDebugMode) {
-      print('${record.level.name}: ${record.time}: [${record.loggerName}] ${record.message}');
+      print(
+          '${record.level.name}: ${record.time}: [${record.loggerName}] ${record.message}');
     }
   });
 
@@ -21,5 +21,5 @@ Future<void> main() async{
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const OptiShop());
+  runApp(OptiShop());
 }

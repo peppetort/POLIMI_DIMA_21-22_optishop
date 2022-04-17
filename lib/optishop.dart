@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dima21_migliore_tortorelli/providers/authentication.dart';
 import 'package:dima21_migliore_tortorelli/providers/cart.dart';
 import 'package:dima21_migliore_tortorelli/providers/data.dart';
@@ -27,14 +28,19 @@ import 'app_theme.dart';
 Logger _logger = Logger('OptiShop');
 
 class OptiShop extends StatelessWidget {
-  const OptiShop({Key? key}) : super(key: key);
+  final FirebaseFirestore fireStoreInstance = FirebaseFirestore.instance;
+  final FirebaseAuth firebaseAuthInstance = FirebaseAuth.instance;
+  final Location location = Location();
+
+  OptiShop({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<AuthenticationProvider>(
-          create: (_) => AuthenticationProvider(FirebaseAuth.instance),
+          create: (_) =>
+              AuthenticationProvider(firebaseAuthInstance, fireStoreInstance),
         ),
         ChangeNotifierProxyProvider<AuthenticationProvider, CartProvider>(
           create: (_) => CartProvider(),
@@ -43,25 +49,25 @@ class OptiShop extends StatelessWidget {
             ..update(authenticationProvider: authenticationProvider),
         ),
         ChangeNotifierProxyProvider<AuthenticationProvider, DataProvider>(
-          create: (_) => DataProvider(),
+          create: (_) => DataProvider(fireStoreInstance),
           lazy: false,
           update: (_, authenticationProvider, dataProvider) => dataProvider!
             ..update(authenticationProvider: authenticationProvider),
         ),
         ChangeNotifierProxyProvider<AuthenticationProvider, UserDataProvider>(
-          create: (_) => UserDataProvider(),
+          create: (_) => UserDataProvider(location, fireStoreInstance),
           update: (_, authenticationProvider, userDataProvider) =>
-              userDataProvider!
-                ..update(authenticationProvider: authenticationProvider),
+          userDataProvider!
+            ..update(authenticationProvider: authenticationProvider),
         ),
         ChangeNotifierProxyProvider2<UserDataProvider, CartProvider,
             ResultProvider>(
           create: (_) => ResultProvider(),
           update: (_, userDataProvider, cartProvider, resultProvider) =>
-              resultProvider!
-                ..update(
-                    userDataProvider: userDataProvider,
-                    cartProvider: cartProvider),
+          resultProvider!
+            ..update(
+                userDataProvider: userDataProvider,
+                cartProvider: cartProvider),
         ),
       ],
       child: MaterialApp(
@@ -77,7 +83,7 @@ class OptiShop extends StatelessWidget {
           '/results': (BuildContext context) => const ResultsPage(),
           '/updateprofile': (BuildContext context) => const UpdateProfilePage(),
           '/updatepassword': (BuildContext context) =>
-              const UpdatePasswordPage(),
+          const UpdatePasswordPage(),
         },
         home: const Root(),
       ),
@@ -91,7 +97,7 @@ class Root extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Future<PermissionStatus> locationPermissionsFuture =
-        Provider.of<UserDataProvider>(context, listen: false).getPermissions();
+    Provider.of<UserDataProvider>(context, listen: false).getPermissions();
 
     return StreamBuilder<User?>(
         stream: Provider.of<AuthenticationProvider>(context)

@@ -11,8 +11,8 @@ final _logger = Logger('AuthenticationProvider');
 class AuthenticationProvider with ChangeNotifier {
   final FirebaseAuth firebaseAuth;
   String lastMessage = '';
-
-  AuthenticationProvider(this.firebaseAuth);
+  final FirebaseFirestore fireStore;
+  AuthenticationProvider(this.firebaseAuth, this.fireStore);
 
   Future<bool> signInWithGoogle() async {
     try {
@@ -53,7 +53,7 @@ class AuthenticationProvider with ChangeNotifier {
           'phone': ''
         };
 
-        await FirebaseFirestore.instance
+        await fireStore
             .collection('users')
             .doc(registeredUserCredentials.user!.uid)
             .set(payload);
@@ -102,7 +102,7 @@ class AuthenticationProvider with ChangeNotifier {
             'phone': ''
           };
 
-          await FirebaseFirestore.instance
+          await fireStore
               .collection('users')
               .doc(registeredUserCredentials.user!.uid)
               .set(payload);
@@ -160,7 +160,7 @@ class AuthenticationProvider with ChangeNotifier {
             'phone': ''
           };
 
-          await FirebaseFirestore.instance
+          await fireStore
               .collection('users')
               .doc(registeredUserCredentials.user!.uid)
               .set(payload);
@@ -231,7 +231,7 @@ class AuthenticationProvider with ChangeNotifier {
           .createUserWithEmailAndPassword(email: email, password: password);
       var uid = userCredential.user!.uid;
 
-      await FirebaseFirestore.instance.collection('users').doc(uid).set(
+      await fireStore.collection('users').doc(uid).set(
         {'name': name, 'surname': surname, 'phone': phone, 'distance': 100},
       );
       _logger.info('Successfully registered user $name $surname $email $phone');
