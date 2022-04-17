@@ -24,6 +24,11 @@ class DataProvider with ChangeNotifier {
   late CollectionReference _productsReference =
       fireStore.collection('products');
 
+  late final CollectionReference _categoriesReference =
+      fireStore.collection('categories');
+  late final CollectionReference _productsReference =
+      fireStore.collection('products');
+
   late AuthenticationProvider authenticationProvider;
 
   StreamSubscription? productsUpdatesStreamSub;
@@ -54,6 +59,8 @@ class DataProvider with ChangeNotifier {
       String downloadURL = await firebase_storage.FirebaseStorage.instance
           .ref(productModel.image)
           .getDownloadURL();
+
+      _logger.info(downloadURL);
 
       ProductModel? productWithImage =
           productModel.copyWith(image: downloadURL);

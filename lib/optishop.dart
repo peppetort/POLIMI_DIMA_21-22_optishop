@@ -57,17 +57,17 @@ class OptiShop extends StatelessWidget {
         ChangeNotifierProxyProvider<AuthenticationProvider, UserDataProvider>(
           create: (_) => UserDataProvider(location, fireStoreInstance),
           update: (_, authenticationProvider, userDataProvider) =>
-              userDataProvider!
-                ..update(authenticationProvider: authenticationProvider),
+          userDataProvider!
+            ..update(authenticationProvider: authenticationProvider),
         ),
         ChangeNotifierProxyProvider2<UserDataProvider, CartProvider,
             ResultProvider>(
           create: (_) => ResultProvider(),
           update: (_, userDataProvider, cartProvider, resultProvider) =>
-              resultProvider!
-                ..update(
-                    userDataProvider: userDataProvider,
-                    cartProvider: cartProvider),
+          resultProvider!
+            ..update(
+                userDataProvider: userDataProvider,
+                cartProvider: cartProvider),
         ),
       ],
       child: MaterialApp(
@@ -83,7 +83,7 @@ class OptiShop extends StatelessWidget {
           '/results': (BuildContext context) => const ResultsPage(),
           '/updateprofile': (BuildContext context) => const UpdateProfilePage(),
           '/updatepassword': (BuildContext context) =>
-              const UpdatePasswordPage(),
+          const UpdatePasswordPage(),
         },
         home: const Root(),
       ),
@@ -97,7 +97,7 @@ class Root extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Future<PermissionStatus> locationPermissionsFuture =
-        Provider.of<UserDataProvider>(context, listen: false).getPermissions();
+    Provider.of<UserDataProvider>(context, listen: false).getPermissions();
 
     return StreamBuilder<User?>(
         stream: Provider.of<AuthenticationProvider>(context)

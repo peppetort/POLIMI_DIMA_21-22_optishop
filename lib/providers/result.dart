@@ -17,6 +17,8 @@ class ResultProvider with ChangeNotifier {
   late UserDataProvider userDataProvider;
   late CartProvider cartProvider;
 
+  LocationData? lastUserLocation;
+
   final CollectionReference _marketsReference =
       FirebaseFirestore.instance.collection('markets');
 
@@ -57,6 +59,7 @@ class ResultProvider with ChangeNotifier {
           cartProvider.cart.map((key, value) => MapEntry(key, value));
 
       LocationData locationData = await userDataProvider.location.getLocation();
+      lastUserLocation = locationData;
       GeoFirePoint userLocation = geo.point(
           latitude: locationData.latitude!, longitude: locationData.longitude!);
       double radius = (userDataProvider.user!.distance / 1000);

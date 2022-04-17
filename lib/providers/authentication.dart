@@ -53,7 +53,7 @@ class AuthenticationProvider with ChangeNotifier {
           'phone': ''
         };
 
-        await FirebaseFirestore.instance
+        await fireStore
             .collection('users')
             .doc(registeredUserCredentials.user!.uid)
             .set(payload);
@@ -102,7 +102,7 @@ class AuthenticationProvider with ChangeNotifier {
             'phone': ''
           };
 
-          await FirebaseFirestore.instance
+          await fireStore
               .collection('users')
               .doc(registeredUserCredentials.user!.uid)
               .set(payload);
@@ -160,7 +160,7 @@ class AuthenticationProvider with ChangeNotifier {
             'phone': ''
           };
 
-          await FirebaseFirestore.instance
+          await fireStore
               .collection('users')
               .doc(registeredUserCredentials.user!.uid)
               .set(payload);

@@ -91,11 +91,13 @@ class _CartCardState extends State<CartCard> {
                           )),
                       child: AspectRatio(
                         aspectRatio: 1,
-                        child: CachedNetworkImage(
-                          imageUrl: product.image,
-                          errorWidget: (context, url, error) =>
-                              const Icon(Icons.error),
-                        ),
+                        child: product.image == ''
+                            ? Container()
+                            : CachedNetworkImage(
+                                imageUrl: product.image,
+                                errorWidget: (context, url, error) =>
+                                    const Icon(Icons.error),
+                              ),
                       ),
                     ),
                     Expanded(

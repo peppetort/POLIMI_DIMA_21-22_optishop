@@ -50,9 +50,9 @@ class CartProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void createCart(Map<String, dynamic> productsList) {
+  void createCart(Map<String, int> productsList) {
     cart.clear();
-    cart.addAll(productsList as Map<String, int>);
+    cart.addAll(productsList);
     notifyListeners();
   }
 }
