@@ -7,10 +7,8 @@ import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/allow_location
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/cart.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/favorites.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/home.dart';
-import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/phone/home.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/results.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/settings.dart';
-import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/tablet/home.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/update_password.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/update_profile.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/unathenticated/first.dart';
