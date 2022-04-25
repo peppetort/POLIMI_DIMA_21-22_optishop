@@ -57,7 +57,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Ricerce salvate'),
+        title: const Text('Ricerche salvate'),
         centerTitle: true,
       ),
       body: isLoading
