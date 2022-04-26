@@ -7,7 +7,7 @@ import 'package:dima21_migliore_tortorelli/providers/result.dart';
 import 'package:dima21_migliore_tortorelli/providers/user_data.dart';
 import 'package:dima21_migliore_tortorelli/ui/widgets/alert_dialog.dart';
 import 'package:dima21_migliore_tortorelli/ui/widgets/big_button.dart';
-import 'package:dima21_migliore_tortorelli/ui/widgets/loading.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
@@ -32,10 +32,43 @@ class ResultsPage extends StatelessWidget {
 
             return ResultContent(markets: markets);
           } else {
-            return const LoadingPage(
-                title: 'Stiamo cercando i migliori supermercati!',
-                subtitle:
-                    'OptiShop sta cercando i supermercati con i prezzi più bassi nelle tue vicinanze');
+            return Scaffold(
+              backgroundColor: Theme.of(context).primaryColor,
+              body: Padding(
+                padding: OptiShopAppTheme.defaultPagePadding,
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset('assets/images/logo_scritta.png'),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 20.0, bottom: 10.0),
+                        child: Text(
+                          'Stiamo cercando i migliori supermercati!',
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.headline5,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10.0, bottom: 20.0),
+                        child: Text(
+                          'OptiShop sta cercando i supermercati con i prezzi più bassi nelle tue vicinanze',
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText1!
+                              .copyWith(height: 1.5),
+                        ),
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 20.0),
+                        child: CupertinoActivityIndicator(),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
           }
         });
   }

@@ -30,7 +30,6 @@ class PrivacyNote extends StatelessWidget {
                     ),
                 recognizer: TapGestureRecognizer()
                   ..onTap = () => {
-                        //TODO:Navigator.of(context).pushNamed('/legal'),
                       })
           ],
           style: Theme.of(context).textTheme.bodyText1?.copyWith(
