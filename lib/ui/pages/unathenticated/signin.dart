@@ -112,6 +112,7 @@ class _SignInPageState extends State<SignInPage> {
                           right: 28.0,
                         ),
                         child: TextFormField(
+                          key: const Key('Email test key'),
                           controller: _emailController,
                           autocorrect: false,
                           keyboardType: TextInputType.emailAddress,
@@ -135,6 +136,7 @@ class _SignInPageState extends State<SignInPage> {
                           right: 28.0,
                         ),
                         child: TextFormField(
+                            key: const Key('Password test key'),
                             controller: _passwordController,
                             obscureText: _hidePassword,
                             autocorrect: false,
@@ -172,6 +174,7 @@ class _SignInPageState extends State<SignInPage> {
                         ),
                         child: Center(
                           child: BigElevatedButton(
+                            key: const Key('Login test key'),
                             onPressed: _submitLogin,
                             loading: _isLoading,
                             child: const Text('Accedi'),

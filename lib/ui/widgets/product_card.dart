@@ -70,6 +70,7 @@ class ProductCard extends StatelessWidget {
                       number: quantity,
                       addCallback: () => onAddCallback(),
                       removeCallback: () => onRemoveCallback(),
+                      prodId: selectedProductId,
                     ),
                   ),
                 ],
@@ -115,12 +116,14 @@ class ItemCounter extends StatelessWidget {
   final int number;
   final VoidCallback addCallback;
   final VoidCallback removeCallback;
+  final String prodId;
 
   const ItemCounter(
       {Key? key,
       required this.number,
       required this.addCallback,
-      required this.removeCallback})
+      required this.removeCallback,
+      required this.prodId})
       : super(key: key);
 
   @override
@@ -130,6 +133,7 @@ class ItemCounter extends StatelessWidget {
             children: [
               Material(
         child: InkWell(
+          key: Key(prodId),
                 onTap: addCallback,
                 child: Container(
                   decoration: const BoxDecoration(

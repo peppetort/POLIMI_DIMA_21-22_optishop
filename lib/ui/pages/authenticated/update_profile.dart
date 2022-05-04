@@ -97,6 +97,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
                         children: [
                           const SizedBox(height: 20.0),
                           TextFormField(
+                              key: const Key('Name test key'),
                               controller: _nameController,
                               decoration: const InputDecoration(
                                 border: UnderlineInputBorder(),
@@ -116,6 +117,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
                               }),
                           const SizedBox(height: 20.0),
                           TextFormField(
+                              key: const Key('Surname test key'),
                               controller: _surnameController,
                               decoration: const InputDecoration(
                                 border: UnderlineInputBorder(),

@@ -89,6 +89,7 @@ class _HomePhonePageState extends State<HomePhonePage> {
                     itemBuilder: (BuildContext context, int index) {
                       return Material(
                           child: InkWell(
+                            key: Key(widget.categories[index].name),
                         onTap: () {
                           Provider.of<DataProvider>(context, listen: false)
                               .getProductsByCategory(

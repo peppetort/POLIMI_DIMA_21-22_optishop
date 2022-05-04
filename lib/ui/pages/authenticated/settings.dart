@@ -51,6 +51,7 @@ class _SettingsPageState extends State<SettingsPage> {
             user != null ? Text('${user.name} ${user.surname}') : Container(),
         centerTitle: true,
         leading: IconButton(
+          key: const Key('Back test key'),
           onPressed: () => Navigator.of(context).pop(),
           icon: const Icon(Icons.arrow_back_ios),
         ),
