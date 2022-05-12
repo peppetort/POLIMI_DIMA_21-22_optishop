@@ -21,13 +21,20 @@ void main() {
     await tester.tap(testCategory);
     await tester.pumpAndSettle();
 
-    const testProductKey = Key("cfuY0KSSO7zBguZT1ZBS");
-    final testProduct = find.byKey(testProductKey);
-    await tester.scrollUntilVisible(testProduct, 10.0);
-    expect(testProduct, findsOneWidget);
+    // const testProductKey = Key("cfuY0KSSO7zBguZT1ZBS");
+    // final testProduct = find.byKey(testProductKey);
+    expect(find.text("Rocchetta"), findsOneWidget);
+    // await tester.scrollUntilVisible(testProduct, 10.0);
+    // expect(testProduct, findsOneWidget);
 
-    await tester.tap(testProduct);
+    const testProductKey = Key("FTmHwSSmj9DUZEgjXJ9l");
+    final btnFinder = find.byKey(testProductKey);
+    await tester.ensureVisible(btnFinder);
+    await tester.tap(btnFinder);
     await tester.pumpAndSettle();
+
+    // await tester.tap(testProduct);
+    // await tester.pumpAndSettle();
 
     const cartButtonKey = Key("Cart test key");
     final cartButton = find.byKey(cartButtonKey);
