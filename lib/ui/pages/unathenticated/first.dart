@@ -47,6 +47,7 @@ class FirstPage extends StatelessWidget {
                           height: 30.0,
                         ),
                         BigOutlinedButton(
+                          key: const Key('Signin test key'),
                           onPressed: () => {
                             Navigator.of(context).restorablePushNamed('/signin')
                           },

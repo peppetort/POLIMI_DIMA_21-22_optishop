@@ -17,7 +17,8 @@ class FavoritesPhonePage extends StatelessWidget {
         itemBuilder: (BuildContext context, int index) {
           ShopPreferenceModel preference = userSavedBags[index];
 
-          return InkWell(
+          return Material(
+              child: InkWell(
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(
@@ -56,6 +57,7 @@ class FavoritesPhonePage extends StatelessWidget {
                 ),
               ),
             ),
+          ),
           );
         });
   }

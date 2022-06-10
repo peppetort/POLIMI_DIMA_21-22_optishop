@@ -21,14 +21,14 @@ class ProductPage extends StatelessWidget {
         context.select<DataProvider, List<String>?>(
             (value) => value.productsByCategory[selectedCategoryId]);
 
-    double a = ((MediaQuery.of(context).size.width /
+    double aspectRatio = ((MediaQuery.of(context).size.width /
         MediaQuery.of(context).size.height));
     int productsPerRow = 3;
 
-    if (a > 1.5) {
-      productsPerRow = (a * 3).round();
+    if (aspectRatio > 1.5) {
+      productsPerRow = (aspectRatio * 3).round();
     } else {
-      productsPerRow = (a * 6).round();
+      productsPerRow = (aspectRatio * 6).round();
     }
 
     //NOTE: setting lower and upper bounds
@@ -39,7 +39,7 @@ class ProductPage extends StatelessWidget {
       productsPerRow = 5;
     }
 
-    _logger.info('AspectRatio: $a');
+    _logger.info('AspectRatio: $aspectRatio');
     _logger.info('Products per Row: $productsPerRow');
 
     return selectedProducts == null

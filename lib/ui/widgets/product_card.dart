@@ -70,6 +70,7 @@ class ProductCard extends StatelessWidget {
                       number: quantity,
                       addCallback: () => onAddCallback(),
                       removeCallback: () => onRemoveCallback(),
+                      prodId: selectedProductId,
                     ),
                   ),
                 ],
@@ -115,12 +116,14 @@ class ItemCounter extends StatelessWidget {
   final int number;
   final VoidCallback addCallback;
   final VoidCallback removeCallback;
+  final String prodId;
 
   const ItemCounter(
       {Key? key,
       required this.number,
       required this.addCallback,
-      required this.removeCallback})
+      required this.removeCallback,
+      required this.prodId})
       : super(key: key);
 
   @override
@@ -128,7 +131,9 @@ class ItemCounter extends StatelessWidget {
     return number == 0
         ? Column(
             children: [
-              InkWell(
+              Material(
+        child: InkWell(
+          key: Key(prodId),
                 onTap: addCallback,
                 child: Container(
                   decoration: const BoxDecoration(
@@ -142,12 +147,14 @@ class ItemCounter extends StatelessWidget {
                     color: Colors.white,
                   ),
                 ),
-              )
+              ),
+              ),
             ],
           )
         : Column(
             children: [
-              InkWell(
+              Material(
+      child: InkWell(
                 onTap: addCallback,
                 child: Container(
                   decoration: const BoxDecoration(
@@ -163,6 +170,7 @@ class ItemCounter extends StatelessWidget {
                   ),
                 ),
               ),
+              ),
               Container(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 8.5, vertical: 5.0),
@@ -173,7 +181,8 @@ class ItemCounter extends StatelessWidget {
                   style: Theme.of(context).textTheme.bodyText1,
                 ),
               ),
-              InkWell(
+              Material(
+    child: InkWell(
                 onTap: removeCallback,
                 child: Container(
                   decoration: const BoxDecoration(
@@ -188,6 +197,7 @@ class ItemCounter extends StatelessWidget {
                     color: Colors.white,
                   ),
                 ),
+              ),
               ),
             ],
           );

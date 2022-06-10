@@ -87,7 +87,9 @@ class _HomePhonePageState extends State<HomePhonePage> {
                     padding: const EdgeInsets.all(15.0),
                     itemCount: widget.categories.length,
                     itemBuilder: (BuildContext context, int index) {
-                      return InkWell(
+                      return Material(
+                          child: InkWell(
+                            key: Key(widget.categories[index].name),
                         onTap: () {
                           Provider.of<DataProvider>(context, listen: false)
                               .getProductsByCategory(
@@ -139,7 +141,7 @@ class _HomePhonePageState extends State<HomePhonePage> {
                             ),
                           ],
                         ),
-                      );
+                      ));
                     })
                 : ProductPage(
                     selectedCategoryId: selectedCategory!,

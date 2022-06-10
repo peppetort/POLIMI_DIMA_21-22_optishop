@@ -54,15 +54,18 @@ class _HomePageState extends State<HomePage> {
         title: const Text('OptiShop'),
         centerTitle: true,
         leading: IconButton(
+          key: const Key('Settings test key'),
           onPressed: () => Navigator.pushNamed(context, '/settings'),
           icon: const Icon(Icons.person_outline),
         ),
         actions: [
           IconButton(
+            key: const Key('Favorites test key'),
             onPressed: () => Navigator.pushNamed(context, '/favorites'),
             icon: const Icon(Icons.favorite_border_outlined),
           ),
           IconButton(
+            key: const Key('Cart test key'),
             onPressed: () => Navigator.pushNamed(context, '/cart'),
             icon: const Icon(Icons.shopping_cart_outlined),
           ),
@@ -83,7 +86,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     Text(
-                      'Errore durante il caricamento dell categorie',
+                      'Errore durante il caricamento delle categorie',
                       style: Theme.of(context).textTheme.headline5,
                       textAlign: TextAlign.center,
                     ),

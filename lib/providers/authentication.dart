@@ -258,9 +258,15 @@ class AuthenticationProvider with ChangeNotifier {
     }
   }
 
-  Future<void> signOut() async {
-    await firebaseAuth.signOut();
-    notifyListeners();
+  Future<bool> signOut() async {
+    try {
+      await firebaseAuth.signOut();
+      notifyListeners();
+      return true;
+    } on FirebaseAuthException catch (e) {
+      notifyListeners();
+      return false;
+    }
   }
 
   Future<bool> recoverPassword({required String email}) async {
