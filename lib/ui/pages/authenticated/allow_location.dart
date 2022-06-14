@@ -7,7 +7,7 @@ import 'package:location/location.dart';
 import 'package:provider/provider.dart';
 
 class AllowLocationPage extends StatelessWidget {
-  AllowLocationPage({Key? key}) : super(key: key);
+  const AllowLocationPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

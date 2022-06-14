@@ -263,7 +263,7 @@ class AuthenticationProvider with ChangeNotifier {
       await firebaseAuth.signOut();
       notifyListeners();
       return true;
-    } on FirebaseAuthException catch (e) {
+    } on FirebaseAuthException {
       notifyListeners();
       return false;
     }

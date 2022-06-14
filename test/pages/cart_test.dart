@@ -3,7 +3,6 @@ import 'package:dima21_migliore_tortorelli/providers/cart.dart';
 import 'package:dima21_migliore_tortorelli/providers/data.dart';
 import 'package:dima21_migliore_tortorelli/providers/result.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/cart.dart';
-import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/results.dart';
 import 'package:dima21_migliore_tortorelli/ui/widgets/big_button.dart';
 import 'package:dima21_migliore_tortorelli/ui/widgets/cart_card.dart';
 import 'package:flutter/material.dart';

@@ -17,7 +17,7 @@ void main() {
     await tester.pumpWidget(ChangeNotifierProvider<UserDataProvider>.value(
       value: mockUdProv,
       child: MaterialApp(
-        home: AllowLocationPage(),
+        home: const AllowLocationPage(),
         navigatorObservers: [mockNavigatorObserver],
       ),
     ));

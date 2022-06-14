@@ -1,8 +1,6 @@
-import 'package:dima21_migliore_tortorelli/models/ProductModel.dart';
 import 'package:dima21_migliore_tortorelli/providers/cart.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'authentication_test.mocks.dart';
 
 void main() {
   const prod1 = "prod1";

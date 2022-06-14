@@ -128,12 +128,10 @@ class OptiShopAppTheme {
     colorScheme: const ColorScheme(
       primary: primaryColor,
       onPrimary: Colors.white,
-      primaryVariant: accentColor,
       background: Colors.red,
       onBackground: Colors.black,
       secondary: secondaryColor,
       onSecondary: Colors.white,
-      secondaryVariant: Colors.deepOrange,
       error: Colors.black,
       onError: Colors.white,
       surface: Colors.white,

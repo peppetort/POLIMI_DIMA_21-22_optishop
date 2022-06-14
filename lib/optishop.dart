@@ -119,7 +119,7 @@ class Root extends StatelessWidget {
                         locationPermission != PermissionStatus.deniedForever) {
                       return const HomePage();
                     } else {
-                      return AllowLocationPage();
+                      return const AllowLocationPage();
                     }
                   } else {
                     return const Center(child: CupertinoActivityIndicator());
