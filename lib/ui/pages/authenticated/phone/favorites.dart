@@ -28,7 +28,7 @@ class FavoritesPhonePage extends StatelessWidget {
               ),
             ),
             child: SizedBox(
-              height: 50.0,
+              height: 60.0,
               child: Card(
                 clipBehavior: Clip.hardEdge,
                 shape: RoundedRectangleBorder(

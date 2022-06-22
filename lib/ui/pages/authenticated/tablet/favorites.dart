@@ -2,7 +2,6 @@ import 'package:dima21_migliore_tortorelli/app_theme.dart';
 import 'package:dima21_migliore_tortorelli/models/ShopPreferenceModel.dart';
 import 'package:dima21_migliore_tortorelli/providers/user_data.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/tablet/favorite_details.dart';
-import 'package:dima21_migliore_tortorelli/ui/widgets/alert_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
@@ -42,7 +41,7 @@ class _FavoritesTabletPageState extends State<FavoritesTabletPage> {
                     });
                   },
                   child: SizedBox(
-                    height: 50.0,
+                    height: 70.0,
                     child: Card(
                       clipBehavior: Clip.hardEdge,
                       shape: RoundedRectangleBorder(
@@ -50,10 +49,11 @@ class _FavoritesTabletPageState extends State<FavoritesTabletPage> {
                       ),
                       elevation: 1.0,
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10.0, vertical: 5.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               preference.name,
@@ -69,47 +69,18 @@ class _FavoritesTabletPageState extends State<FavoritesTabletPage> {
                                         : FontWeight.normal,
                                   ),
                             ),
-                            Row(
-                              children: [
-                                InkWell(
-                                  onTap: () async {
-                                    String name = await showInputAlertDialog(
-                                        context,
-                                        title:
-                                            'Inserisci un nome per la preferenza');
-
-                                    if (name != '') {
-                                      Provider.of<UserDataProvider>(context,
-                                              listen: false)
-                                          .changePreferenceName(
-                                              widget.userSavedBags[index].id,
-                                              name);
-                                    }
-                                  },
-                                  child: const Icon(
-                                    Icons.mode_outlined,
-                                    color: OptiShopAppTheme.secondaryColor,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  width: 10.0,
-                                ),
-                                InkWell(
-                                  onTap: () {
-                                    Provider.of<UserDataProvider>(context,
-                                            listen: false)
-                                        .removePreference(widget
-                                            .userSavedBags[index].id);
-                                    setState(() {
-                                      selectedIndex = 0;
-                                    });
-                                  },
-                                  child: const Icon(
-                                    Icons.delete_outline,
-                                    color: OptiShopAppTheme.secondaryColor,
-                                  ),
-                                )
-                              ],
+                            Text(
+                              widget.userSavedBags[index].savedProducts.length >
+                                      1
+                                  ? widget.userSavedBags[index].savedProducts
+                                          .length
+                                          .toString() +
+                                      ' prodotti'
+                                  : widget.userSavedBags[index].savedProducts
+                                          .length
+                                          .toString() +
+                                      'prodotto',
+                              style: Theme.of(context).textTheme.bodyText1,
                             ),
                           ],
                         ),
@@ -122,6 +93,14 @@ class _FavoritesTabletPageState extends State<FavoritesTabletPage> {
         Flexible(
           flex: 2,
           child: FavoriteDetailsTabletPage(
+            onDelete: () {
+              Provider.of<UserDataProvider>(context, listen: false)
+                  .removePreference(widget.userSavedBags[selectedIndex].id);
+
+              setState((){
+                selectedIndex = 0;
+              });
+            },
             selectedPreferenceId: widget.userSavedBags[selectedIndex].id,
           ),
         ),
