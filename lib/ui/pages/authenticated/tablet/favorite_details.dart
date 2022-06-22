@@ -61,9 +61,9 @@ class FavoriteDetailsTabletPage extends StatelessWidget {
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: productsPerRow,
-                            mainAxisSpacing: 20.0,
+                            mainAxisSpacing: 0.0,
                             crossAxisSpacing: 20.0,
-                            childAspectRatio: 5 / 7,
+                            childAspectRatio: 4/7
                           ),
                           padding: const EdgeInsets.all(15.0),
                           itemCount: savedProducts.length,

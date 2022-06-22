@@ -107,16 +107,19 @@ class _CartCardState extends State<CartCard> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              product.name,
-                              textAlign: TextAlign.start,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText2!
-                                  .copyWith(
-                                    color: OptiShopAppTheme.secondaryColor,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                            Flexible(
+                              child: Text(
+                                product.name,
+                                overflow: TextOverflow.visible,
+                                textAlign: TextAlign.start,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText2!
+                                    .copyWith(
+                                      color: OptiShopAppTheme.secondaryColor,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                              ),
                             ),
                             const SizedBox(
                               height: 5.0,

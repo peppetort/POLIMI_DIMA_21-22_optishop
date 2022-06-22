@@ -21,15 +21,6 @@ class FavoriteDetailsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     _logger.info('Preference details page build');
 
-/*    ShopPreferenceModel? preference =
-        context.select<UserDataProvider, ShopPreferenceModel?>(
-            (value) => value.userShopPreferences[selectedPreferenceId]);
-
-    Map<String, int>? savedProducts = context
-        .watch<UserDataProvider>()
-        .userShopPreferences[selectedPreferenceId]
-        ?.savedProducts;*/
-
     ShopPreferenceModel? preference =
         context.select<UserDataProvider, ShopPreferenceModel?>(
             (value) => value.userShopPreferences[selectedPreferenceId]);

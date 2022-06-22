@@ -28,15 +28,15 @@ class ProductPage extends StatelessWidget {
     if (aspectRatio > 1.5) {
       productsPerRow = (aspectRatio * 3).round();
     } else {
-      productsPerRow = (aspectRatio * 6).round();
+      productsPerRow = (aspectRatio * 7).round();
     }
 
     //NOTE: setting lower and upper bounds
     if (productsPerRow < 1) {
       productsPerRow = 1;
     }
-    if (productsPerRow > 5) {
-      productsPerRow = 5;
+    if (productsPerRow > 7) {
+      productsPerRow = 7;
     }
 
     _logger.info('AspectRatio: $aspectRatio');
@@ -73,9 +73,9 @@ class ProductPage extends StatelessWidget {
             : GridView.builder(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: productsPerRow,
-                  mainAxisSpacing: 15.0,
-                  crossAxisSpacing: 10.0,
-                  childAspectRatio: 4 / 7,
+                  mainAxisSpacing: 20.0,
+                  crossAxisSpacing: 20.0,
+                  childAspectRatio: 4/7,
                 ),
                 padding: const EdgeInsets.all(15.0),
                 itemCount: selectedProducts.length,
