@@ -20,7 +20,8 @@ import 'first_test.mocks.dart';
 import 'home_test.mocks.dart';
 
 void main() {
-  testWidgets('render favorites page with empty user preferences', (WidgetTester tester) async {
+  testWidgets('render favorites page with empty user preferences',
+      (WidgetTester tester) async {
     final mockUdProv = MockUserDataProvider();
     final mockNavigatorObserver = MockNavigatorObserver();
 
@@ -40,7 +41,8 @@ void main() {
     final favPage = find.byType(FavoritesPage);
     final text1 = find.text("Ricerche salvate");
     final text2 = find.text("Non hai salvato nessuna ricerca");
-    final text3 = find.text("Aggiungi i prodotti al carrello e salvalo per ritrovarlo qui in qualsiasi momento");
+    final text3 = find.text(
+        "Aggiungi i prodotti al carrello e salvalo per ritrovarlo qui in qualsiasi momento");
     final text4 = find.text("inizia lo shopping".toUpperCase());
     final bigButton = find.byType(BigElevatedButton);
 
@@ -57,19 +59,22 @@ void main() {
     verify(mockNavigatorObserver.didPop(any, any));
   });
 
-  testWidgets('render favorites page with non-empty user preferences', (WidgetTester tester) async {
+  testWidgets('render favorites page with non-empty user preferences',
+      (WidgetTester tester) async {
     final mockUdProv = MockUserDataProvider();
     final mockDataProv = MockDataProvider();
-    final mod1 = ProductModel('prod1', 'b', 'c', 'd', 'e');
-    final mod2 = ProductModel('prod2', 'b', 'c', 'd', 'e');
+    final mod1 = ProductModel('prod1', 'b', 'ean', 'c', 'd', 'e');
+    final mod2 = ProductModel('prod2', 'b', 'ean', 'c', 'd', 'e');
     final dummySavedProducts = {"prod1": 1, "prod2": 2};
-    final dummyPreference = ShopPreferenceModel("dummyprefid", "name1", "dummyuid", dummySavedProducts);
+    final dummyPreference = ShopPreferenceModel(
+        "dummyprefid", "name1", "dummyuid", dummySavedProducts);
     final dummyUserPreferences = {"dummyprefid": dummyPreference};
 
     when(mockUdProv.getUserPreferences()).thenAnswer((_) async => true);
     when(mockUdProv.userShopPreferences).thenReturn(dummyUserPreferences);
     when(mockDataProv.getProduct(any)).thenAnswer((_) async => true);
-    when(mockDataProv.loadedProducts).thenReturn({"prod1": mod1, "prod2": mod2});
+    when(mockDataProv.loadedProducts)
+        .thenReturn({"prod1": mod1, "prod2": mod2});
 
     await tester.pumpWidget(ChangeNotifierProvider<UserDataProvider>.value(
       value: mockUdProv,
@@ -92,21 +97,24 @@ void main() {
     expect(prodCards, findsNWidgets(2));
   });
 
-  testWidgets('render phone favorites page with non-empty user preferences', (WidgetTester tester) async {
+  testWidgets('render phone favorites page with non-empty user preferences',
+      (WidgetTester tester) async {
     final mockUdProv = MockUserDataProvider();
     final mockDataProv = MockDataProvider();
     final mockNavigatorObserver = MockNavigatorObserver();
-    final mod1 = ProductModel('prod1', 'b', 'c', 'd', 'e');
-    final mod2 = ProductModel('prod2', 'b', 'c', 'd', 'e');
+    final mod1 = ProductModel('prod1', 'b', 'ean', 'c', 'd', 'e');
+    final mod2 = ProductModel('prod2', 'b', 'ean', 'c', 'd', 'e');
     final dummySavedProducts = {"prod1": 1, "prod2": 2};
-    final dummyPreference = ShopPreferenceModel("dummyprefid", "name1", "dummyuid", dummySavedProducts);
+    final dummyPreference = ShopPreferenceModel(
+        "dummyprefid", "name1", "dummyuid", dummySavedProducts);
     final dummyUserPreferences = {"dummyprefid": dummyPreference};
     final prefList = dummyUserPreferences.values.toList();
 
     when(mockUdProv.userShopPreferences).thenReturn(dummyUserPreferences);
     when(mockDataProv.getProduct(any)).thenAnswer((_) async => true);
-    when(mockDataProv.loadedProducts).thenReturn({"prod1": mod1, "prod2": mod2});
-    
+    when(mockDataProv.loadedProducts)
+        .thenReturn({"prod1": mod1, "prod2": mod2});
+
     await tester.pumpWidget(ChangeNotifierProvider<UserDataProvider>.value(
       value: mockUdProv,
       child: ChangeNotifierProvider<DataProvider>.value(

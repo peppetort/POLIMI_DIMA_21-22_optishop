@@ -31,7 +31,7 @@ void main() {
 
   testWidgets('display empty product page', (WidgetTester tester) async {
     final mockDataProv = MockDataProvider();
-    Map<String, List<String>> dummyProducts = {'dummycategoryid' : []};
+    Map<String, List<String>> dummyProducts = {'dummycategoryid': []};
 
     when(mockDataProv.productsByCategory).thenReturn(dummyProducts);
 
@@ -53,11 +53,16 @@ void main() {
     const prod1 = "prod1";
     const prod2 = "prod2";
     //different quantities to test the different product cards builds
-    Map<String, int> dummyCart = {prod1 : 1, prod2 : 0};
-    final dummyProducts = {'dummycategoryid' : [prod1, prod2]};
-    final mod1 = ProductModel('a', 'b', 'c', 'd', 'e');
-    final mod2 = ProductModel('e', 'd', 'c', 'b', 'a');
-    Map<String, ProductModel> dummyLoadedProducts = {'prod1': mod1, 'prod2': mod2};
+    Map<String, int> dummyCart = {prod1: 1, prod2: 0};
+    final dummyProducts = {
+      'dummycategoryid': [prod1, prod2]
+    };
+    final mod1 = ProductModel('a', 'b', 'ean', 'c', 'd', 'e');
+    final mod2 = ProductModel('e', 'd', 'ean', 'c', 'b', 'a');
+    Map<String, ProductModel> dummyLoadedProducts = {
+      'prod1': mod1,
+      'prod2': mod2
+    };
 
     when(mockDataProv.getProduct(any)).thenAnswer((_) async => true);
     when(mockDataProv.productsByCategory).thenReturn(dummyProducts);
@@ -65,13 +70,13 @@ void main() {
     when(mockCartProv.cart).thenReturn(dummyCart);
 
     await tester.pumpWidget(ChangeNotifierProvider<DataProvider>.value(
-      value: mockDataProv,
-      child: ChangeNotifierProvider<CartProvider>.value(
-        value: mockCartProv,
-        child: const MaterialApp(
-        home: ProductPage(selectedCategoryId: 'dummycategoryid'),
-      ),
-    )));
+        value: mockDataProv,
+        child: ChangeNotifierProvider<CartProvider>.value(
+          value: mockCartProv,
+          child: const MaterialApp(
+            home: ProductPage(selectedCategoryId: 'dummycategoryid'),
+          ),
+        )));
 
     final prodCards = find.byType(ProductCard);
 

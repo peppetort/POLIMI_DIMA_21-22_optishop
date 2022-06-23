@@ -110,11 +110,12 @@ class DataProvider with ChangeNotifier {
               String productId = element.doc.id;
               String categoryId = data['category'];
               String productName = data['name'];
+              String productEan = data['ean'] ?? '';
               String productDescription = data['description'];
               String productImagePath = data['image'];
 
-              ProductModel newProduct = ProductModel(
-                  productId, productName, productDescription, '', categoryId);
+              ProductModel newProduct = ProductModel(productId, productName,
+                  productEan, productDescription, '', categoryId);
 
               if (loadedProducts[productId] != null) {
                 loadedProducts[productId] = newProduct;
@@ -221,6 +222,7 @@ class DataProvider with ChangeNotifier {
       ProductModel toAdd = ProductModel(
         product.id,
         productData['name'],
+        productData['ean'] ?? '',
         productData['description'],
         '',
         productData['category'],
