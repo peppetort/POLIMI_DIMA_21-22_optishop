@@ -7,8 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 
-import '../providers/authentication_test.mocks.dart';
-import '../providers/user_data_test.mocks.dart';
+import 'authentication_test.mocks.dart';
+import 'user_data_test.mocks.dart';
 import 'first_test.mocks.dart';
 import 'package:mockito/mockito.dart';
 

@@ -7,7 +7,7 @@ import 'package:location/location.dart';
 
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
-import '../providers/user_data_test.mocks.dart';
+import 'user_data_test.mocks.dart';
 import 'first_test.mocks.dart';
 
 void main() {
