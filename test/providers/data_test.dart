@@ -1,12 +1,14 @@
 import 'package:dima21_migliore_tortorelli/models/ProductModel.dart';
 import 'package:dima21_migliore_tortorelli/providers/data.dart';
+import 'package:firebase_storage_mocks/firebase_storage_mocks.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'authentication_test.mocks.dart';
 
 void main() {
   final mockfs = MockFirebaseFirestore();
-  final dataprov = DataProvider(mockfs);
+  final storage = MockFirebaseStorage();
+  final dataprov = DataProvider(mockfs, storage);
 
   test('get products by category', () async {
     dataprov.productsByCategory.putIfAbsent('dummycategory', () => []);
