@@ -132,48 +132,51 @@ class ItemCounter extends StatelessWidget {
         ? Column(
             children: [
               Material(
-        child: InkWell(
-          key: Key(prodId),
-                onTap: addCallback,
-                child: Container(
-                  decoration: const BoxDecoration(
-                    color: OptiShopAppTheme.primaryColor,
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(5.0),
+                child: InkWell(
+                  key: Key(prodId),
+                  onTap: addCallback,
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      color: OptiShopAppTheme.primaryColor,
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(5.0),
+                      ),
+                    ),
+                    child: const Icon(
+                      Icons.add,
+                      color: Colors.white,
+                      size: 30.0,
                     ),
                   ),
-                  child: const Icon(
-                    Icons.add,
-                    color: Colors.white,
-                  ),
                 ),
-              ),
               ),
             ],
           )
         : Column(
             children: [
               Material(
-      child: InkWell(
-                onTap: addCallback,
-                child: Container(
-                  decoration: const BoxDecoration(
-                    color: OptiShopAppTheme.primaryColor,
-                    borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(5.0),
-                      topLeft: Radius.circular(5.0),
+                child: InkWell(
+                  onTap: addCallback,
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      color: OptiShopAppTheme.primaryColor,
+                      borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(5.0),
+                        topLeft: Radius.circular(5.0),
+                      ),
                     ),
-                  ),
-                  child: const Icon(
-                    Icons.add,
-                    color: Colors.white,
+                    child: const Icon(
+                      Icons.add,
+                      color: Colors.white,
+                      size: 30.0,
+                    ),
                   ),
                 ),
               ),
-              ),
               Container(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 8.5, vertical: 5.0),
+                    const EdgeInsets.symmetric(horizontal: 0, vertical: 5.0),
+                width: 30,
                 color: Colors.white,
                 child: Text(
                   number.toString(),
@@ -182,22 +185,23 @@ class ItemCounter extends StatelessWidget {
                 ),
               ),
               Material(
-    child: InkWell(
-                onTap: removeCallback,
-                child: Container(
-                  decoration: const BoxDecoration(
-                    color: OptiShopAppTheme.primaryColor,
-                    borderRadius: BorderRadius.only(
-                      bottomRight: Radius.circular(5.0),
-                      bottomLeft: Radius.circular(5.0),
+                child: InkWell(
+                  onTap: removeCallback,
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      color: OptiShopAppTheme.primaryColor,
+                      borderRadius: BorderRadius.only(
+                        bottomRight: Radius.circular(5.0),
+                        bottomLeft: Radius.circular(5.0),
+                      ),
+                    ),
+                    child: const Icon(
+                      Icons.remove,
+                      color: Colors.white,
+                      size: 30.0,
                     ),
                   ),
-                  child: const Icon(
-                    Icons.remove,
-                    color: Colors.white,
-                  ),
                 ),
-              ),
               ),
             ],
           );

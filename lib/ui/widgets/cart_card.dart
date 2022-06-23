@@ -183,6 +183,7 @@ class ItemCounter extends StatelessWidget {
             child: const Icon(
               Icons.remove,
               color: Colors.white,
+              size: 30.0,
             ),
           ),
         ),
@@ -208,6 +209,7 @@ class ItemCounter extends StatelessWidget {
             child: const Icon(
               Icons.add,
               color: Colors.white,
+              size: 30.0,
             ),
           ),
         ),
