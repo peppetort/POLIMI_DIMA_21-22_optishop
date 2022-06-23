@@ -9,6 +9,7 @@ import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/cart.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/favorites.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/home.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/results.dart';
+import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/scanner.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/settings.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/update_password.dart';
 import 'package:dima21_migliore_tortorelli/ui/pages/authenticated/update_profile.dart';
@@ -81,6 +82,7 @@ class OptiShop extends StatelessWidget {
           '/cart': (BuildContext context) => const CartPage(),
           '/favorites': (BuildContext context) => const FavoritesPage(),
           '/results': (BuildContext context) => const ResultsPage(),
+          '/scanner': (BuildContext context) => const ScannerPage(),
           '/updateprofile': (BuildContext context) => const UpdateProfilePage(),
           '/updatepassword': (BuildContext context) =>
           const UpdatePasswordPage(),

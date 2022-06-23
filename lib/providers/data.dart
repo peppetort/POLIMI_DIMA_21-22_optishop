@@ -6,6 +6,7 @@ import 'package:dima21_migliore_tortorelli/models/ProductModel.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
+import 'package:collection/collection.dart';
 
 import 'authentication.dart';
 
@@ -110,11 +111,12 @@ class DataProvider with ChangeNotifier {
               String productId = element.doc.id;
               String categoryId = data['category'];
               String productName = data['name'];
+              String productEan = data['ean'] ?? '';
               String productDescription = data['description'];
               String productImagePath = data['image'];
 
-              ProductModel newProduct = ProductModel(
-                  productId, productName, productDescription, '', categoryId);
+              ProductModel newProduct = ProductModel(productId, productName,
+                  productEan, productDescription, '', categoryId);
 
               if (loadedProducts[productId] != null) {
                 loadedProducts[productId] = newProduct;
@@ -221,6 +223,7 @@ class DataProvider with ChangeNotifier {
       ProductModel toAdd = ProductModel(
         product.id,
         productData['name'],
+        productData['ean'] ?? '',
         productData['description'],
         '',
         productData['category'],
@@ -239,5 +242,48 @@ class DataProvider with ChangeNotifier {
       }
       return false;
     }
+  }
+
+  Future<String?> getProductByEAN(String ean) async {
+    ProductModel? product =
+        loadedProducts.values.firstWhereOrNull((element) => element.ean == ean);
+
+    if (product != null) {
+      return product.id;
+    }
+
+    try {
+      List<QueryDocumentSnapshot> products =
+          (await _productsReference.where('ean', isEqualTo: ean).get()).docs;
+
+      if (products.isEmpty) {
+        return null;
+      }
+
+      Map<String, dynamic> productData =
+          products.first.data() as Map<String, dynamic>;
+
+      product = ProductModel(
+        products.first.id,
+        productData['name'],
+        productData['ean'] ?? '',
+        productData['description'],
+        '',
+        productData['category'],
+      );
+
+      loadedProducts[product.id] = product;
+      _getImageUrl(product.copyWith(image: productData['image']));
+      notifyListeners();
+      return product.id;
+    } on FirebaseException catch (e) {
+      _logger.info(e);
+      if (e.message != null) {
+        lastMessage = e.message!;
+      } else {
+        lastMessage = 'Connection error';
+      }
+    }
+    return null;
   }
 }

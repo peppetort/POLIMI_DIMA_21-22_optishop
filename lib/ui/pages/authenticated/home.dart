@@ -71,6 +71,10 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => Navigator.of(context).pushNamed('/scanner'),
+        child: const Icon(Icons.qr_code_scanner_outlined),
+      ),
       body: SafeArea(
         child: errorLoadingCategory
             ? Center(

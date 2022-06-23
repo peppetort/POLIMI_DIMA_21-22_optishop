@@ -16,7 +16,7 @@ void main() {
   });
 
   test('get loaded product', () async {
-    final mod1 = ProductModel('a', 'b', 'c', 'd', 'e');
+    final mod1 = ProductModel('a', 'b', 'ean', 'c', 'd', 'e');
     dataprov.loadedProducts.putIfAbsent("prod", () => mod1);
     final res = await dataprov.getProduct("prod");
 
