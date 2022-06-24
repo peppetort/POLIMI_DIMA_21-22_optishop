@@ -15,7 +15,7 @@ import 'package:mockito/annotations.dart';
 import 'package:provider/provider.dart';
 import 'package:mockito/mockito.dart';
 
-import '../providers/user_data_test.mocks.dart';
+import 'user_data_test.mocks.dart';
 import 'cart_test.mocks.dart';
 import 'first_test.mocks.dart';
 import 'home_test.mocks.dart';

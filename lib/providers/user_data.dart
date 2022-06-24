@@ -141,6 +141,7 @@ class UserDataProvider with ChangeNotifier {
                   .get())
               .docs;
 
+
       for (var pref in userPreferences) {
         Map<String, dynamic> preferenceData =
             pref.data() as Map<String, dynamic>;
@@ -304,7 +305,7 @@ class UserDataProvider with ChangeNotifier {
       Map<String, dynamic> payload = {
         'cart': savedProducts,
       };
-      _userShopPreferencesReference.doc(preferenceId).update(payload);
+      await _userShopPreferencesReference.doc(preferenceId).update(payload);
       _logger.info('Successfully update user preference');
       return true;
     } on FirebaseException catch (e) {

@@ -20,6 +20,7 @@ class DataProvider with ChangeNotifier {
   final Map<String, List<String>?> productsByCategory = {};
 
   final FirebaseFirestore fireStore;
+  final firebase_storage.FirebaseStorage firebaseStorage;
 
   late final CollectionReference _categoriesReference =
       fireStore.collection('categories');
@@ -30,7 +31,7 @@ class DataProvider with ChangeNotifier {
 
   StreamSubscription? productsUpdatesStreamSub;
 
-  DataProvider(this.fireStore);
+  DataProvider(this.fireStore, this.firebaseStorage);
 
   @override
   void dispose() {
@@ -53,11 +54,8 @@ class DataProvider with ChangeNotifier {
 
   void _getImageUrl(ProductModel productModel) async {
     try {
-      String downloadURL = await firebase_storage.FirebaseStorage.instance
-          .ref(productModel.image)
-          .getDownloadURL();
-
-      _logger.info(downloadURL);
+      String downloadURL =
+          await firebaseStorage.ref(productModel.image).getDownloadURL();
 
       ProductModel? productWithImage =
           productModel.copyWith(image: downloadURL);
@@ -66,6 +64,8 @@ class DataProvider with ChangeNotifier {
       notifyListeners();
     } on firebase_storage.FirebaseException catch (e) {
       _logger.info(e.message! + ' ' + productModel.id);
+    } on TypeError catch(e){
+      _logger.info(e);
     }
   }
 
@@ -153,9 +153,8 @@ class DataProvider with ChangeNotifier {
         Map<String, dynamic> categoryData =
             element.data() as Map<String, dynamic>;
 
-        String downloadURL = await firebase_storage.FirebaseStorage.instance
-            .ref(categoryData['image'])
-            .getDownloadURL();
+        String downloadURL =
+            await firebaseStorage.ref(categoryData['image']).getDownloadURL();
 
         loadedCategories[element.id] =
             CategoryModel(element.id, categoryData['name'], downloadURL);
@@ -240,6 +239,9 @@ class DataProvider with ChangeNotifier {
       } else {
         lastMessage = 'Connection error';
       }
+      return false;
+    } on TypeError catch (e) {
+      _logger.info(e);
       return false;
     }
   }

@@ -106,6 +106,8 @@ class _ScannerPageState extends State<ScannerPage> {
       backgroundColor: OptiShopAppTheme.primaryColor,
       body: SafeArea(
         top: false,
+        left: false,
+        right: false,
         child: Column(
           children: [
             Expanded(

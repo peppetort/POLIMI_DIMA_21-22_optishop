@@ -19,9 +19,9 @@ class ErrorAlert extends StatelessWidget {
     double rectHeight = 0;
 
     if (MediaQuery.of(context).orientation == Orientation.landscape) {
-      rectHeight = deviceHeight / deviceWidth * rectWidth;
+      rectHeight = deviceHeight / deviceWidth * rectWidth * 0.8;
     } else {
-      rectHeight = deviceWidth / deviceHeight * rectWidth;
+      rectHeight = deviceWidth / deviceHeight * rectWidth * 2;
     }
 
     return [rectWidth, rectHeight];
@@ -32,6 +32,7 @@ class ErrorAlert extends StatelessWidget {
     List<double> alertSize = _getAlertSize(context);
 
     return AlertDialog(
+      contentPadding: const EdgeInsets.only(bottom: 20.0),
       content: SingleChildScrollView(
         child: Column(
           children: [

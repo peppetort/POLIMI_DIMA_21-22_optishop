@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 
@@ -11,17 +9,6 @@ class CartProvider with ChangeNotifier {
   late AuthenticationProvider authenticationProvider;
 
   final Map<String, int> cart = {};
-
-  StreamSubscription? productsUpdatesStreamSub;
-
-  void update({required AuthenticationProvider authenticationProvider}) {
-    this.authenticationProvider = authenticationProvider;
-
-    if (this.authenticationProvider.firebaseAuth.currentUser == null) {
-      cart.clear();
-      productsUpdatesStreamSub?.cancel();
-    }
-  }
 
   void addToCart(String productId) {
     cart.putIfAbsent(productId, () => 0);
