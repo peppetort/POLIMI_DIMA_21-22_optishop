@@ -21,6 +21,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:location/location.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
@@ -34,6 +35,7 @@ class OptiShop extends StatelessWidget {
   final FirebaseAuth firebaseAuthInstance = FirebaseAuth.instance;
   final FirebaseStorage firebaseStorage = FirebaseStorage.instance;
   final Location location = Location();
+  final Geoflutterfire geo = Geoflutterfire();
 
   OptiShop({Key? key}) : super(key: key);
 
@@ -62,7 +64,7 @@ class OptiShop extends StatelessWidget {
         ),
         ChangeNotifierProxyProvider2<UserDataProvider, CartProvider,
             ResultProvider>(
-          create: (_) => ResultProvider(),
+          create: (_) => ResultProvider(fireStoreInstance, geo),
           update: (_, userDataProvider, cartProvider, resultProvider) =>
               resultProvider!
                 ..update(
