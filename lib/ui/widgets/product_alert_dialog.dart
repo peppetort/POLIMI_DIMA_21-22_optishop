@@ -18,13 +18,13 @@ class ProductAlert extends StatelessWidget {
     double deviceWidth = MediaQuery.of(context).size.width;
     double deviceHeight = MediaQuery.of(context).size.height;
 
-    double rectWidth = deviceWidth * 0.5;
+    double rectWidth = deviceWidth * 0.6;
     double rectHeight = 0;
 
     if (MediaQuery.of(context).orientation == Orientation.landscape) {
-      rectHeight = deviceHeight / deviceWidth * rectWidth;
+      rectHeight = deviceHeight / deviceWidth * rectWidth * 0.8;
     } else {
-      rectHeight = deviceWidth / deviceHeight * rectWidth;
+      rectHeight = deviceWidth / deviceHeight * rectWidth * 2;
     }
 
     return [rectWidth, rectHeight];
@@ -41,7 +41,7 @@ class ProductAlert extends StatelessWidget {
         context.select<CartProvider, int?>((value) => value.cart[productId]);
 
     return AlertDialog(
-      contentPadding: const EdgeInsets.all(20.0),
+      contentPadding: const EdgeInsets.only(bottom: 20.0),
       content: product == null
           ? const Center(
               child: CircularProgressIndicator(),
@@ -84,63 +84,66 @@ class ProductAlert extends StatelessWidget {
                   const SizedBox(
                     height: 10.0,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            product.name,
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 2,
-                            textAlign: TextAlign.start,
-                            style: Theme.of(context)
-                                .textTheme
-                                .headline5!
-                                .copyWith(
-                                  color: OptiShopAppTheme.secondaryColor,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                          ),
-                          Text(
-                            product.description,
-                            overflow: TextOverflow.ellipsis,
-                            style: Theme.of(context)
-                                .textTheme
-                                .headline5!
-                                .copyWith(
-                                    color: OptiShopAppTheme.darkGray,
-                                    fontWeight: FontWeight.normal),
-                          ),
-                        ],
-                      ),
-                      cartQuantity != null
-                          ? Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          ItemCounter(
-                            number: cartQuantity,
-                            addCallback: () =>
-                                Provider.of<CartProvider>(context, listen: false)
-                                    .addToCart(productId),
-                            removeCallback: () =>
-                                Provider.of<CartProvider>(context, listen: false)
-                                    .removeFromCart(productId),
-                          ),
-                        ],
-                      )
-                          : InkWell(
-                        onTap: () {
-                          Provider.of<CartProvider>(context, listen: false)
-                              .addToCart(productId);
-                        },
-                        child: const Icon(
-                          Icons.add_shopping_cart,
-                          color: OptiShopAppTheme.secondaryColor,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              product.name,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2,
+                              textAlign: TextAlign.start,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline5!
+                                  .copyWith(
+                                    color: OptiShopAppTheme.secondaryColor,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                            ),
+                            Text(
+                              product.description,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline5!
+                                  .copyWith(
+                                      color: OptiShopAppTheme.darkGray,
+                                      fontWeight: FontWeight.normal),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
+                        cartQuantity != null
+                            ? Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            ItemCounter(
+                              number: cartQuantity,
+                              addCallback: () =>
+                                  Provider.of<CartProvider>(context, listen: false)
+                                      .addToCart(productId),
+                              removeCallback: () =>
+                                  Provider.of<CartProvider>(context, listen: false)
+                                      .removeFromCart(productId),
+                            ),
+                          ],
+                        )
+                            : InkWell(
+                          onTap: () {
+                            Provider.of<CartProvider>(context, listen: false)
+                                .addToCart(productId);
+                          },
+                          child: const Icon(
+                            Icons.add_shopping_cart,
+                            color: OptiShopAppTheme.secondaryColor,
+                          ),
+                        ),
+                      ],
+                    ),
                   )
                 ],
               ),

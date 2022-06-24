@@ -4,6 +4,7 @@ import 'package:dima21_migliore_tortorelli/ui/widgets/big_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:location/location.dart';
+import 'package:mockito/annotations.dart';
 
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
