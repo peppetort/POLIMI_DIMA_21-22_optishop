@@ -1,7 +1,6 @@
 import 'package:dima21_migliore_tortorelli/providers/cart.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-
 void main() {
   const prod1 = "prod1";
   const prod2 = "prod2";
@@ -43,7 +42,6 @@ void main() {
     cartprov.emptyCart();
 
     cartprov.addToCart(prod1);
-    var quantity = cartprov.cart[prod1]!;
     cartprov.removeFromCart(prod1);
 
     expect(cartprov.cart.containsKey(prod1), false);

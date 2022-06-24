@@ -50,8 +50,8 @@ void main() {
   testWidgets('display non-empty cart page', (WidgetTester tester) async {
     final mockCartProv = MockCartProvider();
     final mockDataProv = MockDataProvider();
-    final mod1 = ProductModel('a', 'b', 'c', 'd', 'e');
-    final mod2 = ProductModel('e', 'd', 'c', 'b', 'a');
+    final mod1 = ProductModel('a', 'b', 'ean', 'c', 'd', 'e');
+    final mod2 = ProductModel('e', 'd', 'ean', 'c', 'b', 'a');
     Map<String, ProductModel> dummyLoadedProducts = {'prod1': mod1, 'prod2': mod2};
     Map<String, int> dummyCart = {"prod1" : 1, "prod2" : 2};
 

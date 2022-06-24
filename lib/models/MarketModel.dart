@@ -10,6 +10,7 @@ class MarketModel {
   Map<String, dynamic> toJson() => {
         'id': id,
         'name': name,
+        'address': address,
         'latitude': latitude,
         'longitude': longitude,
       };

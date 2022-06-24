@@ -19,8 +19,10 @@ class ResultProvider with ChangeNotifier {
 
   LocationData? lastUserLocation;
 
-  final CollectionReference _marketsReference =
-      FirebaseFirestore.instance.collection('markets');
+  final FirebaseFirestore fireStoreInstance;
+  final Geoflutterfire geo;
+
+  ResultProvider(this.fireStoreInstance, this.geo);
 
   void update(
       {required UserDataProvider userDataProvider,
@@ -34,11 +36,43 @@ class ResultProvider with ChangeNotifier {
     final geo = Geoflutterfire();
     GeoFirePoint position =
         geo.point(latitude: market.latitude, longitude: market.longitude);
-    _marketsReference.add({
+    fireStoreInstance.collection('markets').add({
       'name': market.name,
       'position': position.data,
       'address': market.address
     });
+  }
+
+  Map<MarketModel, Map<String, double>> getMarketProductMap(
+      DistanceDocSnapshot element, Map<String, int> cartProducts) {
+    Map<MarketModel, Map<String, double>> resultMarkets = {};
+    Map<String, dynamic> marketData =
+        element.documentSnapshot.data() as Map<String, dynamic>;
+
+    var availableProducts = marketData['products'];
+
+    Set availableProductKeySet = availableProducts.keys.toSet();
+    Set cartProductKeySet = cartProducts.keys.toSet();
+
+    if (availableProductKeySet.containsAll(cartProductKeySet)) {
+      MarketModel market = MarketModel(
+        element.documentSnapshot.id,
+        marketData['name'],
+        (marketData['position']['geopoint'] as GeoPoint).latitude,
+        (marketData['position']['geopoint'] as GeoPoint).longitude,
+        marketData['address'],
+      );
+
+      resultMarkets[market] = {'distance': element.kmDistance};
+
+      for (var productId in cartProductKeySet) {
+        double productPrice =
+            availableProducts[productId]! * cartProducts[productId]!;
+        double totalOfMarket = resultMarkets[market]!['total'] ?? 0;
+        resultMarkets[market]!['total'] = totalOfMarket + productPrice;
+      }
+    }
+    return resultMarkets;
   }
 
   Future<Map<MarketModel, Map<String, double>>> findResults() async {
@@ -53,8 +87,6 @@ class ResultProvider with ChangeNotifier {
     }
 
     try {
-      final geo = Geoflutterfire();
-
       Map<String, int> cartProducts =
           cartProvider.cart.map((key, value) => MapEntry(key, value));
 
@@ -68,8 +100,7 @@ class ResultProvider with ChangeNotifier {
           'Looking for markets starting from (${locationData.latitude!}, ${locationData.longitude}) in a radius of ${radius}Km');
 
       List<DistanceDocSnapshot> marketInUserRangeSnapshot = (await geo
-          .collection(
-              collectionRef: _marketsReference as Query<Map<String, dynamic>>)
+          .collection(collectionRef: fireStoreInstance.collection('markets'))
           .withinWithDistance(
               center: userLocation,
               radius: radius,
@@ -80,32 +111,7 @@ class ResultProvider with ChangeNotifier {
       _logger.info('${marketInUserRangeSnapshot.length} markets found');
 
       for (var element in marketInUserRangeSnapshot) {
-        Map<String, dynamic> marketData =
-            element.documentSnapshot.data() as Map<String, dynamic>;
-
-        var availableProducts = marketData['products'];
-
-        Set availableProductKeySet = availableProducts.keys.toSet();
-        Set cartProductKeySet = cartProducts.keys.toSet();
-
-        if (availableProductKeySet.containsAll(cartProductKeySet)) {
-          MarketModel market = MarketModel(
-            element.documentSnapshot.id,
-            marketData['name'],
-            (marketData['position']['geopoint'] as GeoPoint).latitude,
-            (marketData['position']['geopoint'] as GeoPoint).longitude,
-            marketData['address'],
-          );
-
-          resultMarkets[market] = {'distance': element.kmDistance};
-
-          for (var productId in cartProductKeySet) {
-            double productPrice =
-                availableProducts[productId]! * cartProducts[productId]!;
-            double totalOfMarket = resultMarkets[market]!['total'] ?? 0;
-            resultMarkets[market]!['total'] = totalOfMarket + productPrice;
-          }
-        }
+        resultMarkets.addAll(getMarketProductMap(element, cartProducts));
       }
 
       //NOTE: ranking according to distance and total price with the same weight (top-k where k == |dataset| => ordered skyline)
@@ -123,7 +129,7 @@ class ResultProvider with ChangeNotifier {
         lastMessage = 'Connection error';
       }
       return {};
-    } on Exception catch (e) {
+    } on RangeError catch (e) {
       _logger.warning(e);
       return {};
     }
