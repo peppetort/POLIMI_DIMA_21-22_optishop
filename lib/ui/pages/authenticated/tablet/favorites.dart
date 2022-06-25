@@ -79,7 +79,7 @@ class _FavoritesTabletPageState extends State<FavoritesTabletPage> {
                                   : widget.userSavedBags[index].savedProducts
                                           .length
                                           .toString() +
-                                      'prodotto',
+                                      ' prodotto',
                               style: Theme.of(context).textTheme.bodyText1,
                             ),
                           ],

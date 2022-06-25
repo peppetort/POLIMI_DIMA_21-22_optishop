@@ -28,7 +28,7 @@ class ProductPage extends StatelessWidget {
     if (aspectRatio > 1.5) {
       productsPerRow = (aspectRatio * 3).round();
     } else {
-      productsPerRow = (aspectRatio * 7).round();
+      productsPerRow = (aspectRatio * 6).round();
     }
 
     //NOTE: setting lower and upper bounds

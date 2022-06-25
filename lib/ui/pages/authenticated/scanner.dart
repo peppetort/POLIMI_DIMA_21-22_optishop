@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:dima21_migliore_tortorelli/app_theme.dart';
 import 'package:dima21_migliore_tortorelli/providers/data.dart';
-import 'package:dima21_migliore_tortorelli/ui/widgets/error_alert_dialog.dart';
 import 'package:dima21_migliore_tortorelli/ui/widgets/product_alert_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
@@ -44,40 +43,26 @@ class _ScannerPageState extends State<ScannerPage> {
     String? productId = await Provider.of<DataProvider>(context, listen: false)
         .getProductByEAN(scannedCode);
 
-    if (productId != null) {
-      showDialog<void>(
-        context: context,
-        barrierDismissible: true, // user must tap button!
-        builder: (BuildContext context) {
-          return ProductAlert(
-            productId: productId,
-            onClose: () {
-              controller!.resumeCamera();
-            },
-          );
-        },
-      );
-    } else {
-      showDialog<void>(
-        context: context,
-        barrierDismissible: false, // user must tap button!
-        builder: (BuildContext context) {
-          return ErrorAlert(
-            onClose: () {
-              controller!.resumeCamera();
-            },
-          );
-        },
-      );
-    }
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return ProductAlert(
+          productId: productId,
+          onClose: () {
+            controller!.resumeCamera();
+          },
+        );
+      },
+    );
   }
 
   void _onQRViewCreated(QRViewController controller) {
     this.controller = controller;
     controller.scannedDataStream.listen((scanData) {
       if (scanData.code != null) {
-        _getProduct(context, scanData.code!);
         controller.pauseCamera();
+        _getProduct(context, scanData.code!);
       }
     });
   }
