@@ -72,6 +72,7 @@ class AllowLocationPage extends StatelessWidget {
               padding: OptiShopAppTheme.defaultPagePadding,
               color: OptiShopAppTheme.primaryColor,
               child: BigElevatedButton(
+                key: const Key("Location test key"),
                 onPressed: () async {
                   PermissionStatus locationPermission =
                       await Provider.of<UserDataProvider>(context,

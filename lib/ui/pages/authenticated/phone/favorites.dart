@@ -19,6 +19,7 @@ class FavoritesPhonePage extends StatelessWidget {
 
           return Material(
               child: InkWell(
+                key: Key(preference.name),
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(

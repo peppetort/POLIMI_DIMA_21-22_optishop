@@ -24,6 +24,7 @@ Future<String> showInputAlertDialog(BuildContext context,
                 ),
                 actions: <Widget>[
                   TextButton(
+                    key: const Key('Save preference test key'),
                     onPressed: () {
                       if (textEditingController.text.isNotEmpty) {
                         Navigator.of(context).pop();

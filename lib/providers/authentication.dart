@@ -32,7 +32,7 @@ class AuthenticationProvider with ChangeNotifier {
           await googleUser.authentication;
 
       if (googleAuth == null) {
-        lastMessage = 'Unable to sigin with google';
+        lastMessage = 'Unable to sign in with google';
         return false;
       }
 
@@ -112,7 +112,7 @@ class AuthenticationProvider with ChangeNotifier {
         notifyListeners();
         return true;
       }
-      lastMessage = 'Unable to sigin with facebook';
+      lastMessage = 'Unable to sign in with facebook';
       return false;
     } on FirebaseException catch (e) {
       _logger.info(e);
@@ -170,7 +170,7 @@ class AuthenticationProvider with ChangeNotifier {
         notifyListeners();
         return true;
       }
-      lastMessage = 'Unable to sigin with twitter';
+      lastMessage = 'Unable to sign in with twitter';
       return false;
     } on FirebaseException catch (e) {
       _logger.info(e);

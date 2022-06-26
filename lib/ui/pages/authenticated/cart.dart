@@ -115,6 +115,7 @@ class CartPage extends StatelessWidget {
                           horizontal: 28.0, vertical: 10.0),
                       child: Center(
                         child: BigElevatedButton(
+                            key: const Key('Search test key'),
                           onPressed: () =>
                               Navigator.pushNamed(context, '/results'),
                           // Navigator.pushNamed(context, '/results'),

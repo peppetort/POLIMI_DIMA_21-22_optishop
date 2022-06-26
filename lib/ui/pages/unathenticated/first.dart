@@ -38,6 +38,7 @@ class FirstPage extends StatelessWidget {
                       direction: Axis.vertical,
                       children: [
                         BigElevatedButton(
+                          key: const Key('Signup test key'),
                           onPressed: () => {
                             Navigator.of(context).restorablePushNamed('/signup')
                           },

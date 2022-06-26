@@ -100,6 +100,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     children: [
                       const SizedBox(height: 20.0),
                       TextFormField(
+                          key: const Key("Firstname test key"),
                           controller: _firstNameController,
                           decoration: const InputDecoration(
                             border: UnderlineInputBorder(),
@@ -118,6 +119,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           }),
                       const SizedBox(height: 20.0),
                       TextFormField(
+                          key: const Key("Lastname test key"),
                           controller: _lastNameController,
                           decoration: const InputDecoration(
                             border: UnderlineInputBorder(),
@@ -136,6 +138,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           }),
                       const SizedBox(height: 20.0),
                       TextFormField(
+                        key: const Key("Email test key"),
                         controller: _emailController,
                         decoration: const InputDecoration(
                           border: UnderlineInputBorder(),
@@ -157,6 +160,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       ),
                       const SizedBox(height: 20.0),
                       TextFormField(
+                          key: const Key("Password test key"),
                           controller: _passwordController,
                           decoration: InputDecoration(
                               border: const UnderlineInputBorder(),
@@ -187,6 +191,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           }),
                       const SizedBox(height: 20.0),
                       TextFormField(
+                          key: const Key("Password confirmation test key"),
                           controller: _passConfController,
                           decoration: InputDecoration(
                               border: const UnderlineInputBorder(),
@@ -263,6 +268,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             Expanded(
                               flex: 8,
                               child: TextFormField(
+                                  key: const Key("Phone test key"),
                                   controller: _phoneController,
                                   maxLength: 15,
                                   decoration: const InputDecoration(

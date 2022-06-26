@@ -183,6 +183,7 @@ class _ResultContentState extends State<ResultContent> {
         centerTitle: true,
         actions: [
           IconButton(
+            key: const Key('Preference test key'),
             onPressed: () async {
               String name = await showInputAlertDialog(context,
                   title: 'Inserisci un nome per la preferenza');
@@ -247,6 +248,7 @@ class _ResultContentState extends State<ResultContent> {
                   Container(
                     padding: const EdgeInsets.only(top: 10.0, bottom: 30.0),
                     child: BigElevatedButton(
+                      key: const Key('Continue shopping test key'),
                       onPressed: () =>
                           Navigator.popUntil(context, (route) => route.isFirst),
                       child: Text(

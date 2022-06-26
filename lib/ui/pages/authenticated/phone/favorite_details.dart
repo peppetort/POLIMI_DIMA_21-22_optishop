@@ -50,6 +50,7 @@ class FavoriteDetailsPage extends StatelessWidget {
             icon: const Icon(Icons.mode_outlined),
           ),
           IconButton(
+            key: const Key("Delete preference test key"),
             onPressed: () {
               Provider.of<UserDataProvider>(context, listen: false)
                   .removePreference(selectedPreferenceId);
