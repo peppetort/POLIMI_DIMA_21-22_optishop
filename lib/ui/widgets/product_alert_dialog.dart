@@ -106,34 +106,37 @@ class ProductAlert extends StatelessWidget {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    product.name,
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 2,
-                                    textAlign: TextAlign.start,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .headline5!
-                                        .copyWith(
-                                          color:
-                                              OptiShopAppTheme.secondaryColor,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                  ),
-                                  Text(
-                                    product.description,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .headline5!
-                                        .copyWith(
-                                            color: OptiShopAppTheme.darkGray,
-                                            fontWeight: FontWeight.normal),
-                                  ),
-                                ],
+                              SizedBox(
+                                width: alertSize.first * 0.7,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      product.name,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2,
+                                      textAlign: TextAlign.start,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headline5!
+                                          .copyWith(
+                                            color:
+                                                OptiShopAppTheme.secondaryColor,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                    ),
+                                    Text(
+                                      product.description,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headline5!
+                                          .copyWith(
+                                              color: OptiShopAppTheme.darkGray,
+                                              fontWeight: FontWeight.normal),
+                                    ),
+                                  ],
+                                ),
                               ),
                               cartQuantity != null
                                   ? Row(
@@ -175,8 +178,7 @@ class ProductAlert extends StatelessWidget {
                                 child: Text(
                                   'Il prodotto non è presente nel catalogo.',
                                   textAlign: TextAlign.center,
-                                  style:
-                                      Theme.of(context).textTheme.headline5,
+                                  style: Theme.of(context).textTheme.headline5,
                                 ),
                               ),
                               const SizedBox(
